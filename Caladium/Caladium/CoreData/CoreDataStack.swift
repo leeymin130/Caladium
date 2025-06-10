@@ -7,9 +7,9 @@
 import Foundation
 import CoreData
 
-// 영구 컨테이너 초기화: 싱글톤으로
+// 영구 컨테이너 초기화
 class CoreDataStack: ObservableObject {
-    static let shared = CoreDataStack()
+    static let shared = CoreDataStack()  // 싱글톤 패턴
     
     // 처음 사용할 때 까지 인스턴스를 연기함
     lazy var persistentContainer: NSPersistentContainer = {
@@ -31,7 +31,6 @@ class CoreDataStack: ObservableObject {
     var context: NSManagedObjectContext {
         return persistentContainer.viewContext
     }
-    
     
     // 변경사항 저장 메서드: 변경사항을 디스크에 반영
     func saveContext() {
