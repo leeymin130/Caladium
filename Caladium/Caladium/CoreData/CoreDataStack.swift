@@ -7,11 +7,11 @@
 import Foundation
 import CoreData
 
-// Define an observable class to encapsulate all Core Data-related functionality.
+// 영구 컨테이너 초기화: 싱글톤으로
 class CoreDataStack: ObservableObject {
-    static let shared = CoreDataStack()  // 싱글톤으로 초기화
+    static let shared = CoreDataStack()
     
-    // Create a persistent container as a lazy variable to defer instantiation until its first use.
+    // 처음 사용할 때 까지 인스턴스를 연기함
     lazy var persistentContainer: NSPersistentContainer = {
         
         let container = NSPersistentContainer(name: "Caladium")
@@ -26,6 +26,30 @@ class CoreDataStack: ObservableObject {
     }()
     
     private init() { }
+    
+    // 스택에 기능 추가하기
+    var context: NSManagedObjectContext {
+        return persistentContainer.viewContext
+    }
+    
+    
+    // 변경사항 저장 메서드: 변경사항을 디스크에 반영
+    func saveContext() {
+        let context = persistentContainer.viewContext
+        
+        guard context.hasChanges else { return }
+        
+            do {
+                try context.save()
+            } catch {
+                print("Failed to save the context: \(error.localizedDescription)")
+            }
+        }
+    
+    // 백그라운드 context 생성기: 비동기/무거운 작업을 위한 thread-safe 처리
+    func newBackgroundContext() -> NSManagedObjectContext {
+        return persistentContainer.newBackgroundContext()
+    }
     
 }
 
