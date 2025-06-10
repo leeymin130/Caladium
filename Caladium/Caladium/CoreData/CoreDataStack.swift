@@ -38,7 +38,6 @@ class CoreDataStack: ObservableObject {
         let context = persistentContainer.viewContext
         
         guard context.hasChanges else { return }
-        
             do {
                 try context.save()
             } catch {
