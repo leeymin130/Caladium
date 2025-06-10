@@ -7,7 +7,7 @@
 	objects = {
 
 /* Begin PBXFileReference section */
-		7DA13EA82DEF21E800CD6643 /* Caladium.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; name = Caladium.app; path = "/Users/yoomin/Desktop/Caladium/Caladium/build/Debug-iphoneos/Caladium.app"; sourceTree = "<absolute>"; };
+		7D1EB95D2DF8143E0078D689 /* Caladium.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Caladium.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
@@ -33,6 +33,7 @@
 			isa = PBXGroup;
 			children = (
 				7DA13EAA2DEF21E800CD6643 /* Caladium */,
+				7D1EB95D2DF8143E0078D689 /* Caladium.app */,
 			);
 			sourceTree = "<group>";
 		};
@@ -58,7 +59,7 @@
 			packageProductDependencies = (
 			);
 			productName = Caladium;
-			productReference = 7DA13EA82DEF21E800CD6643 /* Caladium.app */;
+			productReference = 7D1EB95D2DF8143E0078D689 /* Caladium.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
