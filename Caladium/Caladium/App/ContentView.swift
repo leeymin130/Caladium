@@ -45,7 +45,7 @@ struct ContentView: View {
                         if let photos = project.photos as? Set<Photo>, !photos.isEmpty {
                             VStack(alignment: .leading) {
                                 Text("📸 사진 목록:")
-                                ForEach(Array(photos).sorted(by: { ($0.capturedDate ?? Date()) < ($1.capturedDate ?? Date()) })) { photo in
+                                ForEach(Array(photos).sorted(by: { ($0.capturedDate ?? Date()) < ($1.capturedDate ?? Date()) }), id: \.id) { photo in
                                     HStack {
                                         Text(" - \(photo.fileName ?? "파일 없음")")
                                         Spacer()
