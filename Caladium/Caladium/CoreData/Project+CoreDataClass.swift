@@ -23,10 +23,9 @@ public class Project: NSManagedObject {
     }
     
     // 편의 초기화
-    convenience init(context: NSManagedObjectContext, name: String, category: Category) {
+    convenience init(context: NSManagedObjectContext, category: Category) {
         self.init(context: context)
         self.id = UUID()
-        self.name = name
         self.category = category.rawValue
         self.createdDate = Date()
         self.updatedDate = Date()

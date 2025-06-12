@@ -25,4 +25,13 @@ enum Category: String, CaseIterable {
             return "옥상"
         }
     }
+    
+    var icon: String {
+        switch self {
+        case .garden: return "leaf.fill"
+        case .jungle: return "house.fill"
+        case .desert: return "sun.max.fill"
+        case .rooftop: return "camera.macro"
+        }
+    }
 }

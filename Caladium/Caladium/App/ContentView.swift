@@ -8,116 +8,175 @@
 import SwiftUI
 import CoreData
 
+
 struct ContentView: View {
-    // @Environment를 사용하여 Core Data 컨텍스트를 주입받습니다.
-    @Environment(\.managedObjectContext) private var viewContext
-    @StateObject private var vm: TestViewModel
-    
-    init() {
-        // 싱글턴을 통해 context 생성하고 주입 주입
-        let context = CoreDataStack.shared.context
-        _vm = StateObject(wrappedValue: TestViewModel(context: context))
+    var body: some View {
+        CoreDataTestView()
     }
+}
+
+// MARK: - ViewModel
+class TestViewModel: ObservableObject {
+    private let coreDataService = CoreDataService()
+    
+    func createProject() {
+        coreDataService.createProject(category: .garden)
+    }
+    
+    func deleteProject(_ project: Project) {
+        coreDataService.deleteProject(project)
+    }
+     
+    func addPhoto(to project: Project) {
+        let mockImage = UIImage(systemName: "photo.fill") ?? UIImage()
+        try? coreDataService.createPhoto(image: mockImage, project: project)
+    }
+    
+    func deletePhotos(_ photos: [Photo]) {
+        print("=== deletePhotos 호출됨 ===")
+        print("삭제 요청된 사진 수: \(photos.count)")
+        photos.forEach { photo in
+            print("삭제 대상: \(photo.fileName ?? "Unknown")")
+        }
+        
+        // 스택 트레이스 출력
+        print("호출 스택:")
+        Thread.callStackSymbols.forEach { print($0) }
+        
+        try? coreDataService.deletePhotos(photos)
+    }
+}
+
+// MARK: - Main Test View
+struct CoreDataTestView: View {
+    @StateObject private var viewModel = TestViewModel()
+    
+    // @FetchRequest로 프로젝트 가져오기
+    @FetchRequest(
+        sortDescriptors: [NSSortDescriptor(keyPath: \Project.updatedDate, ascending: false)]
+    ) var projects: FetchedResults<Project>
     
     var body: some View {
         NavigationView {
-            List {
-                // MARK: - Read (프로젝트 목록 표시)
-                ForEach(vm.projects) { project in
-                    VStack(alignment: .leading) {
-                        Text(project.name ?? "이름 없음").font(.headline)
-                        Text("카테고리: \(Category(rawValue: project.category ?? "")?.displayName ?? "알 수 없음")")
-                            .font(.subheadline)
-                            .foregroundColor(.gray)
-                        Text("생성일: \(project.createdDate ?? Date(), formatter: dateFormatter)")
-                            .font(.caption)
-                        Text("수정일: \(project.updatedDate ?? Date(), formatter: dateFormatter)")
-                            .font(.caption)
-                        
-                        // MARK: - Add Photo (사진 추가)
-                        Button("사진 추가") {
-                            vm.addPhoto(to: project)
-                        }
-                        .font(.caption)
-                        .padding(.vertical, 2)
-                        
-                        // 해당 프로젝트의 사진 목록
-                        if let photos = project.photos as? Set<Photo>, !photos.isEmpty {
-                            VStack(alignment: .leading) {
-                                Text("📸 사진 목록:")
-                                ForEach(Array(photos).sorted(by: { ($0.capturedDate ?? Date()) < ($1.capturedDate ?? Date()) }), id: \.id) { photo in
-                                    HStack {
-                                        Text(" - \(photo.fileName ?? "파일 없음")")
-                                        Spacer()
-                                        // MARK: - Delete Photo (사진 삭제)
-                                        Button("삭제") {
-                                            vm.deletePhoto(photo)
-                                        }
-                                        .font(.caption)
-                                        .foregroundColor(.red)
-                                    }
-                                }
-                            }
-                            .padding(.leading, 10)
-                        } else {
-                            Text("등록된 사진 없음").font(.caption).foregroundColor(.secondary)
-                        }
-                    }
-                    .padding(.vertical, 5)
-                    .contextMenu { // 컨텍스트 메뉴를 통한 수정/삭제
-                        // MARK: - Update (프로젝트 수정)
-                        Button("이름 변경") {
-                            vm.updateProjectName(project)
-                        }
-                        // MARK: - Delete (프로젝트 삭제)
-                        Button("삭제") {
-                            vm.deleteProject(project)
-                        }
-                        .foregroundColor(.red)
-                    }
+            VStack {
+                // 프로젝트 생성 버튼
+                Button("프로젝트 생성") {
+                    viewModel.createProject()
                 }
-                // 스와이프 삭제 (프로젝트)
-                .onDelete { indexSet in
-                    indexSet.map { vm.projects[$0] }.forEach(vm.deleteProject)
+                .buttonStyle(.borderedProminent)
+                .padding()
+                
+                // 총 개수 표시
+                Text("총 프로젝트: \(projects.count)개")
+                    .font(.headline)
+                    .padding()
+                
+                // 프로젝트 목록
+                List {
+                    ForEach(projects) { project in
+                        ProjectTestRow(project: project, viewModel: viewModel)
+                    }
+                    .onDelete(perform: deleteProjects)
                 }
             }
-            .navigationTitle("내 프로젝트")
-            .toolbar {
-                ToolbarItem(placement: .navigationBarTrailing) {
-                    // MARK: - Create (새 프로젝트 생성)
-                    Button("새 프로젝트") {
-                        vm.createProject()
-                    }
-                }
-                // MARK: - 모든 데이터 삭제 버튼 추가
-                ToolbarItem(placement: .navigationBarLeading) { // 왼쪽에 배치
-                    Button("모든 데이터 삭제") {
-                        vm.deleteAllProjects()
-                    }
-                    .foregroundColor(.red) // 삭제 버튼은 빨간색으로
-                }
-            }
+            .navigationTitle("CoreData 테스트")
         }
     }
-
     
-    // 날짜 포맷터
-    private let dateFormatter: DateFormatter = {
-        let formatter = DateFormatter()
-        formatter.dateStyle = .short
-        formatter.timeStyle = .short
-        return formatter
-    }()
-}
-
-// MARK: - Preview Provider (Xcode Canvas 미리보기용)
-struct ContentView_Previews: PreviewProvider {
-    static var previews: some View {
-        // 프리뷰에서 Core Data 컨텍스트를 제공하기 위한 설정
-        ContentView().environment(\.managedObjectContext, CoreDataStack.shared.context)
+    private func deleteProjects(offsets: IndexSet) {
+        for index in offsets {
+            viewModel.deleteProject(projects[index])
+        }
     }
 }
 
-//#Preview {
-//    ContentView()
-//}
+// MARK: - Project Row
+struct ProjectTestRow: View {
+    let project: Project
+    let viewModel: TestViewModel
+    @State private var selectedPhotoID: NSManagedObjectID?
+    
+    // 해당 프로젝트의 사진들만 가져오기
+    @FetchRequest var photos: FetchedResults<Photo>
+    
+    init(project: Project, viewModel: TestViewModel) {
+        self.project = project
+        self.viewModel = viewModel
+        
+        let predicate = NSPredicate(format: "project == %@", project)
+        self._photos = FetchRequest(
+            sortDescriptors: [NSSortDescriptor(keyPath: \Photo.capturedDate, ascending: false)],
+            predicate: predicate
+        )
+    }
+    
+    var body: some View {
+        VStack(alignment: .leading, spacing: 8) {
+            // 프로젝트 정보
+            HStack {
+                VStack(alignment: .leading) {
+                    Text("프로젝트 ID: \(project.id?.uuidString.prefix(8) ?? "Unknown")")
+                        .font(.headline)
+                    Text("카테고리: \(project.categoryEnum.displayName)")
+                        .font(.subheadline)
+                        .foregroundColor(.secondary)
+                }
+                Spacer()
+                Text("사진 \(photos.count)개")
+                    .font(.caption)
+                    .foregroundColor(.secondary)
+            }
+            
+            // 사진 추가 버튼
+            Button("사진 추가") {
+                viewModel.addPhoto(to: project)
+            }
+            .buttonStyle(.bordered)
+            
+            // 사진 목록 - LazyVStack 사용
+            if !photos.isEmpty {
+                VStack(alignment: .leading, spacing: 4) {
+                    Text("사진 목록:")
+                        .font(.subheadline)
+                        .fontWeight(.medium)
+                    
+                    // ForEach 대신 개별 뷰로 분리
+                    LazyVStack(alignment: .leading, spacing: 2) {
+                        ForEach(photos, id: \.objectID) { photo in
+                            PhotoRowView(
+                                photo: photo,
+                                onDelete: {
+                                    viewModel.deletePhotos([photo])
+                                }
+                            )
+                        }
+                    }
+                }
+                .padding(.leading, 10)
+            }
+        }
+        .padding(.vertical, 8)
+    }
+}
+
+// MARK: - Photo Row (분리된 뷰)
+struct PhotoRowView: View {
+    let photo: Photo
+    let onDelete: () -> Void
+    
+    var body: some View {
+        HStack {
+            Text(photo.fileName ?? "Unknown")
+                .font(.caption)
+            Spacer()
+            Button(action: onDelete) {
+                Text("삭제")
+                    .font(.caption)
+                    .foregroundColor(.red)
+            }
+            .buttonStyle(.plain)
+            .contentShape(Rectangle()) // 터치 영역 명시
+        }
+        .background(Color.clear) // 배경 추가로 터치 영역 격리
+    }
+}
