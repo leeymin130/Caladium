@@ -1,0 +1,86 @@
+//
+//  AppRoute.swift
+//  Caladium
+//
+//  Created by 이종선 on 6/15/25.
+//
+
+import Foundation
+import UIKit
+
+enum AppRoute: Hashable, Identifiable {
+    // 메인 앱 플로우
+    case home(category: Category)
+    case projectDetail(Project)
+    case photoDetail(Photo, Project)
+    
+    // 촬영 플로우
+    case camera(CameraContext)
+    case photoConfirm(UIImage, CameraContext)
+    
+    // 영상 만들기 플로우
+    case videoPhotoSelection(Project)
+    case videoGeneration([Photo])
+    
+    // Identifiable 구현
+    var id: String {
+        switch self {
+        case .home(let category):
+            return "home_\(category.rawValue)"
+        case .projectDetail(let project):
+            return "project_\(project.id ?? UUID())"
+        case .photoDetail(let photo, _):
+            return "photo_\(photo.id ?? UUID())"
+        case .camera(let context):
+            return "camera_\(context.id)"
+        case .photoConfirm(_, let context):
+            return "photo_confirm_\(context.id)"
+        case .videoPhotoSelection(let project):
+            return "video_selection_\(project.id ?? UUID())"
+        case .videoGeneration(let photos):
+            return "video_generation_\(photos.count)"
+        }
+    }
+}
+
+enum OnboardingStep: Int, CaseIterable {
+    case welcome = 0
+    case features = 1
+    case permissions = 2
+    case complete = 3
+    
+    var next: OnboardingStep? {
+        guard let nextCase = OnboardingStep(rawValue: self.rawValue + 1) else {
+            return nil
+        }
+        return nextCase
+    }
+    
+    var previous: OnboardingStep? {
+        guard self.rawValue > 0,
+              let prevCase = OnboardingStep(rawValue: self.rawValue - 1) else {
+            return nil
+        }
+        return prevCase
+    }
+}
+
+enum CameraContext: Hashable {
+    case newProject // 새 식물 추가
+    case existingProject(Project) // 기존 프로젝트에 사진 추가
+    
+    var id: String {
+        switch self {
+        case .newProject:
+            return "new_project"
+        case .existingProject(let project):
+            return "existing_\(project.id ?? UUID())"
+        }
+    }
+}
+
+enum HomeEditMode : Hashable{
+    case normal
+    case delete(selectedProject: Set<Project>)
+    case move(selectedProject: Set<Project>)
+}
