@@ -10,7 +10,7 @@ import UIKit
 
 enum AppRoute: Hashable, Identifiable {
     // 메인 앱 플로우
-    case home(category: Category)
+    case home
     case projectDetail(Project)
     case photoDetail(Photo, Project)
     
@@ -25,8 +25,8 @@ enum AppRoute: Hashable, Identifiable {
     // Identifiable 구현
     var id: String {
         switch self {
-        case .home(let category):
-            return "home_\(category.rawValue)"
+        case .home:
+            return "home"
         case .projectDetail(let project):
             return "project_\(project.id ?? UUID())"
         case .photoDetail(let photo, _):

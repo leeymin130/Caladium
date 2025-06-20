@@ -66,9 +66,18 @@ final class AppCoordinator: ObservableObject {
     }
     
     func startNewProject() {
-        showingAlert = .cameraEnvironmentCheck {
-            self.presentFullScreen(.camera(.newProject))
-        }
+        // 먼저 카메라 풀스크린으로 띄우기
+        presentFullScreen(.camera(.newProject))
+        
+        // 카메라 화면에 Alert 띄우기
+        showingAlert = .cameraEnvironmentCheck(onConfirm: {
+            // 확인: Alert 만 닫기( 카메라 창 유지)
+            self.dismissAlert()
+        }, onCancel: {
+            // 취소 : Alert 먼저 닫고 + 카메라 화면 닫기
+            self.dismissAlert()
+            self.dismissFullScreen()
+        })
     }
     
     func startDeleteMode() {
@@ -161,7 +170,7 @@ final class AppCoordinator: ObservableObject {
 }
 
 enum AlertType: Identifiable {
-    case cameraEnvironmentCheck(onConfirm: () -> Void)
+    case cameraEnvironmentCheck(onConfirm: () -> Void, onCancel: () -> Void)
     case confirmDelete(count: Int, onConfirm: () -> Void)
     case selectMoveCategory(projects: Set<Project>, onSelect: (
     Category) -> Void)

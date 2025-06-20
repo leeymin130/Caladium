@@ -11,6 +11,7 @@ import UIKit
 
 final class CoreDataService {
     
+    // MARK: 의존성 주입시 각 ViewModel에서 동일한 인스턴스 공유하도록 설계
     let context: NSManagedObjectContext
     let coreDataManager: CoreDataManager
     
