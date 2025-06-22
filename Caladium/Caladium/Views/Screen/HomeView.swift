@@ -10,153 +10,265 @@ import SwiftUI
 struct HomeView: View {
     @StateObject private var vm: HomeViewModel
     
+    @FetchRequest var projects: FetchedResults<Project>
+    
     init(vm: HomeViewModel) {
         self._vm = StateObject(wrappedValue: vm)
+        self._projects = FetchRequest(
+            entity: Project.entity(),
+            sortDescriptors: [NSSortDescriptor(keyPath: \Project.createdDate, ascending: false)],
+            predicate: NSPredicate(format: "category == %@", vm.currentCategory.rawValue)
+        )
     }
     
     var body: some View {
-        Text(/*@START_MENU_TOKEN@*/"Hello, World!"/*@END_MENU_TOKEN@*/)
+        VStack(spacing: 0) {
+            // Header with category navigation
+            categoryHeader
+            
+            projectsGrid
+            
+            Spacer()
+            
+            bottomToolbar
+        }
+    }
+    
+    // MARK: - Category Header
+    private var categoryHeader: some View {
+        HStack {
+            Button(action: vm.previousCategory) {
+                Image(systemName: "chevron.left")
+                    .font(.title2)
+                    .foregroundColor(.green)
+                    .padding()
+            }
+            
+            Spacer()
+            
+            VStack {
+                // Category dots indicator
+                HStack(spacing: 8) {
+                    ForEach(Category.allCases, id: \.self) { category in
+                        Circle()
+                            .fill(category == vm.currentCategory ? Color.green : Color.gray.opacity(0.3))
+                            .frame(
+                                width: category == vm.currentCategory ? 10 : 8,
+                                height: category == vm.currentCategory ? 10 : 8)
+                    }
+                }
+                
+                
+                Text(vm.currentCategory.displayName)
+                    .font(.headline)
+                    .padding(.top, 4)
+            }
+            
+            Spacer()
+            
+            Button(action: vm.nextCategory) {
+                Image(systemName: "chevron.right")
+                    .font(.title2)
+                    .foregroundColor(.green)
+                    .padding()
+            }
+        }
+        .padding(.horizontal)
+        .padding(.top)
+    }
+    
+    
+    // MARK: - Projects Grid
+    private var projectsGrid: some View {
+        ScrollView {
+            LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: 24), count: 3), spacing: 12) {
+                // Add new project button (always first)
+                newProjectButton
+                
+                // Existing projects
+                ForEach(projects, id: \.id) { project in
+                    projectGridItem(project)
+                }
+            }
+            .padding(.horizontal, 16)
+            .padding(.top, 20)
+        }
+    }
+    
+    // MARK: - New Project Button
+    private var newProjectButton: some View {
+        Button(action: vm.startNewProject) {
+            Image(systemName: "plus")
+                .font(.system(size: 30))
+                .foregroundColor(.white)
+                .frame(width: 100, height: 100)
+                .background {
+                    RoundedRectangle(cornerRadius: 8)
+                        .fill(Color.green)
+                }
+        }
+        .disabled(vm.isEditMode)
+    }
+    
+    // MARK: - Project Grid Item
+    private func projectGridItem(_ project: Project) -> some View {
+        Button(action: {
+            if vm.isEditMode {
+                vm.toggleProjectSelection(project)
+            } else {
+                // Navigate to selected Project
+                vm.selectProject(selectedProject: project)
+            }
+        }) {
+            ZStack {
+                // Project thumbnail (placeholder)
+                RoundedRectangle(cornerRadius: 12)
+                    .fill(Color.gray.opacity(0.3))
+                    .frame(width: 100, height: 100)
+                    .overlay(
+                        Image(systemName: "leaf.fill")
+                            .font(.title)
+                            .foregroundColor(.green)
+                    )
+                
+                // Selection indicator
+                if vm.isProjectSelected(project) {
+                    RoundedRectangle(cornerRadius: 12)
+                        .stroke(Color.blue, lineWidth: 3)
+                        .background(Color.blue.opacity(0.2))
+                        .cornerRadius(12)
+                }
+                
+                // Selection checkbox
+                if vm.isEditMode {
+                    VStack {
+                        HStack {
+                            Spacer()
+                            Image(systemName: vm.isProjectSelected(project) ? "checkmark.circle.fill" : "circle")
+                                .foregroundColor(vm.isProjectSelected(project) ? .blue : .white)
+                                .background(Color.black.opacity(0.5))
+                                .clipShape(Circle())
+                        }
+                        Spacer()
+                    }
+                    .padding(8)
+                }
+            }
+        }
+        .buttonStyle(PlainButtonStyle())
+    }
+    
+    // MARK: - Bottom Toolbar
+    private var bottomToolbar: some View {
+        HStack {
+            
+            switch vm.editMode {
+            case .normal:
+                Button {
+                    vm.startDeleteMode()
+                } label: {
+                    VStack {
+                        Image(systemName: "trash")
+                            .font(.title2)
+                        Text("지우기")
+                            .font(.caption)
+                    }
+                    .foregroundColor(.red)
+                }
+                .disabled(projects.isEmpty)
+                
+                Spacer()
+                
+                Button {
+                    vm.startMoveMode()
+                } label: {
+                    VStack {
+                        Image(systemName: "folder")
+                            .font(.title2)
+                        Text("옮기기")
+                            .font(.caption)
+                    }
+                }
+                .disabled(projects.isEmpty)
+
+            case .delete(_):
+                Button {
+                    vm.exitEditMode()
+                } label: {
+                    VStack{
+                        Image(systemName: "xmark")
+                            .font(.title2)
+                        Text("취소")
+                            .font(.caption)
+                    }
+                }
+                
+                Spacer()
+                
+                if vm.selectedProjectsCount > 0 {
+                    Text("\(vm.selectedProjectsCount)개 선택됨")
+                        .font(.caption)
+                        .foregroundColor(.secondary)
+                }
+                
+                Spacer()
+                
+                Button {
+                   // TODO: 선택한 프로젝트들 삭제 로직 호출
+                } label: {
+                    VStack{
+                        Image(systemName: "checkmark")
+                            .font(.title2)
+                        Text("확인")
+                            .font(.caption)
+                    }
+                }
+
+            case .move(_):
+                Button {
+                    vm.exitEditMode()
+                } label: {
+                    VStack{
+                        Image(systemName: "xmark")
+                            .font(.title2)
+                        Text("취소")
+                            .font(.caption)
+                    }
+                }
+                
+                Spacer()
+                
+                if vm.selectedProjectsCount > 0 {
+                    Text("\(vm.selectedProjectsCount)개 선택됨")
+                        .font(.caption)
+                        .foregroundColor(.secondary)
+                }
+                
+                Spacer()
+                
+                Button {
+                    // TODO: 선택한 프로젝트들 옮기기 로직 호출
+                } label: {
+                    VStack{
+                        Image(systemName: "checkmark")
+                            .font(.title2)
+                        Text("확인")
+                            .font(.caption)
+                    }
+                }
+            }
+            
+        }
+        .padding(.horizontal, 40)
+        .padding(.vertical, 16)
+        .background(Color(.systemBackground))
+        .shadow(color: .black.opacity(0.1), radius: 1, x: 0, y: -1)
+        
     }
 }
 
 #Preview {
     HomeView(vm: HomeViewModel(coordinator: AppCoordinator()))
+        .environment(\.managedObjectContext, CoreDataManager.preview.mainContext)
 }
 
-
-//// MARK: - Home View
-//struct HomeView: View {
-//    @EnvironmentObject var coordinator: AppCoordinator
-//    @Environment(\.managedObjectContext) private var context
-//    
-//    @FetchRequest(
-//        sortDescriptors: [NSSortDescriptor(keyPath: \Project.updatedDate, ascending: false)],
-//        animation: .default)
-//    private var allProjects: FetchedResults<Project>
-//    
-//    // 현재 선택된 카테고리의 프로젝트들
-//    private var filteredProjects: [Project] {
-//        allProjects.filter { $0.categoryEnum == coordinator.currentCategory }
-//    }
-//    
-//    var body: some View {
-//        VStack {
-//            // 카테고리 선택
-//            categorySelector
-//            
-//            // 메인 컨텐츠
-//            if filteredProjects.isEmpty {
-//                emptyStateView
-//            } else {
-//                projectGridView
-//            }
-//            
-//            Spacer()
-//        }
-//        .navigationTitle(coordinator.currentCategory.displayName)
-//        .navigationBarTitleDisplayMode(.large)
-//        .toolbar {
-//            ToolbarItem(placement: .navigationBarTrailing) {
-//                if coordinator.homeEditMode == .normal {
-//                    Menu {
-//                        Button("새 프로젝트", systemImage: "plus") {
-//                            coordinator.startNewProject()
-//                        }
-//                        Button("편집", systemImage: "pencil") {
-//                            coordinator.startDeleteMode()
-//                        }
-//                        Button("이동", systemImage: "arrow.right") {
-//                            coordinator.startMoveMode()
-//                        }
-//                    } label: {
-//                        Image(systemName: "ellipsis.circle")
-//                    }
-//                } else {
-//                    HStack {
-//                        Button("취소") {
-//                            coordinator.cancelEditMode()
-//                        }
-//                        
-//                        if case .delete(let selected) = coordinator.homeEditMode, !selected.isEmpty {
-//                            Button("삭제") {
-//                                coordinator.deleteSelectedProjects()
-//                            }
-//                            .foregroundColor(.red)
-//                        }
-//                        
-//                        if case .move(let selected) = coordinator.homeEditMode, !selected.isEmpty {
-//                            Button("이동") {
-//                                coordinator.moveSelectedProjects()
-//                            }
-//                        }
-//                    }
-//                }
-//            }
-//        }
-//    }
-//    
-//    private var categorySelector: some View {
-//        ScrollView(.horizontal, showsIndicators: false) {
-//            HStack(spacing: 15) {
-//                ForEach(Category.allCases, id: \.self) { category in
-//                    Button {
-//                        coordinator.changeCategory(to: category)
-//                    } label: {
-//                        VStack {
-//                            Image(systemName: category.icon)
-//                                .font(.title2)
-//                            Text(category.displayName)
-//                                .font(.caption)
-//                        }
-//                        .foregroundColor(coordinator.currentCategory == category ? .white : .primary)
-//                        .padding(.horizontal, 16)
-//                        .padding(.vertical, 12)
-//                        .background(
-//                            RoundedRectangle(cornerRadius: 12)
-//                                .fill(coordinator.currentCategory == category ? Color.blue : Color.gray.opacity(0.2))
-//                        )
-//                    }
-//                    .buttonStyle(.plain)
-//                }
-//            }
-//            .padding(.horizontal)
-//        }
-//    }
-//    
-//    private var emptyStateView: some View {
-//        VStack(spacing: 20) {
-//            Image(systemName: coordinator.currentCategory.icon)
-//                .font(.system(size: 60))
-//                .foregroundColor(.gray)
-//            
-//            Text("아직 \(coordinator.currentCategory.displayName) 프로젝트가 없습니다")
-//                .font(.title3)
-//                .multilineTextAlignment(.center)
-//            
-//            Text("새로운 식물을 추가해보세요!")
-//                .foregroundColor(.secondary)
-//            
-//            Button {
-//                coordinator.startNewProject()
-//            } label: {
-//                Label("첫 프로젝트 시작하기", systemImage: "plus")
-//            }
-//            .buttonStyle(.borderedProminent)
-//        }
-//        .padding()
-//    }
-//    
-//    private var projectGridView: some View {
-//        ScrollView {
-//            LazyVGrid(columns: [
-//                GridItem(.flexible()),
-//                GridItem(.flexible())
-//            ], spacing: 15) {
-//                ForEach(filteredProjects, id: \.id) { project in
-//                    ProjectCardView(project: project)
-//                }
-//            }
-//            .padding(.horizontal)
-//        }
-//    }
-//}

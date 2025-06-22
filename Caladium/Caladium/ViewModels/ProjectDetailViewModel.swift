@@ -6,3 +6,13 @@
 //
 
 import Foundation
+
+final class ProjectDetailViewModel: ObservableObject {
+    
+    private let coordinator: AppCoordinator
+    
+    init(coordinator: AppCoordinator) {
+        self.coordinator = coordinator
+    }
+    
+}

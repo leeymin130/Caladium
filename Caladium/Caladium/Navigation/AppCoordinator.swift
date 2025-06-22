@@ -18,7 +18,6 @@ final class AppCoordinator: ObservableObject {
     // App State
     @AppStorage("onboarding_completed") var isOnboardingComplete: Bool = false
     @AppStorage("last_selected_category") var currentCategory: Category = .garden
-    @Published var homeEditMode: HomeEditMode = .normal
     
     // Alert States
     @Published var showingAlert: AlertType?
@@ -55,59 +54,14 @@ final class AppCoordinator: ObservableObject {
         presentedFullScreen = nil
     }
     
-    // MARK: - 홈 화면 액션들
+    // MARK: - 카테고리 변경
     func changeCategory(to category: Category) {
         currentCategory = category
-        homeEditMode = .normal  // 카테고리 변경시 편집모드 해제
     }
+    
     // MARK: - 온보딩 완료
     func completeOnboarding() {
         isOnboardingComplete = true  // @AppStorage가 자동으로 저장
-    }
-    
-    func startNewProject() {
-        // 먼저 카메라 풀스크린으로 띄우기
-        presentFullScreen(.camera(.newProject))
-        
-        // 카메라 화면에 Alert 띄우기
-        showingAlert = .cameraEnvironmentCheck(onConfirm: {
-            // 확인: Alert 만 닫기( 카메라 창 유지)
-            self.dismissAlert()
-        }, onCancel: {
-            // 취소 : Alert 먼저 닫고 + 카메라 화면 닫기
-            self.dismissAlert()
-            self.dismissFullScreen()
-        })
-    }
-    
-    func startDeleteMode() {
-        homeEditMode = .delete(selectedProject: [])
-    }
-    
-    func startMoveMode() {
-        homeEditMode = .move(selectedProject: [])
-    }
-    
-    func cancelEditMode() {
-        homeEditMode = .normal
-    }
-    
-    func deleteSelectedProjects() {
-        guard case .delete(let projects) = homeEditMode else { return }
-        
-        showingAlert = .confirmDelete(count: projects.count) {
-            // CoreData 삭제 로직
-            self.homeEditMode = .normal
-        }
-    }
-    
-    func moveSelectedProjects() {
-        guard case .move(let projects) = homeEditMode else { return }
-        
-        showingAlert = .selectMoveCategory(projects: projects) { category in
-            // 카테고리 이동 로직
-            self.homeEditMode = .normal
-        }
     }
     
     // MARK: - 촬영 플로우

@@ -13,10 +13,12 @@ final class HomeViewModel: ObservableObject {
     @Published var editMode: HomeEditMode = .normal
     
     private let coordinator: AppCoordinator
+    private let coreDataService: CoreDataService
     
     init(coordinator: AppCoordinator) {
         self.coordinator = coordinator
         self.currentCategory = coordinator.currentCategory
+        self.coreDataService = CoreDataService()
     }
     
     // MARK: - Category Navigation
@@ -45,11 +47,12 @@ final class HomeViewModel: ObservableObject {
     
     // MARK: -  Project Actions
     func startNewProject() {
-        coordinator.startNewProject()
+        coordinator.presentFullScreen(.camera(.newProject))
     }
     
-    func selectProject() {
+    func selectProject(selectedProject: Project) {
         // 선택한 프로젝트로 네비게이션
+        coordinator.navigate(to: .projectDetail(selectedProject))
     }
     
     // MARK: - Edit Mode
@@ -139,4 +142,14 @@ final class HomeViewModel: ObservableObject {
             return true
         }
     }
+    
+    var selectedProjectsCount: Int {
+        switch editMode {
+        case .delete(let projects), .move(let projects):
+            return projects.count
+        case .normal:
+            return 0
+        }
+    }
+
 }
