@@ -153,3 +153,10 @@ final class HomeViewModel: ObservableObject {
     }
 
 }
+
+
+extension HomeViewModel {
+    func addMockData() {
+        coreDataService.createMockData()
+    }
+}

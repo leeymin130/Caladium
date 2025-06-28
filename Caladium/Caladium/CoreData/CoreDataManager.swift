@@ -123,7 +123,7 @@ extension CoreDataManager {
                 project.updatedDate = Date().addingTimeInterval(-Double(i * 1800))
                 
                 // 각 프로젝트에 사진 몇 개 추가 (메타데이터만)
-                for j in 1...3 {
+                for j in 1...20 {
                     let photo = Photo(context: context)
                     photo.id = UUID()
                     photo.fileName = "preview_photo_\(i)_\(j).jpg"

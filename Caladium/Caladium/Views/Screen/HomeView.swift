@@ -30,8 +30,18 @@ struct HomeView: View {
             
             Spacer()
             
+            Button {
+                vm.addMockData()
+            } label: {
+                Text("Mock Data Add")
+
+            }
+            .padding()
+
+            
             bottomToolbar
         }
+        .navigationTitle("") // 빈 문자열로 설정
     }
     
     // MARK: - Category Header

@@ -12,7 +12,7 @@ import CoreData
 struct ProjectDetailView: View {
     
     @StateObject private var vm: ProjectDetailViewModel
-
+    
     let project: Project
     @FetchRequest private var photos: FetchedResults<Photo>
     
@@ -27,89 +27,257 @@ struct ProjectDetailView: View {
     }
     
     var body: some View {
+        VStack(spacing: 0) {
+            photoGrid
+                .overlay(alignment: .bottomTrailing){
+                    cameraButton
+                        .padding()
+                }
+            
+            bottomToolbar
+        }
+        .navigationTitle("")
+        .navigationBarTitleDisplayMode(.inline)
+        .toolbar {
+            ToolbarItem(placement: .principal) {
+                Text(dateRangeText)
+                    .font(.subheadline) // 또는 .caption, .footnote
+                    .foregroundColor(.primary)
+            }
+        }
+        
+    }
+    
+    // MARK: - Photo Grid
+
+    private var photoGrid: some View {
         ScrollView {
-            VStack(spacing: 20) {
-                // 프로젝트 정보
-                VStack(spacing: 10) {
-                    Text("📊 프로젝트 정보")
-                        .font(.title2)
-                        .bold()
-                    
-                    VStack(alignment: .leading, spacing: 8) {
-                        Text("카테고리: \(project.categoryEnum.displayName)")
-                        Text("생성일: \(project.createdDate?.formatted() ?? "")")
-                        Text("마지막 업데이트: \(project.updatedDate?.formatted() ?? "")")
-                        Text("사진 수: \(photos.count)장")
-                    }
-                    .frame(maxWidth: .infinity, alignment: .leading)
-                    .padding()
-                    .background(Color.gray.opacity(0.1))
-                    .clipShape(RoundedRectangle(cornerRadius: 12))
+            LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: 3), count: 3), spacing: 3) {
+                ForEach(photos, id: \.objectID) { photo in
+                    photoGridItem(photo: photo)
                 }
-                
-                // 액션 버튼들
-                VStack(spacing: 12) {
-                    Button {
-//                        coordinator.addPhotoToProject(project)
-                    } label: {
-                        Label("사진 추가", systemImage: "camera")
-                            .frame(maxWidth: .infinity)
-                    }
-                    .buttonStyle(.borderedProminent)
-                    
-                    if photos.count >= 2 {
-                        Button {
-                        } label: {
-                            Label("영상 만들기", systemImage: "video")
-                                .frame(maxWidth: .infinity)
+            }
+            .padding(.horizontal, 1)
+
+        }
+    }
+    
+    private func photoGridItem(photo: Photo) -> some View {
+            ZStack {
+                AsyncPhotoImage(photo: photo)
+                    .frame(width:128, height: 128)
+                    .clipped()
+                    .onTapGesture {
+                        if vm.isEditMode {
+                            vm.togglePhotoSelection(photo)
+                        } else {
+                            // TODO: 사진 상세보기로 이동
+                            vm.navigateToPhotoDetail(photo: photo, project: project)
                         }
-                        .buttonStyle(.bordered)
                     }
-                }
                 
-                // 사진 그리드
-                if !photos.isEmpty {
-                    VStack(alignment: .leading, spacing: 12) {
-                        Text("📷 사진들")
-                            .font(.title2)
-                            .bold()
-                            .frame(maxWidth: .infinity, alignment: .leading)
-                        
-                        LazyVGrid(columns: [
-                            GridItem(.flexible()),
-                            GridItem(.flexible()),
-                            GridItem(.flexible())
-                        ], spacing: 10) {
-                            ForEach(photos, id: \.id) { photo in
-                                Button {
-                                } label: {
-                                    RoundedRectangle(cornerRadius: 8)
-                                        .fill(Color.gray.opacity(0.3))
-                                        .aspectRatio(1, contentMode: .fit)
-                                        .overlay {
-                                            VStack {
-                                                Image(systemName: "photo")
-                                                Text(photo.capturedDate?.formatted(date: .abbreviated, time: .omitted) ?? "")
-                                                    .font(.caption2)
-                                            }
-                                            .foregroundColor(.gray)
-                                        }
-                                }
-                                .buttonStyle(.plain)
-                            }
+                // 선택 표시
+                if vm.isEditMode {
+                    VStack {
+                        HStack {
+                            Spacer()
+                            Circle()
+                                .fill(vm.isPhotoSelected(photo) ? Color.blue : Color.clear)
+                                .stroke(Color.white, lineWidth: 2)
+                                .frame(width: 24, height: 24)
+                                .overlay(
+                                    Image(systemName: "checkmark")
+                                        .font(.system(size: 12, weight: .bold))
+                                        .foregroundColor(.white)
+                                        .opacity(vm.isPhotoSelected(photo) ? 1 : 0)
+                                )
+                                .padding(8)
                         }
+                        Spacer()
                     }
                 }
             }
-            .padding()
         }
-        .navigationTitle("프로젝트 상세")
-        .navigationBarTitleDisplayMode(.inline)
+    
+    private var cameraButton: some View {
+        HStack(alignment: .center,spacing: 18){
+            Image(systemName: "camera.fill")
+                .font(.system(size: 30, weight: .medium))
+                .foregroundColor(.white)
+                .background{
+                   Rectangle()
+                        .fill(Color.green500)
+                        .frame(width: 60, height: 60)
+                        
+                }
+                .padding(.leading, 8)
+            
+            VStack(spacing: 4){
+                Text("새로운 사진")
+                    .font(.caption)
+                    .foregroundStyle(.primary)
+                Text("촬영하기")
+                    .font(.caption2)
+                    .foregroundStyle(.secondary)
+            }
+            .padding(.leading,10)
+        
+
+        }
+        .onTapGesture {
+            vm.addNewPhoto(currentProject: project)
+        }
+        .frame(width: 158, height: 58, alignment: .leading)
+        .background{
+            Rectangle()
+                .fill(Color.white)
+               
+        }
+        .clipShape(RoundedRectangle(cornerRadius: 12))
+        .overlay(
+            RoundedRectangle(cornerRadius: 10)
+                .stroke(Color.gray400, lineWidth: 2)
+        )
+
+        
+    }
+    
+    
+    private var bottomToolbar: some View {
+        HStack {
+            
+            switch vm.editMode {
+            case .normal:
+                Button {
+                    vm.startDeleteMode()
+                } label: {
+                    VStack {
+                        Image(systemName: "trash")
+                            .font(.title2)
+                        Text("지우기")
+                            .font(.caption)
+                    }
+                    .foregroundColor(.red)
+                }
+                .disabled(photos.isEmpty)
+                
+                Spacer()
+                
+                Button {
+                    vm.startVideoMode()
+                } label: {
+                    VStack {
+                        Image(systemName: "folder")
+                            .font(.title2)
+                        Text("옮기기")
+                            .font(.caption)
+                    }
+                }
+                .disabled(photos.isEmpty)
+
+            case .delete(_):
+                Button {
+                    vm.exitEditMode()
+                } label: {
+                    VStack{
+                        Image(systemName: "xmark")
+                            .font(.title2)
+                        Text("취소")
+                            .font(.caption)
+                    }
+                }
+                
+                Spacer()
+                
+                if vm.selectedProjectsCount > 0 {
+                    Text("\(vm.selectedProjectsCount)개 선택됨")
+                        .font(.caption)
+                        .foregroundColor(.secondary)
+                }
+                
+                Spacer()
+                
+                Button {
+                   // TODO: 선택한 프로젝트들 삭제 로직 호출
+                } label: {
+                    VStack{
+                        Image(systemName: "checkmark")
+                            .font(.title2)
+                        Text("확인")
+                            .font(.caption)
+                    }
+                }
+
+            case .makeVideo(_):
+                Button {
+                    vm.exitEditMode()
+                } label: {
+                    VStack{
+                        Image(systemName: "xmark")
+                            .font(.title2)
+                        Text("취소")
+                            .font(.caption)
+                    }
+                }
+                
+                Spacer()
+                
+                if vm.selectedProjectsCount > 0 {
+                    Text("\(vm.selectedProjectsCount)개 선택됨")
+                        .font(.caption)
+                        .foregroundColor(.secondary)
+                }
+                
+                Spacer()
+                
+                Button {
+                    // TODO: 비디오 만들기 로직 호출
+                } label: {
+                    VStack{
+                        Image(systemName: "checkmark")
+                            .font(.title2)
+                        Text("확인")
+                            .font(.caption)
+                    }
+                }
+            }
+            
+        }
+        .padding(.horizontal, 40)
+        .padding(.vertical, 16)
+        .background(Color(.systemBackground))
+        .shadow(color: .black.opacity(0.1), radius: 1, x: 0, y: -1)
+        
+    }
+    
+    
+    private var dateRangeText: String {
+        let formatter = Date.FormatStyle()
+            .year()
+            .month(.wide)
+            .day()
+            .locale(Locale(identifier: "ko_KR"))
+        
+        let startDate = project.createdDate?.formatted(formatter) ?? ""
+        let endDate = project.updatedDate?.formatted(formatter) ?? ""
+        
+        return "\(startDate) ~ \(endDate)"
     }
 }
 
 
 
+
+#Preview {
+    let context = CoreDataManager.preview.mainContext
+    let sampleProject = getSampleProject(from: context)
+    
+    return ProjectDetailView(
+        vm: ProjectDetailViewModel(coordinator: AppCoordinator()),
+        project: sampleProject
+    )
+    .environment(\.managedObjectContext, context)
+}
 
 
 // Preview 밖에서 helper 함수 정의
@@ -128,15 +296,4 @@ private func getSampleProject(from context: NSManagedObjectContext) -> Project {
     project.updatedDate = Date()
     project.category = Category.rooftop.rawValue
     return project
-}
-
-#Preview {
-    let context = CoreDataManager.preview.mainContext
-    let sampleProject = getSampleProject(from: context)
-    
-    return ProjectDetailView(
-        vm: ProjectDetailViewModel(coordinator: AppCoordinator()),
-        project: sampleProject
-    )
-    .environment(\.managedObjectContext, context)
 }

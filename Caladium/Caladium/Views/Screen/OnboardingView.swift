@@ -9,8 +9,13 @@ import SwiftUI
 
 // MARK: - Onboarding Views
 struct OnboardingContainerView: View {
-    @EnvironmentObject var coordinator: AppCoordinator
+    private var coordinator: AppCoordinator
     @State private var currentStep: OnboardingStep = .welcome
+    
+    init(coordinator: AppCoordinator) {
+        self.coordinator = coordinator
+        
+    }
     
     var body: some View {
         VStack(spacing: 20) {

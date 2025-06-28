@@ -25,6 +25,7 @@ struct ContentView: View {
         .fullScreenCover(item: $coordinator.presentedFullScreen) { route in
             routeView(for: route)
         }
+        .tint(.green500)
     }
     
     @ViewBuilder
@@ -32,7 +33,7 @@ struct ContentView: View {
         if coordinator.isOnboardingComplete {
             HomeView(vm:HomeViewModel(coordinator: coordinator))
         } else {
-            OnboardingContainerView()
+            OnboardingContainerView(coordinator: coordinator)
         }
     }
     

@@ -84,3 +84,9 @@ enum HomeEditMode : Hashable{
     case delete(selectedProject: Set<Project>)
     case move(selectedProject: Set<Project>)
 }
+
+enum ProjectEditMode : Hashable{
+    case normal
+    case delete(selectedPhoto: Set<Photo>)
+    case makeVideo(selectedPhoto: Set<Photo>)
+}
