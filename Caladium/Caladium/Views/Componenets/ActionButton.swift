@@ -35,8 +35,8 @@ struct ActionButton: View {
     var body: some View {
         Button(action: {
             // 햅틱 피드백 추가
-            let impact = UIImpactFeedbackGenerator(style: .medium)
-            impact.impactOccurred()
+            let impactFeedback = UIImpactFeedbackGenerator(style: .medium)
+            impactFeedback.impactOccurred()
             
             action()
         }) {
