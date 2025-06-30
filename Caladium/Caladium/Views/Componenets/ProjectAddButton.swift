@@ -42,7 +42,7 @@ struct ProjectAddButton: View {
             .overlay(
                 RoundedRectangle(cornerRadius: 10)
                     .stroke(
-                        isEnabled ? Color.gray400 : Color.gray400,
+                        isEnabled ? Color.green700 : Color.gray400,
                         lineWidth: 1
                     )
             )
