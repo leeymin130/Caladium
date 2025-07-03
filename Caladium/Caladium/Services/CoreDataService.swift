@@ -11,6 +11,7 @@ import UIKit
 
 final class CoreDataService {
     
+    // MARK: 의존성 주입시 각 ViewModel에서 동일한 인스턴스 공유하도록 설계
     let context: NSManagedObjectContext
     let coreDataManager: CoreDataManager
     
@@ -244,11 +245,23 @@ extension CoreDataService {
             }
         }
         
-        // 첫 번째 프로젝트에 사진 추가
-        if let firstProject = try? fetchAllProjects().first {
-            for _ in 1...5 {
-                let mockImage = UIImage(systemName: "photo") ?? UIImage()
-                try? createPhoto(image: mockImage, project: firstProject)
+        // 모든 프로젝트에 사진 추가
+        if let allProjects = try? fetchAllProjects() {
+            for project in allProjects {
+                // 각 프로젝트마다 3-7개의 랜덤한 수의 사진 추가
+                let photoCount = Int.random(in: 3...7)
+                
+                for i in 1...photoCount {
+                    // 다양한 색상의 샘플 이미지 생성
+                    let mockImage = UIImage(systemName: "photo") ?? UIImage()
+
+                    do {
+                        try createPhoto(image: mockImage, project: project)
+                        print("Added photo \(i) to project \(project.categoryEnum.rawValue)")
+                    } catch {
+                        print("Failed to create photo for project \(project.categoryEnum.rawValue): \(error)")
+                    }
+                }
             }
         }
     }
