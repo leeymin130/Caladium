@@ -24,6 +24,12 @@ struct ProjectAddButton: View {
             VStack(){
                 Rectangle()
                     .fill(isEnabled ? Color.green500 : Color.gray300)
+                    .overlay {
+                        Image("plant")
+                            .resizable()
+                            .scaledToFit()
+                            .frame(width: 38, height: 38)
+                    }
                 Rectangle()
                     .fill(Color.gray0)
                     .overlay(
@@ -39,6 +45,7 @@ struct ProjectAddButton: View {
             }
             .frame(width: 100, height: 100)
             .cornerRadius(10)
+            .shadow(color: .gray900.opacity(0.25), radius: 1.5, x: 0, y: 2)
             .overlay(
                 RoundedRectangle(cornerRadius: 10)
                     .stroke(

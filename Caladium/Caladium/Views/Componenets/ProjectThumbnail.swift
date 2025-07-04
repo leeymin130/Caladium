@@ -53,8 +53,13 @@ struct ProjectThumbnail: View {
         }) {
             ZStack {
                 Rectangle()
-                    .foregroundColor(.gray)
+                    .foregroundColor(stateColor)
                     .frame(width: 100, height: 100)
+                    .shadow(color: .gray900.opacity(0.25), radius: 1.5, x: 0, y: 2)
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 10)
+                            .stroke(Color.gray400, lineWidth: 1)
+                    )
                 
                 // 이미지 있나요?
                 if let image = thumbnailImage {
@@ -62,21 +67,35 @@ struct ProjectThumbnail: View {
                         .resizable()
                         .scaledToFill()
                         .frame(width: 90, height: 90)
+                        .cornerRadius(7)
                         .clipped()
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 7)
+                                .stroke(Color.gray0.opacity(0.25), lineWidth: 1)
+                        )
                 }
                 
                 // 선택 모드
-                if selectedMode {
+                if state == .inactive || selectedMode {
                     ZStack {
                         Rectangle()
-                            .foregroundStyle(Color.gray500.opacity(0.5))
+                            .foregroundStyle(Color.gray900.opacity(0.5))
                             .frame(width: 90, height: 90)
+                            .cornerRadius(7)
                         
-                        Text("선택")
-                            .font(.headline)
-                            .foregroundColor(.white)
-                            .padding(6)
-                            .cornerRadius(8)
+                        if selectedMode {
+                            VStack(spacing: 0){
+                                Image("shovel")
+                                    .frame(width: 40, height: 40)
+                                
+                                Text("선택")
+                                    .font(.headline)
+                                    .foregroundColor(.white)
+                                    .padding(6)
+                                    .cornerRadius(8)
+                            }
+                            
+                        }
                     }
                     
                 }
