@@ -27,6 +27,37 @@ struct HomeView: View {
             categoryHeader
             
             projectsGrid
+                .alert(isPresented: $vm.isShowingDeleteAlert) {
+                    /// ALERT CONTENT
+                    DeleteConfirmPopup {
+                        vm.isShowingDeleteAlert = false
+                    } confirmButtonAction: {
+                        // TODO: 선택한 프로젝트들 삭제 로직 호출
+                        vm.deleteSelectedProjects()
+                    }
+                    .padding(.horizontal)
+
+                } background: {
+                    /// BACKGROUND
+                    Rectangle()
+                        .fill(.primary.opacity(0.35))
+                }
+                .alert(isPresented: $vm.isShowingMoveAlert) {
+                    /// ALERT CONTENT
+                    CategoryChangePopup(selectedCategory: vm.currentCategory, cancelButtonAction: {
+                        vm.isShowingMoveAlert = false
+                    }, confirmButtonAction: {
+                        // TODO: 선택한 프로젝트들 옮기기 로직 호출
+                        vm.moveSelectedProjects()
+                    })
+                    .padding(.horizontal)
+
+                } background: {
+                    /// BACKGROUND
+                    Rectangle()
+                        .fill(.primary.opacity(0.35))
+                }
+            
             
             Spacer()
             
@@ -190,7 +221,7 @@ struct HomeView: View {
                 Spacer()
                 
                 Button {
-                   // TODO: 선택한 프로젝트들 삭제 로직 호출
+                    vm.isShowingDeleteAlert = true
                 } label: {
                     VStack{
                         Image(systemName: "checkmark")
@@ -223,7 +254,7 @@ struct HomeView: View {
                 Spacer()
                 
                 Button {
-                    // TODO: 선택한 프로젝트들 옮기기 로직 호출
+                    vm.isShowingMoveAlert = true
                 } label: {
                     VStack{
                         Image(systemName: "checkmark")

@@ -11,6 +11,14 @@ struct CategoryChangePopup: View {
     @State private var selectedCategory: Category = .jungle
     
     private let categories = Category.allCases
+    let cancelButtonAction: () -> Void
+    let confirmButtonAction: () -> Void
+    
+    init(selectedCategory: Category, cancelButtonAction: @escaping () -> Void, confirmButtonAction: @escaping () -> Void) {
+        _selectedCategory = .init(initialValue: selectedCategory)
+        self.cancelButtonAction = cancelButtonAction
+        self.confirmButtonAction = confirmButtonAction
+    }
     
     var body: some View {
         VStack(alignment: .center, spacing: 20) {
@@ -102,7 +110,7 @@ struct CategoryChangePopup: View {
                 backgroundColor: .gray200,
                 borderColor: .gray300,
                 action: {
-                    print("취소")
+                   cancelButtonAction()
                 }
             )
             
@@ -111,7 +119,7 @@ struct CategoryChangePopup: View {
                 backgroundColor: .green500,
                 borderColor: .green700,
                 action: {
-                    print("확인")
+                    confirmButtonAction()
                 }
             )
         }
@@ -119,6 +127,6 @@ struct CategoryChangePopup: View {
 }
 
 #Preview {
-    CategoryChangePopup()
-        .padding()
+    CategoryChangePopup(selectedCategory: Category.desert, cancelButtonAction: {}, confirmButtonAction: {})
+    .padding()
 }

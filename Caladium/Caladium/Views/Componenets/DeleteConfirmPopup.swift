@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct DeleteConfirmPopup: View {
-    let canelButtonAction: () -> Void
+    let cancelButtonAction: () -> Void
     let confirmButtonAction: () -> Void
     
     var body: some View {
@@ -63,7 +63,7 @@ struct DeleteConfirmPopup: View {
                 backgroundColor: .gray200,
                 borderColor: .gray300,
                 action: {
-                    canelButtonAction()
+                    cancelButtonAction()
                 }
             )
             
@@ -80,6 +80,6 @@ struct DeleteConfirmPopup: View {
 }
 
 #Preview {
-    DeleteConfirmPopup(canelButtonAction: {}, confirmButtonAction: {})
+    DeleteConfirmPopup(cancelButtonAction: {}, confirmButtonAction: {})
     .padding()
 }

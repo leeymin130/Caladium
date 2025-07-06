@@ -11,6 +11,8 @@ final class HomeViewModel: ObservableObject {
     
     @Published var currentCategory: Category
     @Published var editMode: HomeEditMode = .normal
+    @Published var isShowingDeleteAlert: Bool = false
+    @Published var isShowingMoveAlert: Bool = false
     
     private let coordinator: AppCoordinator
     private let coreDataService: CoreDataService
@@ -104,23 +106,13 @@ final class HomeViewModel: ObservableObject {
     func deleteSelectedProjects() {
         guard case .delete(let projects) = editMode else { return }
         
-        // Coordinator를 통해 Alert 표시 및 삭제 처리
-//        coordinator.showDeleteConfirmAlert(count: projects.count) {
-//            // 실제 삭제 로직 수행
-//            self.performDelete(projects: projects)
-//            self.exitEditMode()
-//        }
+        self.isShowingDeleteAlert = false
     }
     
     func moveSelectedProjects() {
         guard case .move(let projects) = editMode else { return }
         
-        // Coordinator를 통해 카테고리 선택 Alert 표시
-//        coordinator.showMoveCategoryAlert(projects: projects) { category in
-//            // 실제 이동 로직 수행
-//            self.performMove(projects: projects, to: category)
-//            self.exitEditMode()
-//        }
+        self.isShowingMoveAlert = false
     }
     
     // MARK: - Private Methods
