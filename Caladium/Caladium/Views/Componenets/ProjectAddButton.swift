@@ -41,6 +41,7 @@ struct ProjectAddButton: View {
                                 .foregroundColor(.gray400)
                                 .font(.system(size: 12))
                         }
+                        .padding(.bottom, 8)
                     )
             }
             .frame(width: 100, height: 100)
