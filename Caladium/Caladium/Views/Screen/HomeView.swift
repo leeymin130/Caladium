@@ -27,6 +27,37 @@ struct HomeView: View {
             categoryHeader
             
             projectsGrid
+                .alert(isPresented: $vm.isShowingDeleteAlert) {
+                    /// ALERT CONTENT
+                    DeleteConfirmPopup {
+                        vm.isShowingDeleteAlert = false
+                    } confirmButtonAction: {
+                        // TODO: 선택한 프로젝트들 삭제 로직 호출
+                        vm.deleteSelectedProjects()
+                    }
+                    .padding(.horizontal)
+
+                } background: {
+                    /// BACKGROUND
+                    Rectangle()
+                        .fill(.primary.opacity(0.35))
+                }
+                .alert(isPresented: $vm.isShowingMoveAlert) {
+                    /// ALERT CONTENT
+                    CategoryChangePopup(selectedCategory: vm.currentCategory, cancelButtonAction: {
+                        vm.isShowingMoveAlert = false
+                    }, confirmButtonAction: {
+                        // TODO: 선택한 프로젝트들 옮기기 로직 호출
+                        vm.moveSelectedProjects()
+                    })
+                    .padding(.horizontal)
+
+                } background: {
+                    /// BACKGROUND
+                    Rectangle()
+                        .fill(.primary.opacity(0.35))
+                }
+            
             
             Spacer()
             
@@ -93,7 +124,9 @@ struct HomeView: View {
         ScrollView {
             LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: 24), count: 3), spacing: 12) {
                 // Add new project button (always first)
-                newProjectButton
+                ProjectAddButton(isEnabled: !vm.isEditMode) {
+                    vm.startNewProject()
+                }
                 
                 // Existing projects
                 ForEach(projects, id: \.id) { project in
@@ -105,67 +138,31 @@ struct HomeView: View {
         }
     }
     
-    // MARK: - New Project Button
-    private var newProjectButton: some View {
-        Button(action: vm.startNewProject) {
-            Image(systemName: "plus")
-                .font(.system(size: 30))
-                .foregroundColor(.white)
-                .frame(width: 100, height: 100)
-                .background {
-                    RoundedRectangle(cornerRadius: 8)
-                        .fill(Color.green)
-                }
-        }
-        .disabled(vm.isEditMode)
-    }
-    
     // MARK: - Project Grid Item
     private func projectGridItem(_ project: Project) -> some View {
-        Button(action: {
-            if vm.isEditMode {
-                vm.toggleProjectSelection(project)
-            } else {
-                // Navigate to selected Project
-                vm.selectProject(selectedProject: project)
-            }
-        }) {
-            ZStack {
-                // Project thumbnail (placeholder)
-                RoundedRectangle(cornerRadius: 12)
-                    .fill(Color.gray.opacity(0.3))
-                    .frame(width: 100, height: 100)
-                    .overlay(
-                        Image(systemName: "leaf.fill")
-                            .font(.title)
-                            .foregroundColor(.green)
-                    )
-                
-                // Selection indicator
-                if vm.isProjectSelected(project) {
-                    RoundedRectangle(cornerRadius: 12)
-                        .stroke(Color.blue, lineWidth: 3)
-                        .background(Color.blue.opacity(0.2))
-                        .cornerRadius(12)
-                }
-                
-                // Selection checkbox
+        ProjectThumbnail(
+            project: project,
+            state: projectThumbnailState(for: project),
+            action: {
                 if vm.isEditMode {
-                    VStack {
-                        HStack {
-                            Spacer()
-                            Image(systemName: vm.isProjectSelected(project) ? "checkmark.circle.fill" : "circle")
-                                .foregroundColor(vm.isProjectSelected(project) ? .blue : .white)
-                                .background(Color.black.opacity(0.5))
-                                .clipShape(Circle())
-                        }
-                        Spacer()
-                    }
-                    .padding(8)
+                    vm.toggleProjectSelection(project)
+                } else {
+                    vm.selectProject(selectedProject: project)
                 }
             }
+        )
+        .shadow(color: .gray900.opacity(0.25), radius: 1.5, x: 0, y: 2)
+    }
+    
+    private func projectThumbnailState(for project: Project) -> ProjectThumbnailState {
+        switch vm.editMode {
+        case .normal:
+            return .active
+        case .delete(let selectedProjects):
+            return selectedProjects.contains(project) ? .selectedForDelete : .inactive
+        case .move(let selectedProjects):
+            return selectedProjects.contains(project) ? .selectedForMove : .inactive
         }
-        .buttonStyle(PlainButtonStyle())
     }
     
     // MARK: - Bottom Toolbar
@@ -224,7 +221,7 @@ struct HomeView: View {
                 Spacer()
                 
                 Button {
-                   // TODO: 선택한 프로젝트들 삭제 로직 호출
+                    vm.isShowingDeleteAlert = true
                 } label: {
                     VStack{
                         Image(systemName: "checkmark")
@@ -257,7 +254,7 @@ struct HomeView: View {
                 Spacer()
                 
                 Button {
-                    // TODO: 선택한 프로젝트들 옮기기 로직 호출
+                    vm.isShowingMoveAlert = true
                 } label: {
                     VStack{
                         Image(systemName: "checkmark")
