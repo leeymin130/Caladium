@@ -109,50 +109,29 @@ struct HomeView: View {
     
     // MARK: - Project Grid Item
     private func projectGridItem(_ project: Project) -> some View {
-        Button(action: {
-            if vm.isEditMode {
-                vm.toggleProjectSelection(project)
-            } else {
-                // Navigate to selected Project
-                vm.selectProject(selectedProject: project)
-            }
-        }) {
-            ZStack {
-                // Project thumbnail (placeholder)
-                RoundedRectangle(cornerRadius: 12)
-                    .fill(Color.gray.opacity(0.3))
-                    .frame(width: 100, height: 100)
-                    .overlay(
-                        Image(systemName: "leaf.fill")
-                            .font(.title)
-                            .foregroundColor(.green)
-                    )
-                
-                // Selection indicator
-                if vm.isProjectSelected(project) {
-                    RoundedRectangle(cornerRadius: 12)
-                        .stroke(Color.blue, lineWidth: 3)
-                        .background(Color.blue.opacity(0.2))
-                        .cornerRadius(12)
-                }
-                
-                // Selection checkbox
+        ProjectThumbnail(
+            project: project,
+            state: projectThumbnailState(for: project),
+            action: {
                 if vm.isEditMode {
-                    VStack {
-                        HStack {
-                            Spacer()
-                            Image(systemName: vm.isProjectSelected(project) ? "checkmark.circle.fill" : "circle")
-                                .foregroundColor(vm.isProjectSelected(project) ? .blue : .white)
-                                .background(Color.black.opacity(0.5))
-                                .clipShape(Circle())
-                        }
-                        Spacer()
-                    }
-                    .padding(8)
+                    vm.toggleProjectSelection(project)
+                } else {
+                    vm.selectProject(selectedProject: project)
                 }
             }
+        )
+        .shadow(color: .gray900.opacity(0.25), radius: 1.5, x: 0, y: 2)
+    }
+    
+    private func projectThumbnailState(for project: Project) -> ProjectThumbnailState {
+        switch vm.editMode {
+        case .normal:
+            return .active
+        case .delete(let selectedProjects):
+            return selectedProjects.contains(project) ? .selectedForDelete : .inactive
+        case .move(let selectedProjects):
+            return selectedProjects.contains(project) ? .selectedForMove : .inactive
         }
-        .buttonStyle(PlainButtonStyle())
     }
     
     // MARK: - Bottom Toolbar
