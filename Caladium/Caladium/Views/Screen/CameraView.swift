@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import AVFoundation
 
 // MARK: - Camera View
 struct CameraView: View {
@@ -40,22 +41,54 @@ struct CameraView: View {
             
             Spacer()
             
-            // 촬영 버튼
-            Button {
-                // 임시 이미지로 다음 단계로
-                let tempImage = UIImage(systemName: "photo") ?? UIImage()
+            
+            HStack(spacing: 55){
 
-            } label: {
-                Circle()
-                    .fill(Color.white)
-                    .frame(width: 80, height: 80)
-                    .overlay {
-                        Circle()
-                            .stroke(Color.black, lineWidth: 3)
-                            .frame(width: 70, height: 70)
+                Spacer()
+                
+                // 촬영 버튼
+                Button {
+                    vm.capturePhoto()
+                    // 임시 이미지로 다음 단계로
+//                    let tempImage = UIImage(systemName: "photo") ?? UIImage()
+                    
+                } label: {
+                    Circle()
+                        .fill(Color.white)
+                        .frame(width: 80, height: 80)
+                        .overlay {
+                            Circle()
+                                .stroke(Color.black, lineWidth: 3)
+                                .frame(width: 70, height: 70)
+                        }
+                }
+                
+                // 오버레이 토글
+                VStack(alignment: .center, spacing: 9) {
+                    Button(action: {
+                        vm.switchOverlay()
+                    }) {
+                        ZStack {
+                            RoundedRectangle(cornerRadius: 100)
+                                .fill(vm.isOverlayOn ? Color.green400 : Color.gray500)
+                                .frame(width: 51, height: 31)
+                            
+                            Circle()
+                                .fill(Color.white)
+                                .frame(width: 27, height: 27)
+                                .offset(x: vm.isOverlayOn ? 10 : -10)
+                        }
                     }
+                    .buttonStyle(PlainButtonStyle())
+                    
+                    Text("최근 사진 필터")
+                        .font(.caption)
+                }
+                .padding(.horizontal, 16)
+                
             }
             .padding(.bottom, 50)
+            
         }
         .background(Color.black)
         .foregroundColor(.white)
