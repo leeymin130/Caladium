@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct ProjectAddButton: View {
-    @Binding var isEnabled: Bool
+    var isEnabled: Bool
     let action: () -> Void
     
     var body: some View {
@@ -62,11 +62,11 @@ struct ProjectAddButton: View {
 
 #Preview {
     VStack(spacing: 30) {
-        ProjectAddButton(isEnabled: .constant(true)) {
+        ProjectAddButton(isEnabled: true) {
             print("프로젝트 추가 - 활성화")
         }
         
-        ProjectAddButton(isEnabled: .constant(false)) {
+        ProjectAddButton(isEnabled: false) {
             print("프로젝트 추가 - 비활성화")
         }
     }

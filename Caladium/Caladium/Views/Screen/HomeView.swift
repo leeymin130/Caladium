@@ -93,7 +93,9 @@ struct HomeView: View {
         ScrollView {
             LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: 24), count: 3), spacing: 12) {
                 // Add new project button (always first)
-                newProjectButton
+                ProjectAddButton(isEnabled: !vm.isEditMode) {
+                    vm.startNewProject()
+                }
                 
                 // Existing projects
                 ForEach(projects, id: \.id) { project in
@@ -103,21 +105,6 @@ struct HomeView: View {
             .padding(.horizontal, 16)
             .padding(.top, 20)
         }
-    }
-    
-    // MARK: - New Project Button
-    private var newProjectButton: some View {
-        Button(action: vm.startNewProject) {
-            Image(systemName: "plus")
-                .font(.system(size: 30))
-                .foregroundColor(.white)
-                .frame(width: 100, height: 100)
-                .background {
-                    RoundedRectangle(cornerRadius: 8)
-                        .fill(Color.green)
-                }
-        }
-        .disabled(vm.isEditMode)
     }
     
     // MARK: - Project Grid Item
