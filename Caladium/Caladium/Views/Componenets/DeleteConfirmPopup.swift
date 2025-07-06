@@ -8,6 +8,9 @@
 import SwiftUI
 
 struct DeleteConfirmPopup: View {
+    let canelButtonAction: () -> Void
+    let confirmButtonAction: () -> Void
+    
     var body: some View {
         VStack(alignment: .center, spacing: 20) {
             // 제목 헤더
@@ -60,7 +63,7 @@ struct DeleteConfirmPopup: View {
                 backgroundColor: .gray200,
                 borderColor: .gray300,
                 action: {
-                    print("취소")
+                    canelButtonAction()
                 }
             )
             
@@ -69,7 +72,7 @@ struct DeleteConfirmPopup: View {
                 backgroundColor: .pink300,
                 borderColor: .pink600,
                 action: {
-                    print("확인")
+                    confirmButtonAction()
                 }
             )
         }
@@ -77,6 +80,6 @@ struct DeleteConfirmPopup: View {
 }
 
 #Preview {
-    DeleteConfirmPopup()
-        .padding()
+    DeleteConfirmPopup(canelButtonAction: {}, confirmButtonAction: {})
+    .padding()
 }
