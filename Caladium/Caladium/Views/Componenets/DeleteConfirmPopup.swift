@@ -18,7 +18,10 @@ struct DeleteConfirmPopup: View {
                     .font(.system(size: 16, weight: .bold))
                     .foregroundStyle(Color.gray900)
                     .padding(.bottom, 8)
-                Text("삭제하면 식물과 관련된 모든 정보가 완전히 사라지며, 되돌릴 수 없습니다.")
+                Text("삭제하면 식물과 관련된 모든 정보가 완전히 사라지며,")
+                    .font(.system(size: 12))
+                    .foregroundStyle(Color.gray500)
+                Text("되돌릴 수 없습니다.")
                     .font(.system(size: 12))
                     .foregroundStyle(Color.gray500)
             }
