@@ -66,13 +66,11 @@ final class AppCoordinator: ObservableObject {
         switch context {
         case .newProject:
             // 새 프로젝트 생성 후 홈으로
-            createNewProject(with: image)
             dismissFullScreen()
             popToRoot()
             
         case .existingProject(let project):
             // 기존 프로젝트에 사진 추가 후 프로젝트 상세로
-            addPhoto(image, to: project)
             dismissFullScreen()
         }
     }

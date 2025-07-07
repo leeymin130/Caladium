@@ -7,25 +7,13 @@
 
 import SwiftUI
 
-// MARK: - Environment Key for CoreDataService
-struct CoreDataServiceKey: EnvironmentKey {
-    static let defaultValue = CoreDataService()
-}
-
-extension EnvironmentValues {
-    var coreDataService: CoreDataService {
-        get { self[CoreDataServiceKey.self] }
-        set { self[CoreDataServiceKey.self] = newValue }
-    }
-}
-
 // MARK: - AsyncImage Component
 struct AsyncPhotoImage: View {
     let photo: Photo
     @State private var image: UIImage?
     @State private var isLoading = true
     
-    @Environment(\.coreDataService) private var coreDataService
+    @Environment(\.dependencies) private var dependencies
     
     var body: some View {
         Group {
@@ -63,7 +51,7 @@ struct AsyncPhotoImage: View {
         Task {
             let loadedImage = await withCheckedContinuation { continuation in
                 DispatchQueue.global(qos: .userInitiated).async {
-                    let image = coreDataService.loadImageFromFile(fileName: fileName)
+                    let image = dependencies.coreDataService.loadImageFromFile(fileName: fileName)
                     continuation.resume(returning: image)
                 }
             }

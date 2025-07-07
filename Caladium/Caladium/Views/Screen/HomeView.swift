@@ -275,7 +275,7 @@ struct HomeView: View {
 }
 
 #Preview {
-    HomeView(vm: HomeViewModel(coordinator: AppCoordinator()))
+    HomeView(vm: HomeViewModel(coordinator: AppCoordinator(), coreDataService: CoreDataService()))
         .environment(\.managedObjectContext, CoreDataManager.preview.mainContext)
 }
 

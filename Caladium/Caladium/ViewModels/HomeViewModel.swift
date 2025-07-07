@@ -17,10 +17,10 @@ final class HomeViewModel: ObservableObject {
     private let coordinator: AppCoordinator
     private let coreDataService: CoreDataService
     
-    init(coordinator: AppCoordinator) {
+    init(coordinator: AppCoordinator, coreDataService: CoreDataService) {
         self.coordinator = coordinator
         self.currentCategory = coordinator.currentCategory
-        self.coreDataService = CoreDataService()
+        self.coreDataService = coreDataService
     }
     
     // MARK: - Category Navigation

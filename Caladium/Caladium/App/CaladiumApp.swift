@@ -9,16 +9,16 @@ import SwiftUI
 
 @main
 struct CaladiumApp: App {
-    let coreDataService = CoreDataService()
+    let dependencyContainer: DependencyContainer = .shared
 
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            ContentView(coordinator: dependencyContainer.appCoordinator)
                 .environment(
                     \.managedObjectContext,
-                    CoreDataManager.shared.mainContext
+                     dependencyContainer.coreDataManager.mainContext
                 )
-                .environment(\.coreDataService, coreDataService) // 동일한 인스턴스 공유
+                .environment(\.dependencies, dependencyContainer)
         }
     }
 }

@@ -15,9 +15,9 @@ final class ProjectDetailViewModel: ObservableObject {
     private let coreDataService: CoreDataService
     // 사진 만들기 서비스
     
-    init(coordinator: AppCoordinator) {
+    init(coordinator: AppCoordinator, coreDataService: CoreDataService) {
         self.coordinator = coordinator
-        self.coreDataService = CoreDataService()
+        self.coreDataService = coreDataService
     }
     
     // 선택한 사진 상세뷰 네비게이션

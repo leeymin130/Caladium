@@ -10,7 +10,12 @@ import CoreData
 
 
 struct ContentView: View {
-    @StateObject private var coordinator = AppCoordinator()
+    @StateObject private var coordinator: AppCoordinator
+    @Environment(\.dependencies) private var dependencies
+    
+    init(coordinator: AppCoordinator){
+        self._coordinator = StateObject(wrappedValue: coordinator)
+    }
     
     var body: some View {
         NavigationStack(path: $coordinator.path) {
@@ -31,7 +36,7 @@ struct ContentView: View {
     @ViewBuilder
     private var rootView: some View {
         if coordinator.isOnboardingComplete {
-            HomeView(vm:HomeViewModel(coordinator: coordinator))
+            HomeView(vm: dependencies.makeHomeViewModel())
         } else {
             OnboardingContainerView(coordinator: coordinator)
         }
@@ -41,10 +46,10 @@ struct ContentView: View {
     private func routeView(for route: AppRoute) -> some View {
         switch route {
         case .home:
-            HomeView(vm:HomeViewModel(coordinator: coordinator))
+            HomeView(vm:dependencies.makeHomeViewModel())
             
         case .projectDetail(let project):
-            ProjectDetailView(vm:ProjectDetailViewModel(coordinator: coordinator), project: project)
+            ProjectDetailView(vm: dependencies.makeProjectDetailViewModel(), project: project)
             
         case .photoDetail(let photo, let project):
             PhotoDetailView(photo: photo, project: project)

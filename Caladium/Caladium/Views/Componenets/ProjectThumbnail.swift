@@ -132,7 +132,7 @@ struct ProjectThumbnail: View {
     }
     .padding()
     .environment(\.managedObjectContext, CoreDataManager.preview.mainContext)
-    .environment(\.coreDataService, CoreDataService())
+    .environment(\.dependencies, DependencyContainer.shared)
 }
 
 // MARK: - Preview Data Helper

@@ -272,8 +272,8 @@ struct ProjectDetailView: View {
     let context = CoreDataManager.preview.mainContext
     let sampleProject = getSampleProject(from: context)
     
-    return ProjectDetailView(
-        vm: ProjectDetailViewModel(coordinator: AppCoordinator()),
+    ProjectDetailView(
+        vm: ProjectDetailViewModel(coordinator: AppCoordinator(), coreDataService: CoreDataService()),
         project: sampleProject
     )
     .environment(\.managedObjectContext, context)
