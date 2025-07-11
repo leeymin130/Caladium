@@ -12,9 +12,9 @@ struct CategoryChangePopup: View {
     
     private let categories = Category.allCases
     let cancelButtonAction: () -> Void
-    let confirmButtonAction: () -> Void
+    let confirmButtonAction: (Category) -> Void
     
-    init(selectedCategory: Category, cancelButtonAction: @escaping () -> Void, confirmButtonAction: @escaping () -> Void) {
+    init(selectedCategory: Category, cancelButtonAction: @escaping () -> Void, confirmButtonAction: @escaping (Category) -> Void) {
         _selectedCategory = .init(initialValue: selectedCategory)
         self.cancelButtonAction = cancelButtonAction
         self.confirmButtonAction = confirmButtonAction
@@ -119,7 +119,7 @@ struct CategoryChangePopup: View {
                 backgroundColor: .green500,
                 borderColor: .green700,
                 action: {
-                    confirmButtonAction()
+                    confirmButtonAction(selectedCategory)
                 }
             )
         }
@@ -127,6 +127,6 @@ struct CategoryChangePopup: View {
 }
 
 #Preview {
-    CategoryChangePopup(selectedCategory: Category.desert, cancelButtonAction: {}, confirmButtonAction: {})
+    CategoryChangePopup(selectedCategory: Category.desert, cancelButtonAction: {}, confirmButtonAction: {_ in })
     .padding()
 }

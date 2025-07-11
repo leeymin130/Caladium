@@ -76,15 +76,10 @@ final class CoreDataService {
         coreDataManager.saveContext()
     }
     
-    /// 사진을 다른 프로젝트로 이동
-    func movePhoto(_ photo: Photo, to project: Project) {
-        let oldProject = photo.project
-        photo.project = project
-        
-        // 양쪽 프로젝트의 업데이트 시간 갱신
-        oldProject?.updateTimestamp()
+    /// 프로젝트를 다른 카테고리로 변경
+    func moveCategory(_ project: Project, to category: Category) {
+        project.categoryEnum = category
         project.updateTimestamp()
-        
         coreDataManager.saveContext()
     }
     

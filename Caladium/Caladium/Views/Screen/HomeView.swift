@@ -46,9 +46,9 @@ struct HomeView: View {
                     /// ALERT CONTENT
                     CategoryChangePopup(selectedCategory: vm.currentCategory, cancelButtonAction: {
                         vm.isShowingMoveAlert = false
-                    }, confirmButtonAction: {
+                    }, confirmButtonAction: { selectedCategory in
                         // TODO: 선택한 프로젝트들 옮기기 로직 호출
-                        vm.moveSelectedProjects()
+                        vm.moveSelectedProjects(to: selectedCategory)
                     })
                     .padding(.horizontal)
 

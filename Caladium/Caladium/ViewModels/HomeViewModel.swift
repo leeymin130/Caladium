@@ -111,9 +111,11 @@ final class HomeViewModel: ObservableObject {
         self.isShowingDeleteAlert = false
     }
     
-    func moveSelectedProjects() {
+    func moveSelectedProjects(to tagetCategory: Category) {
         guard case .move(let projects) = editMode else { return }
         
+        performMove(projects: projects, to: tagetCategory)
+        exitEditMode()
         self.isShowingMoveAlert = false
     }
     
@@ -126,8 +128,9 @@ final class HomeViewModel: ObservableObject {
     }
     
     private func performMove(projects: Set<Project>, to category: Category) {
-        // CoreData 카테고리 이동 로직
-        // TODO: 실제 Core Data 업데이트 구현 / CoreDataService 주입 
+        for project in projects {
+            coreDataService.moveCategory(project, to: category)
+        }
     }
     
     var isEditMode: Bool {
