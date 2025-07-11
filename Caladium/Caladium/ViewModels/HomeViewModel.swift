@@ -106,6 +106,8 @@ final class HomeViewModel: ObservableObject {
     func deleteSelectedProjects() {
         guard case .delete(let projects) = editMode else { return }
         
+        performDelete(projects: projects)
+        exitEditMode()
         self.isShowingDeleteAlert = false
     }
     
@@ -117,8 +119,10 @@ final class HomeViewModel: ObservableObject {
     
     // MARK: - Private Methods
     private func performDelete(projects: Set<Project>) {
-        // CoreData 삭제 로직
-        // TODO: 실제 Core Data 삭제 구현 / CoreDataService 주입
+        for project in projects {
+            coreDataService.deleteProject(project)
+        }
+ 
     }
     
     private func performMove(projects: Set<Project>, to category: Category) {
