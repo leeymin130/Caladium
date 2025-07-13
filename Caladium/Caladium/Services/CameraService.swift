@@ -13,9 +13,12 @@ class CameraService {
     private let photoOutput = AVCapturePhotoOutput()
     
     // Preview Layer 생성
-    var previewLayer: AVCaptureVideoPreviewLayer {
-        return AVCaptureVideoPreviewLayer(session: captureSession)
-    }
+    lazy var previewLayer: AVCaptureVideoPreviewLayer = {
+        let layer = AVCaptureVideoPreviewLayer(session: captureSession)
+        layer.videoGravity = .resizeAspectFill  // 설정도 한 번만
+        return layer
+    }()
+    // 첫 번째 호출 시에만 생성, 이후엔 같은 객체 재사용
     
     
     @Published var permissionGranted = false
