@@ -30,13 +30,9 @@ struct CameraView: View {
                 Text(contextDescription)
                     .foregroundColor(.secondary)
                 
-                RoundedRectangle(cornerRadius: 12)
-                    .fill(Color.gray.opacity(0.3))
+                // 카메라 프리뷰 영역
+                CameraViewController(cameraService: vm.cameraService)
                     .aspectRatio(4/3, contentMode: .fit)
-                    .overlay {
-                        Text("카메라 뷰 영역")
-                            .foregroundColor(.gray)
-                    }
             }
             
             Spacer()
@@ -103,6 +99,7 @@ struct CameraView: View {
             }
         }
         .onAppear {
+            print("🔥 onAppear 호출됨")
             vm.cameraService.requestCameraPermission()
         }
     }
