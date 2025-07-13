@@ -15,8 +15,11 @@ final class CameraViewModel: ObservableObject {
         self.coordinator = coordinator
     }
     
-//    @Published var isFlashOn = false
+    let cameraService = CameraService()
+    
     @Published var isOverlayOn = false
+    //    @Published var isFlashOn = false
+    
     
     func cancel() {
         print("취소")
@@ -24,7 +27,7 @@ final class CameraViewModel: ObservableObject {
     }
     
     func capturePhoto() {
-        print("사진찍기")
+        print("촬영")
     }
     
     func switchOverlay() {

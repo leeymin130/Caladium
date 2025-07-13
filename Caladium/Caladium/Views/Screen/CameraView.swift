@@ -102,6 +102,9 @@ struct CameraView: View {
                 .foregroundColor(.white)
             }
         }
+        .onAppear {
+            vm.cameraService.requestCameraPermission()
+        }
     }
     
     private var contextDescription: String {
