@@ -38,6 +38,9 @@ class CameraService {
             AVCaptureDevice.requestAccess(for: .video) { granted in
                 DispatchQueue.main.async {
                     self.permissionGranted = granted
+                    if granted {
+                        self.setupCamera()
+                    }
                 }
             }
         }
@@ -82,7 +85,7 @@ class CameraService {
             }
         }
     }
-
+    
     private func stopSession() {
         if captureSession.isRunning {
             DispatchQueue.global(qos: .userInitiated).async {
