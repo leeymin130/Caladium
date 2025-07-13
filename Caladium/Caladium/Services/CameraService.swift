@@ -75,23 +75,10 @@ class CameraService {
         captureSession.commitConfiguration() // 설정종료
         
         // Preview Layer는 프로퍼티로 제공
+        
+        // 세션 시작하기
+        captureSession.startRunning()
     }
-    
-    private func startSession() {
-        print("▶️ startSession 호출됨")
-        if !captureSession.isRunning {
-            DispatchQueue.global(qos: .userInitiated).async {
-                self.captureSession.startRunning()
-            }
-        }
-    }
-    
-    private func stopSession() {
-        if captureSession.isRunning {
-            DispatchQueue.global(qos: .userInitiated).async {
-                self.captureSession.stopRunning()
-            }
-        }
-    }
+
     
 }
