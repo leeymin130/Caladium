@@ -31,6 +31,7 @@ class CameraService {
             // 이미 권한 있음
             DispatchQueue.main.async {
                 self.permissionGranted = true
+                self.setupCamera()
             }
         } else {
             // 권한 없음 → 요청
@@ -44,6 +45,7 @@ class CameraService {
     
     // 카메라 셋업 - 1.Input 2.Output 3.Preview
     func setupCamera() {
+        print("🎬 setupCamera 호출됨")
         captureSession.beginConfiguration() // 설정 시작
         
         // Input 설정
@@ -70,6 +72,23 @@ class CameraService {
         captureSession.commitConfiguration() // 설정종료
         
         // Preview Layer는 프로퍼티로 제공
+    }
+    
+    private func startSession() {
+        print("▶️ startSession 호출됨")
+        if !captureSession.isRunning {
+            DispatchQueue.global(qos: .userInitiated).async {
+                self.captureSession.startRunning()
+            }
+        }
+    }
+
+    private func stopSession() {
+        if captureSession.isRunning {
+            DispatchQueue.global(qos: .userInitiated).async {
+                self.captureSession.stopRunning()
+            }
+        }
     }
     
 }
