@@ -53,10 +53,12 @@ struct ProjectDetailView: View {
         .navigationTitle("")
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
-            ToolbarItem(placement: .principal) {
-                Text(dateRangeText)
-                    .font(.subheadline) // 또는 .caption, .footnote
-                    .foregroundColor(.primary)
+            if case .normal = vm.editMode {
+                ToolbarItem(placement: .principal) {
+                    Text(dateRangeText)
+                        .font(.subheadline)
+                        .foregroundColor(.primary)
+                }
             }
         }
         
@@ -72,6 +74,15 @@ struct ProjectDetailView: View {
             let itemSize = availableWidth / 3
             
             ScrollView {
+                // 편집 모드 가이드 배너
+                if case .delete = vm.editMode {
+                    guideBanner(
+                        text: "삭제할 식물을 선택해주세요"
+                    )
+                } else if case .makeVideo = vm.editMode {
+                    guideBanner(text: "영상에 추가할 사진을 고르세요", guideText : "사진을 많이 선택할수록 영상이 풍성해져요")
+                }
+                
                 LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: 3), count: 3), spacing: 3) {
                     ForEach(photos, id: \.objectID) { photo in
                         photoGridItem(photo: photo, size: itemSize)
@@ -81,6 +92,28 @@ struct ProjectDetailView: View {
                 
             }
         }
+    }
+    
+    // MARK: - Guide Banner
+    private func guideBanner(text: String, guideText: String? = nil) -> some View {
+        VStack(alignment: .leading, spacing: 8) {
+            Text(text)
+                .font(.system(size: 24, weight: .semibold))
+            
+            if let guideText = guideText {
+                Text(guideText)
+                    .font(.system(size: 16, weight: .regular))
+                    .foregroundStyle(.secondary)
+            }
+            
+        }
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .padding(.horizontal, 16)
+        .padding(.top, 20)
+        .transition(.asymmetric(
+            insertion: .move(edge: .top).combined(with: .opacity),
+            removal: .move(edge: .top).combined(with: .opacity)
+        ))
     }
     
     private func photoGridItem(photo: Photo, size: CGFloat) -> some View {
