@@ -10,17 +10,23 @@ import SwiftUI
 // MARK: - AsyncImage Component
 struct AsyncPhotoImage: View {
     let photo: Photo
+    let contentMode: ContentMode
     @State private var image: UIImage?
     @State private var isLoading = true
     
     @Environment(\.dependencies) private var dependencies
+    
+    init(photo: Photo, ContentMode: ContentMode = .fill){
+        self.photo = photo
+        self.contentMode = ContentMode
+    }
     
     var body: some View {
         Group {
             if let image = image {
                 Image(uiImage: image)
                     .resizable()
-                    .aspectRatio(contentMode: .fill)
+                    .aspectRatio(contentMode: contentMode)
             } else if isLoading {
                 Rectangle()
                     .fill(Color.gray.opacity(0.2))

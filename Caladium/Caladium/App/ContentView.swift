@@ -52,7 +52,7 @@ struct ContentView: View {
             ProjectDetailView(vm: dependencies.makeProjectDetailViewModel(), project: project)
             
         case .photoDetail(let photo, let project):
-            PhotoDetailView(photo: photo, project: project)
+            PhotoDetailView(photo: photo)
             
         case .camera(let context):
             CameraView(vm: CameraViewModel(coordinator: coordinator), context: context)
@@ -69,63 +69,6 @@ struct ContentView: View {
     }
     
 }
-
-
-
-// MARK: - Photo Detail View
-struct PhotoDetailView: View {
-    let photo: Photo
-    let project: Project
-    @EnvironmentObject var coordinator: AppCoordinator
-    
-    var body: some View {
-        VStack(spacing: 20) {
-            // 사진 표시 영역 (임시)
-            RoundedRectangle(cornerRadius: 12)
-                .fill(Color.gray.opacity(0.3))
-                .aspectRatio(4/3, contentMode: .fit)
-                .overlay {
-                    VStack {
-                        Image(systemName: "photo")
-                            .font(.system(size: 60))
-                        Text("사진: \(photo.fileName ?? "Unknown")")
-                            .font(.caption)
-                    }
-                    .foregroundColor(.gray)
-                }
-            
-            // 사진 정보
-            VStack(alignment: .leading, spacing: 8) {
-                Text("📊 사진 정보")
-                    .font(.title2)
-                    .bold()
-                
-                VStack(alignment: .leading, spacing: 6) {
-                    Text("파일명: \(photo.fileName ?? "Unknown")")
-                    Text("촬영일: \(photo.capturedDate?.formatted() ?? "")")
-                    Text("프로젝트: \(project.categoryEnum.displayName)")
-                }
-                .frame(maxWidth: .infinity, alignment: .leading)
-                .padding()
-                .background(Color.gray.opacity(0.1))
-                .clipShape(RoundedRectangle(cornerRadius: 12))
-            }
-            
-            Spacer()
-            
-            // 액션 버튼
-            Button("삭제", role: .destructive) {
-                // 삭제 로직 구현
-                coordinator.goBack()
-            }
-            .buttonStyle(.bordered)
-        }
-        .padding()
-        .navigationTitle("사진 상세")
-        .navigationBarTitleDisplayMode(.inline)
-    }
-}
-
 
 // MARK: - Photo Confirm View
 struct PhotoConfirmView: View {
