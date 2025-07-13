@@ -8,7 +8,7 @@
 import AVFoundation
 import UIKit
 
-class CameraViewController: UIViewController {
+struct CameraViewController: UIViewController {
     // AVCaptureVideoPreviewLayer 표시
     // UIViewControllerRepresentable로 래핑
 
