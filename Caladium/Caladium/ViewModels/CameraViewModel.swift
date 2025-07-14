@@ -10,17 +10,14 @@ import SwiftUI
 final class CameraViewModel: ObservableObject {
     
     private let coordinator: AppCoordinator
+    let cameraService = CameraService()
+    
+    @Published var isOverlayOn = false
     
     init(coordinator: AppCoordinator) {
         self.coordinator = coordinator
     }
-    
-    let cameraService = CameraService()
-    
-    @Published var isOverlayOn = false
-    //    @Published var isFlashOn = false
-    
-    
+ 
     func cancel() {
         print("취소")
         coordinator.dismissFullScreen()
@@ -28,6 +25,7 @@ final class CameraViewModel: ObservableObject {
     
     func capturePhoto() {
         print("촬영")
+        cameraService.capturePhoto()
     }
     
     func switchOverlay() {

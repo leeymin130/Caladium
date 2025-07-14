@@ -116,6 +116,7 @@ extension CameraService: AVCapturePhotoCaptureDelegate {
         }
         
         print("📸 사진 촬영 성공!")
+        
         // 여기서 촬영된 이미지를 처리 (나중에 ViewModel로 전달)
         handleCapturedPhoto(uiImage)
     }
