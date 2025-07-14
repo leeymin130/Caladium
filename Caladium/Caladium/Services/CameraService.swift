@@ -6,8 +6,9 @@
 //
 
 import AVFoundation
+import SwiftUI
 
-class CameraService {
+class CameraService: NSObject, ObservableObject {
     
     private let captureSession = AVCaptureSession()
     private let photoOutput = AVCapturePhotoOutput()
@@ -15,11 +16,13 @@ class CameraService {
     // Preview Layer 생성
     lazy var previewLayer: AVCaptureVideoPreviewLayer = {
         let layer = AVCaptureVideoPreviewLayer(session: captureSession)
-        layer.videoGravity = .resizeAspectFill  // 설정도 한 번만
+        layer.videoGravity = .resizeAspectFill  // 설정 한 번만
         return layer
     }()
     // 첫 번째 호출 시에만 생성, 이후엔 같은 객체 재사용
     
+    
+    @Published var capturedImage: UIImage?
     
     @Published var permissionGranted = false
     
@@ -79,6 +82,41 @@ class CameraService {
         // 세션 시작하기
         captureSession.startRunning()
     }
-
     
+    // 사진 촬영 메서드
+    func capturePhoto() {
+        let settings = AVCapturePhotoSettings()
+        photoOutput.capturePhoto(with: settings, delegate: self)
+    }
+
+    // 촬영된 사진 처리
+    private func handleCapturedPhoto(_ image: UIImage) {
+        DispatchQueue.main.async {
+            self.capturedImage = image
+        }
+    }
+    
+    
+}
+
+// Photo Capture Delegate 구현
+extension CameraService: AVCapturePhotoCaptureDelegate {
+    func photoOutput(_ output: AVCapturePhotoOutput, didFinishProcessingPhoto photo: AVCapturePhoto, error: Error?) {
+        
+        if let error = error {
+            print("📸 사진 촬영 오류: \(error)")
+            return
+        }
+        
+        // 사진 데이터 추출
+        guard let imageData = photo.fileDataRepresentation(),
+              let uiImage = UIImage(data: imageData) else {
+            print("📸 이미지 데이터 변환 실패")
+            return
+        }
+        
+        print("📸 사진 촬영 성공!")
+        // 여기서 촬영된 이미지를 처리 (나중에 ViewModel로 전달)
+        handleCapturedPhoto(uiImage)
+    }
 }
