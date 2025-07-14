@@ -23,6 +23,10 @@ struct CameraView: View {
             // 상단 툴바 영역
             HStack {
                 Button {
+                    // 햅틱 피드백 추가
+                    let impactFeedback = UIImpactFeedbackGenerator(style: .medium)
+                    impactFeedback.impactOccurred()
+                    
                     vm.cancel()
                 } label: {
                     Image("arrow-back-w")
@@ -54,6 +58,10 @@ struct CameraView: View {
                 
                 // 촬영 버튼
                 Button {
+                    // 햅틱 피드백 추가
+                    let impactFeedback = UIImpactFeedbackGenerator(style: .medium)
+                    impactFeedback.impactOccurred()
+                    
                     vm.capturePhoto()
                     // 임시 이미지로 다음 단계로
                     //                    let tempImage = UIImage(systemName: "photo") ?? UIImage()
@@ -73,6 +81,10 @@ struct CameraView: View {
                 // 오버레이 토글
                 VStack(alignment: .center, spacing: 9) {
                     Button{
+                        // 햅틱 피드백 추가
+                        let impactFeedback = UIImpactFeedbackGenerator(style: .medium)
+                        impactFeedback.impactOccurred()
+                        
                         vm.switchOverlay()
                     } label: {
                         ZStack {
