@@ -23,7 +23,6 @@ class CameraService: NSObject, ObservableObject {
     
     
     @Published var capturedImage: UIImage?
-    
     @Published var permissionGranted = false
     
     // 카메라 권한 요청 및 확인 로직
@@ -83,10 +82,10 @@ class CameraService: NSObject, ObservableObject {
         captureSession.startRunning()
     }
     
-    // 사진 촬영 메서드
+    // 사진 촬영 메서드 - 카메라 버튼을 눌렀을때 실행되는 함수
     func capturePhoto() {
         let settings = AVCapturePhotoSettings()
-        photoOutput.capturePhoto(with: settings, delegate: self)
+        photoOutput.capturePhoto(with: settings, delegate: self)  // 비동기
     }
 
     // 촬영된 사진 처리
@@ -104,20 +103,20 @@ extension CameraService: AVCapturePhotoCaptureDelegate {
     func photoOutput(_ output: AVCapturePhotoOutput, didFinishProcessingPhoto photo: AVCapturePhoto, error: Error?) {
         
         if let error = error {
-            print("📸 사진 촬영 오류: \(error)")
+            print("사진 촬영 오류: \(error)")
             return
         }
         
         // 사진 데이터 추출
         guard let imageData = photo.fileDataRepresentation(),
               let uiImage = UIImage(data: imageData) else {
-            print("📸 이미지 데이터 변환 실패")
+            print("이미지 데이터 변환 실패")
             return
         }
         
         print("📸 사진 촬영 성공!")
         
-        // 여기서 촬영된 이미지를 처리 (나중에 ViewModel로 전달)
+        // 촬영된 이미지 처리
         handleCapturedPhoto(uiImage)
     }
 }

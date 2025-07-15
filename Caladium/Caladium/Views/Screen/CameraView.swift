@@ -63,8 +63,10 @@ struct CameraView: View {
                     impactFeedback.impactOccurred()
                     
                     vm.capturePhoto()
-                    // 임시 이미지로 다음 단계로
-                    //                    let tempImage = UIImage(systemName: "photo") ?? UIImage()
+                    
+                    if let image = vm.cameraService.capturedImage {
+                        // 미리보기 화면으로 이동
+                    }
                     
                 } label: {
                     Circle()
