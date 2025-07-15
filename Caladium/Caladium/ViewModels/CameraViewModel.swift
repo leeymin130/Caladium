@@ -13,11 +13,12 @@ final class CameraViewModel: ObservableObject {
     let cameraService = CameraService()
     
     @Published var isOverlayOn = false
+    @Published var overlayImage: UIImage?
     
     init(coordinator: AppCoordinator) {
         self.coordinator = coordinator
     }
- 
+    
     func cancel() {
         print("취소")
         coordinator.dismissFullScreen()
@@ -26,6 +27,11 @@ final class CameraViewModel: ObservableObject {
     func capturePhoto() {
         print("촬영")
         cameraService.capturePhoto()
+        
+        // 사진 촬영 -> cameraService.capturedImage에 값이 할당 -> overlayImage에 저장
+        if let image = cameraService.capturedImage {
+            self.overlayImage = image
+        }
     }
     
     func switchOverlay() {

@@ -92,6 +92,7 @@ class CameraService: NSObject, ObservableObject {
     private func handleCapturedPhoto(_ image: UIImage) {
         DispatchQueue.main.async {
             self.capturedImage = image
+            print("📸 CameraService: capturedImage 설정됨 \(image.size)") // ViewModel에 이미지가 캡처되었다는 것을 알려주기
         }
     }
     

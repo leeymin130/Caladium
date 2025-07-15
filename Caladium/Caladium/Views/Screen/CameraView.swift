@@ -41,7 +41,17 @@ struct CameraView: View {
             CameraViewController(cameraService: vm.cameraService)
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
                 .background(Color.gray900)
-            
+                .overlay(
+                    Group {
+                        // isOverlayOn이 true일 때만 오버레이 이미지를 표시합니다.
+                        if vm.isOverlayOn, let uiImage = vm.overlayImage {
+                            Image(uiImage: uiImage)
+                                .resizable()
+                                .aspectRatio(contentMode: .fill)
+                                .opacity(0.5)
+                        }
+                    }
+                )
             
             // 하단 조작부
             HStack(spacing: 0){
