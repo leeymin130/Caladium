@@ -144,7 +144,7 @@ struct HomeView: View {
                     projectGridItem(project)
                 }
             }
-            .padding(.horizontal, 16)
+            .padding(.horizontal, 24)
             .padding(.top, 20)
         }
     }
@@ -158,8 +158,8 @@ struct HomeView: View {
 
             }
         .frame(maxWidth: .infinity, alignment: .leading)
-        .padding(.horizontal, 16)
-        .padding(.top, 20)
+        .padding(.horizontal, 24)
+        .padding(.top, 63)
         .transition(.asymmetric(
             insertion: .move(edge: .top).combined(with: .opacity),
             removal: .move(edge: .top).combined(with: .opacity)
