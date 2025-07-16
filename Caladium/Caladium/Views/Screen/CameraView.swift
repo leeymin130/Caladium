@@ -29,7 +29,7 @@ struct CameraView: View {
                     
                     vm.cancel()
                 } label: {
-                    Image("arrow-back-w")
+                    Image("arrow-back-gray0")
                 }
                 
                 Spacer()
@@ -73,11 +73,7 @@ struct CameraView: View {
                     impactFeedback.impactOccurred()
                     
                     vm.capturePhoto()
-                    
-                    if let image = vm.cameraService.capturedImage {
-                        // 미리보기 화면으로 이동
-                    }
-                    
+                                        
                 } label: {
                     Circle()
                         .fill(Color.green500)
@@ -128,6 +124,7 @@ struct CameraView: View {
         .navigationBarHidden(true)
         .onAppear {
             print("🔥 onAppear 호출됨")
+            vm.setContext(context)
             vm.cameraService.requestCameraPermission()
         }
         
