@@ -108,7 +108,7 @@ struct ProjectDetailView: View {
             
         }
         .frame(maxWidth: .infinity, alignment: .leading)
-        .padding(.horizontal, 16)
+        .padding(.horizontal, 24)
         .padding(.top, 20)
         .transition(.asymmetric(
             insertion: .move(edge: .top).combined(with: .opacity),
