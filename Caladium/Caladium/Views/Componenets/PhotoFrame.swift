@@ -8,7 +8,8 @@
 import SwiftUI
 
 struct PhotoFrame: View {
-    let photo: Photo
+    let photo: Photo?
+        let previewImage: UIImage?
     @State private var loadedImage: UIImage?
     @State private var isImageLoading = true
     
@@ -23,6 +24,19 @@ struct PhotoFrame: View {
         return formatter
     }()
     
+    // 기존 Photo 이니셜라이저
+    init(photo: Photo) {
+        self.photo = photo
+        self.previewImage = nil
+    }
+    
+    // UIImage용 이니셜라이저
+    init(image: UIImage) {
+        self.photo = nil
+        self.previewImage = image
+    }
+
+    
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
             // 사진 표시 영역
@@ -30,7 +44,7 @@ struct PhotoFrame: View {
                 .cornerRadius(5)
             
             // 사진 촬영 날짜
-            Text(formatDate(photo.capturedDate))
+            Text(formatDate(photo?.capturedDate ?? Date()))
                 .fontWeight(.semibold)
                 .foregroundColor(.gray900)
         }
@@ -92,10 +106,11 @@ struct PhotoFrame: View {
     
     /// 이미지 비동기 로딩
     private func loadImage() {
-        guard let fileName = photo.fileName else {
-            self.isImageLoading = false
-            return
-        }
+           guard let photo = photo,
+                 let fileName = photo.fileName else {
+               self.isImageLoading = false
+               return
+           }
         
         // 백그라운드에서 이미지 로딩
         DispatchQueue.global(qos: .userInitiated).async {

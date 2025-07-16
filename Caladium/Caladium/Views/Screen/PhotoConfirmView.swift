@@ -28,15 +28,35 @@ struct PhotoConfirmView: View {
                 .ignoresSafeArea()
             
             VStack(spacing: 20) {
-                Text("📸 사진 확인")
-                    .font(.title2)
-                    .bold()
+                // 상단 툴바 영역
+                HStack {
+                    Button {
+                        // 햅틱 피드백 추가
+                        let impactFeedback = UIImpactFeedbackGenerator(style: .medium)
+                        impactFeedback.impactOccurred()
+                        
+                        vm.cancel()
+                    } label: {
+                        Image("arrow-back-green700")
+                    }
+                    
+                    Spacer()
+                }
+                
+                HStack{
+                    Text("이 사진으로 할까요?")
+                        .font(.title2)
+                        .bold()
+                    Spacer()
+                }
+                
                 
                 // 촬영된 이미지
-                Image(uiImage: image)
-                    .resizable()
-                    .aspectRatio(4/3, contentMode: .fit)
-                    .clipped()
+                PhotoFrame(image: image)
+//                Image(uiImage: image)
+//                    .resizable()
+//                    .aspectRatio(4/3, contentMode: .fit)
+//                    .clipped()
                 
                 Text(contextDescription)
                     .foregroundColor(.secondary)
@@ -63,7 +83,7 @@ struct PhotoConfirmView: View {
                     .buttonStyle(.bordered)
                 }
             }
-            .padding(40)
+            .padding()
             .navigationBarHidden(true)
         }
     }
