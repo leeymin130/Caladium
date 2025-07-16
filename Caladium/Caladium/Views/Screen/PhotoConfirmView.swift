@@ -12,55 +12,62 @@ struct PhotoConfirmView: View {
     let image: UIImage
     let context: CameraContext
     @EnvironmentObject var coordinator: AppCoordinator
-
+    
     var body: some View {
-        VStack(spacing: 20) {
-            Text("📸 사진 확인")
-                .font(.title2)
-                .bold()
-
-            // 촬영된 이미지 (임시)
-            RoundedRectangle(cornerRadius: 12)
-                .fill(Color.gray.opacity(0.3))
-                .aspectRatio(4/3, contentMode: .fit)
-                .overlay {
-                    VStack {
-                        Image(systemName: "checkmark.circle")
-                            .font(.system(size: 60))
-                            .foregroundColor(.green)
-                        Text("촬영 완료!")
+        ZStack {
+            Image("bg-picture")
+                .resizable()
+                .scaledToFill()
+                .ignoresSafeArea()
+            
+            VStack(spacing: 20) {
+                Text("📸 사진 확인")
+                    .font(.title2)
+                    .bold()
+                
+                // 촬영된 이미지 (임시)
+                RoundedRectangle(cornerRadius: 12)
+                    .fill(Color.gray.opacity(0.3))
+                    .aspectRatio(4/3, contentMode: .fit)
+                    .overlay {
+                        VStack {
+                            Image(systemName: "checkmark.circle")
+                                .font(.system(size: 60))
+                                .foregroundColor(.green)
+                            Text("촬영 완료!")
+                        }
                     }
+                
+                Text(contextDescription)
+                    .foregroundColor(.secondary)
+                    .multilineTextAlignment(.center)
+                
+                Spacer()
+                
+                // 액션 버튼들
+                VStack(spacing: 12) {
+                    Button {
+                        coordinator.confirmPhoto(image, context: context)
+                    } label: {
+                        Text("사용하기")
+                            .frame(maxWidth: .infinity)
+                    }
+                    .buttonStyle(.borderedProminent)
+                    
+                    Button {
+                        coordinator.retakePhoto()
+                    } label: {
+                        Text("다시 찍기")
+                            .frame(maxWidth: .infinity)
+                    }
+                    .buttonStyle(.bordered)
                 }
-
-            Text(contextDescription)
-                .foregroundColor(.secondary)
-                .multilineTextAlignment(.center)
-
-            Spacer()
-
-            // 액션 버튼들
-            VStack(spacing: 12) {
-                Button {
-                    coordinator.confirmPhoto(image, context: context)
-                } label: {
-                    Text("사용하기")
-                        .frame(maxWidth: .infinity)
-                }
-                .buttonStyle(.borderedProminent)
-
-                Button {
-                    coordinator.retakePhoto()
-                } label: {
-                    Text("다시 찍기")
-                        .frame(maxWidth: .infinity)
-                }
-                .buttonStyle(.bordered)
             }
+            .padding(40)
+            .navigationBarHidden(true)
         }
-        .padding()
-        .navigationBarHidden(true)
     }
-
+    
     private var contextDescription: String {
         switch context {
         case .newProject:
