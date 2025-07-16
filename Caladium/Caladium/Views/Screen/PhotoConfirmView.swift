@@ -12,6 +12,13 @@ struct PhotoConfirmView: View {
     let image: UIImage
     let context: CameraContext
     @EnvironmentObject var coordinator: AppCoordinator
+    @ObservedObject private var vm: CameraViewModel
+    
+    init(image: UIImage, vm: CameraViewModel, context: CameraContext) {
+        self.image = image
+        self._vm = ObservedObject(wrappedValue: vm)
+        self.context = context
+    }
     
     var body: some View {
         ZStack {
@@ -25,18 +32,11 @@ struct PhotoConfirmView: View {
                     .font(.title2)
                     .bold()
                 
-                // 촬영된 이미지 (임시)
-                RoundedRectangle(cornerRadius: 12)
-                    .fill(Color.gray.opacity(0.3))
+                // 촬영된 이미지
+                Image(uiImage: image)
+                    .resizable()
                     .aspectRatio(4/3, contentMode: .fit)
-                    .overlay {
-                        VStack {
-                            Image(systemName: "checkmark.circle")
-                                .font(.system(size: 60))
-                                .foregroundColor(.green)
-                            Text("촬영 완료!")
-                        }
-                    }
+                    .clipped()
                 
                 Text(contextDescription)
                     .foregroundColor(.secondary)
@@ -79,5 +79,5 @@ struct PhotoConfirmView: View {
 }
 
 #Preview {
-    PhotoConfirmView(image: UIImage(named: "sample") ?? UIImage(), context: .newProject)
+    PhotoConfirmView(image: UIImage(named: "sample") ?? UIImage(), vm: CameraViewModel(coordinator: AppCoordinator()), context: .newProject)
 }

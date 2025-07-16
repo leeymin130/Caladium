@@ -53,7 +53,8 @@ struct ContentView: View {
             CameraView(vm: CameraViewModel(coordinator: coordinator), context: context)
             
         case .photoConfirm(let image, let context):
-            PhotoConfirmView(image: image, context: context)
+//            PhotoConfirmView(image: image, context: context)
+            PhotoConfirmView(image: image, vm: CameraViewModel(coordinator: coordinator), context: context)
             
         case .videoPhotoSelection(let project):
             VideoPhotoSelectionView(project: project)

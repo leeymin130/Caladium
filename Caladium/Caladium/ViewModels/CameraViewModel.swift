@@ -54,7 +54,7 @@ final class CameraViewModel: ObservableObject {
         
         if let context = currentContext {
             print("네비게이션 실행")
-            coordinator.navigate(to: .photoConfirm(image, context))
+            coordinator.presentFullScreen(.photoConfirm(image, context))
         } else {
             print("context가 nil")
         }
