@@ -50,9 +50,10 @@ struct ProjectDetailView: View {
                 .alert(isPresented: $vm.isShowingFormatSelectAlert) {
                     FormatSelectPopupView {
                         /// mov로 애니메이션 만들기 로직
-                        
+                        vm.isShowingFormatSelectAlert = false
                     } confirmButtonAction: {
                         /// gif로 애니메이션 만들기 로직
+                        vm.makeVideoSelectedPhotos()
                     }
                     .padding(.horizontal)
 
@@ -63,8 +64,15 @@ struct ProjectDetailView: View {
 
             bottomToolbar
         }
+        .overlay {
+            // 로딩 오버레이
+            if vm.isGeneratingAnimation {
+                LoadingView()
+            }
+        }
         .navigationTitle("")
         .navigationBarTitleDisplayMode(.inline)
+        .navigationBarHidden(vm.isGeneratingAnimation) // 로딩 중에는 네비게이션 바 숨기기
         .toolbar {
             if case .normal = vm.editMode {
                 ToolbarItem(placement: .principal) {
@@ -243,8 +251,8 @@ struct ProjectDetailView: View {
                 
                 Spacer()
                 
-                if vm.selectedProjectsCount > 0 {
-                    Text("\(vm.selectedProjectsCount)개 선택됨")
+                if vm.selectedPhotosCount > 0 {
+                    Text("\(vm.selectedPhotosCount)개 선택됨")
                         .font(.caption)
                         .foregroundColor(.secondary)
                 }
@@ -277,8 +285,8 @@ struct ProjectDetailView: View {
                 
                 Spacer()
                 
-                if vm.selectedProjectsCount > 0 {
-                    Text("\(vm.selectedProjectsCount)개 선택됨")
+                if vm.selectedPhotosCount > 0 {
+                    Text("\(vm.selectedPhotosCount)개 선택됨")
                         .font(.caption)
                         .foregroundColor(.secondary)
                 }
@@ -296,6 +304,7 @@ struct ProjectDetailView: View {
                             .font(.caption)
                     }
                 }
+                .disabled(vm.selectedPhotosCount == 0)
             }
             
         }

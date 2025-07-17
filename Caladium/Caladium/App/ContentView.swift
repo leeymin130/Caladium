@@ -65,6 +65,9 @@ struct ContentView: View {
             
         case .videoGeneration(let photos):
             VideoGenerationView(photos: photos)
+            
+        case .animationResult:
+            AnimationResultView()
         }
     }
     

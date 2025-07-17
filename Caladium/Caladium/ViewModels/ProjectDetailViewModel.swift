@@ -12,6 +12,7 @@ final class ProjectDetailViewModel: ObservableObject {
     @Published var editMode: ProjectEditMode = .normal
     @Published var isShowingDeleteAlert: Bool = false
     @Published var isShowingFormatSelectAlert: Bool = false
+    @Published var isGeneratingAnimation = false 
     
     private let coordinator: AppCoordinator
     private let coreDataService: CoreDataService
@@ -93,6 +94,19 @@ final class ProjectDetailViewModel: ObservableObject {
     // 선택된 사진들로 영상 만들기 로직
     func makeVideoSelectedPhotos() {
         guard case .makeVideo(let selectedPhoto) = editMode else { return }
+        exitEditMode()
+        self.isShowingFormatSelectAlert = false
+        
+        // TODO: 선택된 포멧에 따른 서비스 이용해서 애니메이션 만들어서 넘기기
+        
+        isGeneratingAnimation = true
+
+        DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) {
+            self.isGeneratingAnimation = false
+            
+            // 실제로는 여기서 GIF/MOV 생성 후 결과를 전달
+            self.coordinator.navigate(to: .animationResult)
+        }
     }
     
     private func performDelete(photos: Set<Photo>) {
@@ -108,7 +122,7 @@ final class ProjectDetailViewModel: ObservableObject {
         }
     }
     
-    var selectedProjectsCount: Int {
+    var selectedPhotosCount: Int {
         switch editMode {
         case .delete(let photos), .makeVideo(let photos):
             return photos.count

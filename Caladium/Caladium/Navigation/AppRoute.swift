@@ -22,6 +22,9 @@ enum AppRoute: Hashable, Identifiable {
     case videoPhotoSelection(Project)
     case videoGeneration([Photo])
     
+    // 영상 완료 플로우
+    case animationResult
+    
     // Identifiable 구현
     var id: String {
         switch self {
@@ -39,6 +42,8 @@ enum AppRoute: Hashable, Identifiable {
             return "video_selection_\(project.id ?? UUID())"
         case .videoGeneration(let photos):
             return "video_generation_\(photos.count)"
+        case .animationResult:
+            return "animation_result"
         }
     }
 }
