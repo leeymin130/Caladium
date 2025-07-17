@@ -47,7 +47,20 @@ struct ProjectDetailView: View {
                     Rectangle()
                         .fill(.primary.opacity(0.35))
                 }
-            
+                .alert(isPresented: $vm.isShowingFormatSelectAlert) {
+                    FormatSelectPopupView {
+                        /// mov로 애니메이션 만들기 로직
+                        
+                    } confirmButtonAction: {
+                        /// gif로 애니메이션 만들기 로직
+                    }
+                    .padding(.horizontal)
+
+                } background: {
+                    Rectangle()
+                        .fill(.primary.opacity(0.35))
+                }
+
             bottomToolbar
         }
         .navigationTitle("")
@@ -274,6 +287,7 @@ struct ProjectDetailView: View {
                 
                 Button {
                     // TODO: 비디오 만들기 로직 호출
+                    vm.isShowingFormatSelectAlert = true
                 } label: {
                     VStack{
                         Image(systemName: "checkmark")

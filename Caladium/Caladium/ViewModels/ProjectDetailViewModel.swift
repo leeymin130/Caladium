@@ -11,6 +11,7 @@ final class ProjectDetailViewModel: ObservableObject {
     
     @Published var editMode: ProjectEditMode = .normal
     @Published var isShowingDeleteAlert: Bool = false
+    @Published var isShowingFormatSelectAlert: Bool = false
     
     private let coordinator: AppCoordinator
     private let coreDataService: CoreDataService
