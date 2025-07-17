@@ -78,12 +78,20 @@ final class ProjectDetailViewModel: ObservableObject {
     // 선택된 사진들 삭제하기 로직
     func deleteSelectedPhotos() {
         guard case .delete(let selectedPhoto) = editMode else { return }
+        
+        performDelete(photos: selectedPhoto)
+        exitEditMode()
+        self.isShowingDeleteAlert = false
     }
     
     
     // 선택된 사진들로 영상 만들기 로직
     func makeVideoSelectedPhotos() {
         guard case .makeVideo(let selectedPhoto) = editMode else { return }
+    }
+    
+    private func performDelete(photos: Set<Photo>) {
+        try? coreDataService.deletePhotos(Array(photos))
     }
     
     var isEditMode: Bool {

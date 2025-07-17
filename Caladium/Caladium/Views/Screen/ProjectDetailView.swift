@@ -38,7 +38,7 @@ struct ProjectDetailView: View {
                     PhotoDeleteConfirmPopup(cancelButtonAction: {
                         vm.isShowingDeleteAlert = false
                     }, confirmButtonAction: {
-                        // TODO: 선택한 프로젝트들 삭제 로직 호출
+                        vm.deleteSelectedPhotos()
                     })
                     .padding(.horizontal)
 
