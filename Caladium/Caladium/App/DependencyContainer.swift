@@ -35,6 +35,15 @@ final class DependencyContainer: ObservableObject {
         return CoreDataService(coreDataManager: coreDataManager)
     }()
     
+    // MARK: - GIF/Mov Creator Service
+    lazy var gifCreatorService: GIFCreator = {
+        return GIFCreator()
+    }()
+    
+    lazy var movCreatorService: VideoCreator = {
+        return VideoCreator()
+    }()
+    
     // MARK: - Preview/Test Container
     static var preview: DependencyContainer = {
         let container = DependencyContainer()
@@ -51,7 +60,7 @@ final class DependencyContainer: ObservableObject {
     }
     
     func makeProjectDetailViewModel() -> ProjectDetailViewModel {
-        return ProjectDetailViewModel(coordinator: appCoordinator, coreDataService: coreDataService)
+        return ProjectDetailViewModel(coordinator: appCoordinator, coreDataService: coreDataService, gifService: gifCreatorService, videoService: movCreatorService)
     }
     
 }

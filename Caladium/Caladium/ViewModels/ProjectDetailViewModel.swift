@@ -15,10 +15,14 @@ final class ProjectDetailViewModel: ObservableObject {
     private let coordinator: AppCoordinator
     private let coreDataService: CoreDataService
     // 사진 만들기 서비스
+    private let gifService: GIFCreator
+    private let videoService: VideoCreator
     
-    init(coordinator: AppCoordinator, coreDataService: CoreDataService) {
+    init(coordinator: AppCoordinator, coreDataService: CoreDataService, gifService: GIFCreator, videoService: VideoCreator) {
         self.coordinator = coordinator
         self.coreDataService = coreDataService
+        self.gifService = gifService
+        self.videoService = videoService
     }
     
     // 선택한 사진 상세뷰 네비게이션
