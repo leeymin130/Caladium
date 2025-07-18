@@ -1,0 +1,12 @@
+{
+  "images" : [
+    {
+      "filename" : "arrow-back-green700.svg",
+      "idiom" : "universal"
+    }
+  ],
+  "info" : {
+    "author" : "xcode",
+    "version" : 1
+  }
+}
