@@ -50,10 +50,10 @@ struct ProjectDetailView: View {
                 .alert(isPresented: $vm.isShowingFormatSelectAlert) {
                     FormatSelectPopupView {
                         /// mov로 애니메이션 만들기 로직
-                        vm.isShowingFormatSelectAlert = false
+                        vm.selectMovFormat()
                     } confirmButtonAction: {
                         /// gif로 애니메이션 만들기 로직
-                        vm.makeVideoSelectedPhotos()
+                        vm.selectMovFormat()
                     }
                     .padding(.horizontal)
 

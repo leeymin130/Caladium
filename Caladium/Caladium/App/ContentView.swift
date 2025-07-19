@@ -51,7 +51,7 @@ struct ContentView: View {
         case .projectDetail(let project):
             ProjectDetailView(vm: dependencies.makeProjectDetailViewModel(), project: project)
             
-        case .photoDetail(let photo, let project):
+        case .photoDetail(let photo, _):
             PhotoDetailView(photo: photo)
             
         case .camera(let context):
@@ -66,8 +66,8 @@ struct ContentView: View {
         case .videoGeneration(let photos):
             VideoGenerationView(photos: photos)
             
-        case .animationResult:
-            AnimationResultView()
+        case .animationResult(let data, let url, let format):
+            AnimationResultView(data: data, url: url, format: format)
         }
     }
     

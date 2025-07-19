@@ -231,7 +231,7 @@ extension CoreDataService {
         context.reset()
     }
     
-    /// Mock data
+    /// Mock data 생성 - 다양한 이미지로 애니메이션 테스트 가능
     func createMockData() {
         // 각 카테고리별로 프로젝트 생성
         for category in Category.allCases {
@@ -243,16 +243,19 @@ extension CoreDataService {
         // 모든 프로젝트에 사진 추가
         if let allProjects = try? fetchAllProjects() {
             for project in allProjects {
-                // 각 프로젝트마다 3-7개의 랜덤한 수의 사진 추가
-                let photoCount = Int.random(in: 3...7)
+                // 각 프로젝트마다 5-8개의 다양한 사진 추가
+                let photoCount = Int.random(in: 5...8)
                 
                 for i in 1...photoCount {
-                    // 다양한 색상의 샘플 이미지 생성
-                    let mockImage = UIImage(systemName: "photo") ?? UIImage()
-
+                    // 다양한 스타일의 Mock 이미지 생성
+                    let mockImage = MockImageGenerator.createSFSymbolImage(
+                        index: i,
+                        category: project.categoryEnum
+                    )
+                    
                     do {
                         try createPhoto(image: mockImage, project: project)
-                        print("Added photo \(i) to project \(project.categoryEnum.rawValue)")
+                        print("Added varied photo \(i) to project \(project.categoryEnum.rawValue)")
                     } catch {
                         print("Failed to create photo for project \(project.categoryEnum.rawValue): \(error)")
                     }
@@ -261,4 +264,136 @@ extension CoreDataService {
         }
     }
     
+}
+
+
+// MARK: - SF Symbol Mock Image Generator
+struct MockImageGenerator {
+    
+    /// SF Symbol을 사용한 Mock 이미지 생성
+    static func createSFSymbolImage(index: Int, category: Category) -> UIImage {
+        let symbols = getSFSymbolsForCategory(category)
+        let colors = getColorsForCategory(category)
+        
+        // 인덱스에 따라 다른 심볼과 색상 선택
+        let symbolName = symbols[index % symbols.count]
+        let color = colors[index % colors.count]
+        
+        // SF Symbol 이미지 생성
+        let config = UIImage.SymbolConfiguration(pointSize: 200, weight: .medium)
+        let image = UIImage(systemName: symbolName, withConfiguration: config)?
+            .withTintColor(color, renderingMode: .alwaysOriginal)
+        
+        // 배경이 있는 이미지로 변환
+        return createImageWithBackground(symbol: image, backgroundColor: getBackgroundColor(for: index), index: index)
+    }
+    
+    // MARK: - 카테고리별 SF Symbol 목록
+    private static func getSFSymbolsForCategory(_ category: Category) -> [String] {
+        switch category {
+        case .garden:
+            return [
+                "leaf", "leaf.fill", "tree", "tree.fill",
+                "sun.max", "sun.max.fill", "cloud.rain",
+                "drop", "drop.fill", "sparkles"
+            ]
+        case .desert:
+            return [
+                "heart", "heart.fill", "star", "star.fill",
+                "circle", "circle.fill", "diamond", "diamond.fill",
+                "crown", "crown.fill"
+            ]
+        case .rooftop:
+            return [
+                "tree", "tree.fill", "leaf", "leaf.fill",
+                "rectangle", "rectangle.fill", "triangle", "triangle.fill",
+                "circle", "oval.fill"
+            ]
+        case .jungle:
+            return [
+                "leaf", "leaf.fill", "drop", "drop.fill",
+                "circle", "oval", "diamond", "square",
+                "heart", "star"
+            ]
+        }
+    }
+    
+    // MARK: - 카테고리별 색상 목록
+    private static func getColorsForCategory(_ category: Category) -> [UIColor] {
+        switch category {
+        case .garden:
+            return [.systemGreen, .systemYellow, .systemOrange, .systemBrown]
+        case .rooftop:
+            return [.systemPink, .systemPurple, .systemRed, .systemIndigo]
+        case .desert:
+            return [.systemGreen, .systemBrown, .systemYellow, .systemOrange]
+        case .jungle:
+            return [.systemGreen, .systemMint, .systemTeal, .systemCyan]
+        }
+    }
+    
+    // MARK: - 배경 색상
+    private static func getBackgroundColor(for index: Int) -> UIColor {
+        let backgrounds: [UIColor] = [
+            .systemGray6, .systemGray5, .systemGray4,
+            UIColor(white: 0.95, alpha: 1.0),
+            UIColor(white: 0.92, alpha: 1.0),
+            UIColor(white: 0.88, alpha: 1.0)
+        ]
+        return backgrounds[index % backgrounds.count]
+    }
+    
+    // MARK: - 배경이 있는 이미지 생성
+    private static func createImageWithBackground(
+        symbol: UIImage?,
+        backgroundColor: UIColor,
+        index: Int
+    ) -> UIImage {
+        let size = CGSize(width: 300, height: 400)
+        
+        let renderer = UIGraphicsImageRenderer(size: size)
+        return renderer.image { context in
+            let cgContext = context.cgContext
+            
+            // 배경색 칠하기
+            cgContext.setFillColor(backgroundColor.cgColor)
+            cgContext.fill(CGRect(origin: .zero, size: size))
+            
+            // SF Symbol 그리기
+            if let symbol = symbol {
+                let symbolSize = symbol.size
+                let x = (size.width - symbolSize.width) / 2
+                let y = (size.height - symbolSize.height) / 2
+                
+                symbol.draw(at: CGPoint(x: x, y: y))
+            }
+            
+            // 인덱스 번호 추가
+            addIndexText(context: cgContext, index: index, size: size)
+        }
+    }
+    
+    // MARK: - 인덱스 텍스트 추가
+    private static func addIndexText(context: CGContext, index: Int, size: CGSize) {
+        let text = "\(index)"
+        let font = UIFont.systemFont(ofSize: 28, weight: .bold)
+        let attributes: [NSAttributedString.Key: Any] = [
+            .font: font,
+            .foregroundColor: UIColor.white,
+            .strokeColor: UIColor.black,
+            .strokeWidth: -3
+        ]
+        
+        let attributedText = NSAttributedString(string: text, attributes: attributes)
+        let textSize = attributedText.size()
+        
+        let textRect = CGRect(
+            x: size.width - textSize.width - 15,
+            y: 15,
+            width: textSize.width,
+            height: textSize.height
+        )
+        
+        attributedText.draw(in: textRect)
+    }
 }
