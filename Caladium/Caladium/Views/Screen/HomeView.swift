@@ -28,48 +28,6 @@ struct HomeView: View {
                 .scaledToFit()
                 .ignoresSafeArea()
             
-<<<<<<< HEAD
-            projectsGrid
-                .alert(isPresented: $vm.isShowingDeleteAlert) {
-                    /// ALERT CONTENT
-                    DeleteConfirmPopup {
-                        vm.isShowingDeleteAlert = false
-                    } confirmButtonAction: {
-                        // TODO: 선택한 프로젝트들 삭제 로직 호출
-                        vm.deleteSelectedProjects()
-                    }
-                    .padding(.horizontal)
-
-                } background: {
-                    /// BACKGROUND
-                    Rectangle()
-                        .fill(.primary.opacity(0.35))
-                }
-                .alert(isPresented: $vm.isShowingMoveAlert) {
-                    /// ALERT CONTENT
-                    CategoryChangePopup(selectedCategory: vm.currentCategory, cancelButtonAction: {
-                        vm.isShowingMoveAlert = false
-                    }, confirmButtonAction: {
-                        // TODO: 선택한 프로젝트들 옮기기 로직 호출
-                        vm.moveSelectedProjects()
-                    })
-                    .padding(.horizontal)
-
-                } background: {
-                    /// BACKGROUND
-                    Rectangle()
-                        .fill(.primary.opacity(0.35))
-                }
-            
-            
-            Spacer()
-            
-            Button {
-                vm.addMockData()
-            } label: {
-                Text("Mock Data Add")
-
-=======
             VStack(spacing: 0) {
                 // Header with category navigation
                 categoryHeader
@@ -87,7 +45,6 @@ struct HomeView: View {
                 .padding()
                 
                 bottomToolbar
->>>>>>> 2989b7d (feat/#31-홈화면 배경 추가)
             }
             .navigationTitle("") // 빈 문자열로 설정
         }
@@ -130,12 +87,9 @@ struct HomeView: View {
         ScrollView {
             LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: 24), count: 3), spacing: 12) {
                 // Add new project button (always first)
-<<<<<<< HEAD
-=======
                 //                newProjectButton
-                ProjectAddButton(isEnabled: .constant(!vm.isEditMode)) {
+                ProjectAddButton(isEnabled: !vm.isEditMode) {
                     vm.startNewProject()
->>>>>>> 2989b7d (feat/#31-홈화면 배경 추가)
                 }
                 
                 // Existing projects
@@ -179,7 +133,6 @@ struct HomeView: View {
     // MARK: - Bottom Toolbar
     private var bottomToolbar: some View {
         HStack {
-            
             switch vm.editMode {
             case .normal:
                 Button {
@@ -232,11 +185,8 @@ struct HomeView: View {
                 Spacer()
                 
                 Button {
-<<<<<<< HEAD
                     vm.isShowingDeleteAlert = true
-=======
                     // TODO: 선택한 프로젝트들 삭제 로직 호출
->>>>>>> 2989b7d (feat/#31-홈화면 배경 추가)
                 } label: {
                     VStack{
                         Image(systemName: "checkmark")
@@ -293,4 +243,3 @@ struct HomeView: View {
     HomeView(vm: HomeViewModel(coordinator: AppCoordinator()))
         .environment(\.managedObjectContext, CoreDataManager.preview.mainContext)
 }
-
