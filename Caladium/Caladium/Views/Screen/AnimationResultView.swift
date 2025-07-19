@@ -41,6 +41,7 @@ struct AnimationResultView: View {
             Spacer()
             
             Button {
+                shareAnimation()
             } label: {
                 VStack {
                     Image(systemName: "square.and.arrow.up")
@@ -159,45 +160,15 @@ struct AnimationResultView: View {
         }
     }
     
-    private var actionButtons: some View {
-        VStack(spacing: 12) {
-            Button {
-                exportAnimation()
-            } label: {
-                Label("사진앱에 저장", systemImage: "square.and.arrow.down")
-                    .frame(maxWidth: .infinity)
-            }
-            .buttonStyle(.borderedProminent)
-            .disabled(data == nil && url == nil)
-            
-            Button {
-                shareAnimation()
-            } label: {
-                Label("공유하기", systemImage: "square.and.arrow.up")
-                    .frame(maxWidth: .infinity)
-            }
-            .buttonStyle(.bordered)
-            .disabled(data == nil && url == nil)
-        }
-    }
-    
-    private func exportAnimation() {
-        switch format {
-        case .gif:
-            if let data = data {
-                // GIF를 사진앱에 저장
-                saveGIFToPhotos(data: data)
-            }
-        case .mov:
-            if let url = url {
-                // 비디오를 사진앱에 저장
-                saveMOVToPhotos(url: url)
-            }
-        }
+    private func createTempGIFFile(data: Data) -> URL {
+        let tempDir = FileManager.default.temporaryDirectory
+        let tempURL = tempDir.appendingPathComponent("shared_animation.gif")
+        try? data.write(to: tempURL)
+        return tempURL
     }
     
     private func shareAnimation() {
-        // 공유 시트 표시
+        // 공유할 아이템 준비
         var itemsToShare: [Any] = []
         
         switch format {
@@ -213,32 +184,55 @@ struct AnimationResultView: View {
             }
         }
         
-        if !itemsToShare.isEmpty {
-            let activityVC = UIActivityViewController(activityItems: itemsToShare, applicationActivities: nil)
-            if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
-               let rootViewController = windowScene.windows.first?.rootViewController {
-                rootViewController.present(activityVC, animated: true)
+        // 공유 텍스트 추가 (선택사항)
+        if let start = startDate, let end = endDate {
+            let dateText = dateRangeText(start: start, end: end)
+            let shareText = "📸 \(dateText) 기간의 성장 기록 애니메이션"
+            itemsToShare.append(shareText)
+        }
+        
+        guard !itemsToShare.isEmpty else { return }
+        
+        // UIActivityViewController 표시
+        presentActivityController(with: itemsToShare)
+    }
+    
+    private func presentActivityController(with items: [Any]) {
+        let activityVC = UIActivityViewController(
+            activityItems: items,
+            applicationActivities: nil
+        )
+        
+        // 특정 액티비티 제외 (필요에 따라)
+        activityVC.excludedActivityTypes = [
+            .assignToContact,
+            .addToReadingList,
+            .openInIBooks
+        ]
+        
+        // 완료 핸들러
+        activityVC.completionWithItemsHandler = { activityType, completed, returnedItems, error in
+            if completed {
+                print("공유 완료: \(activityType?.rawValue ?? "unknown")")
+            }
+            if let error = error {
+                print("공유 에러: \(error.localizedDescription)")
             }
         }
-    }
-    
-    private func saveGIFToPhotos(data: Data) {
-        // GIF를 사진앱에 저장하는 로직
-        print("GIF 저장: \(data.count) bytes")
-        // 실제 구현에서는 PHPhotoLibrary 사용
-    }
-    
-    private func saveMOVToPhotos(url: URL) {
-        // 비디오를 사진앱에 저장하는 로직
-        print("비디오 저장: \(url.path)")
-        // 실제 구현에서는 PHPhotoLibrary 사용
-    }
-    
-    private func createTempGIFFile(data: Data) -> URL {
-        let tempDir = FileManager.default.temporaryDirectory
-        let tempURL = tempDir.appendingPathComponent("shared_animation.gif")
-        try? data.write(to: tempURL)
-        return tempURL
+        
+        // 현재 뷰 컨트롤러에서 표시
+        if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
+           let window = windowScene.windows.first,
+           let rootViewController = window.rootViewController {
+            
+            // 가장 위의 뷰 컨트롤러 찾기
+            var topViewController = rootViewController
+            while let presentedViewController = topViewController.presentedViewController {
+                topViewController = presentedViewController
+            }
+            
+            topViewController.present(activityVC, animated: true)
+        }
     }
 }
 
