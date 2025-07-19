@@ -34,4 +34,14 @@ enum Category: String, CaseIterable {
         case .rooftop: return "category-roof"
         }
     }
+    
+    var background: String {
+        switch self {
+        case .garden: return "bg-garden"
+        case .jungle: return "bg-jungle"
+        case .desert: return "bg-desert"
+        case .rooftop: return "bg-roof"
+        }
+    }
+
 }
