@@ -69,7 +69,7 @@ struct FormatSelectPopupView: View {
     private var actionButtons: some View {
         HStack(spacing: 40) {
             ActionButton(
-                title: "MOV로 저장하기",
+                title: "MOV로 만들기",
                 backgroundColor: .gray200,
                 borderColor: .gray300,
                 action: {
@@ -79,7 +79,7 @@ struct FormatSelectPopupView: View {
             .padding(.horizontal, -12)
             
             ActionButton(
-                title: "GIF로 저장하기",
+                title: "GIF로 만들기",
                 backgroundColor: .green500,
                 borderColor: .green700,
                 action: {

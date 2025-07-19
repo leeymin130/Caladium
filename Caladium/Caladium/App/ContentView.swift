@@ -66,8 +66,14 @@ struct ContentView: View {
         case .videoGeneration(let photos):
             VideoGenerationView(photos: photos)
             
-        case .animationResult(let data, let url, let format):
-            AnimationResultView(data: data, url: url, format: format)
+        case .animationResult(let data, let url, let format, let startDate, let endDate):
+            AnimationResultView(
+                data: data,
+                url: url,
+                format: format,
+                startDate: startDate,
+                endDate: endDate
+            )
         }
     }
     

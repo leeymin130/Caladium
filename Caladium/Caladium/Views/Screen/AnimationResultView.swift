@@ -12,6 +12,8 @@ struct AnimationResultView: View {
     let data: Data?
     let url: URL?
     let format: AnimationFormat
+    let startDate: Date?
+    let endDate: Date?
     @EnvironmentObject var coordinator: AppCoordinator
     
     var body: some View {
@@ -66,14 +68,14 @@ struct AnimationResultView: View {
                     VStack(alignment: .leading, spacing: 8){
                         GIFPreviewView(gifData: gifData)
                             .cornerRadius(5)
-
                         
-                        Text("촬영 일자")
-                            .fontWeight(.semibold)
-                            .foregroundColor(.gray900)
-                            .padding(.top)
+                        if let start = startDate, let end = endDate {
+                            Text(dateRangeText(start: start, end: end))
+                                .font(.system(size: 15))
+                                .fontWeight(.semibold)
+                                .foregroundStyle(.gray900)
+                        }
                     }
-                    .frame(maxWidth: 350, maxHeight: 520)
                     .padding(.horizontal, 18)
                     .padding(.top, 18)
                     .padding(.bottom, 48)
@@ -93,12 +95,13 @@ struct AnimationResultView: View {
                     VStack(alignment: .leading, spacing: 8){
                         MOVPreviewView(videoURL: videoURL)
                             .cornerRadius(5)
-                            .frame(maxWidth: 320, maxHeight: 420)
                         
-                        Text("촬영 일자")
-                            .fontWeight(.semibold)
-                            .foregroundColor(.gray900)
-                            .padding(.top)
+                        if let start = startDate, let end = endDate {
+                            Text(dateRangeText(start: start, end: end))
+                                .font(.system(size: 15))
+                                .fontWeight(.semibold)
+                                .foregroundStyle(.gray900)
+                        }
 
                     }
                     .padding(.horizontal, 18)
@@ -136,7 +139,24 @@ struct AnimationResultView: View {
             }
             
         }
+        .frame(maxWidth: 350, maxHeight: 520)
         .padding(.top)
+        
+    }
+    
+    private func dateRangeText(start: Date, end: Date) -> String {
+        let formatter = DateFormatter()
+        formatter.dateStyle = .medium
+        
+        let startString = formatter.string(from: start)
+        let endString = formatter.string(from: end)
+        
+        // 같은 날이면 하나만 표시
+        if Calendar.current.isDate(start, equalTo: end, toGranularity: .day) {
+            return startString
+        } else {
+            return "\(startString) ~ \(endString)"
+        }
     }
     
     private var actionButtons: some View {
@@ -223,5 +243,5 @@ struct AnimationResultView: View {
 }
 
 #Preview {
-    AnimationResultView(data: nil, url: nil, format: .gif)
+    AnimationResultView(data: nil, url: nil, format: .gif, startDate: nil, endDate: nil)
 }

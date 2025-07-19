@@ -148,15 +148,45 @@ final class ProjectDetailViewModel: ObservableObject {
             await MainActor.run {
                 self.isGeneratingAnimation = false
                 
-                // 적절한 결과 전달
+                // 날짜 범위 계산
+                let dateRange = self.getDateRange(from: Array(selectedPhotos))
+                
+                // 적절한 결과 전달 (날짜 정보 포함)
                 switch self.selectedAnimationFormat {
                 case .gif:
-                    self.coordinator.navigate(to: .animationResult(data: resultData, url: nil, format: .gif))
+                    self.coordinator.navigate(to: .animationResult(
+                        data: resultData,
+                        url: nil,
+                        format: .gif,
+                        startDate: dateRange.start,
+                        endDate: dateRange.end
+                    ))
                 case .mov:
-                    self.coordinator.navigate(to: .animationResult(data: nil, url: resultURL, format: .mov))
+                    self.coordinator.navigate(to: .animationResult(
+                        data: nil,
+                        url: resultURL,
+                        format: .mov,
+                        startDate: dateRange.start,
+                        endDate: dateRange.end
+                    ))
                 }
             }
         }
+    }
+    
+    private func getDateRange(from photos: [Photo]) -> (start: Date?, end: Date?) {
+        let sortedPhotos = photos.sorted { photo1, photo2 in
+            guard let date1 = photo1.capturedDate,
+                  let date2 = photo2.capturedDate else {
+                return false
+            }
+            return date1 < date2
+        }
+        
+        return (
+            start: sortedPhotos.first?.capturedDate,
+            end: sortedPhotos.last?.capturedDate
+        )
     }
     
     private func performAnimationGeneration(

@@ -53,7 +53,7 @@ struct ProjectDetailView: View {
                         vm.selectMovFormat()
                     } confirmButtonAction: {
                         /// gif로 애니메이션 만들기 로직
-                        vm.selectMovFormat()
+                        vm.selectGifFormat()
                     }
                     .padding(.horizontal)
 

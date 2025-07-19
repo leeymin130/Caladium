@@ -23,8 +23,14 @@ enum AppRoute: Hashable, Identifiable {
     case videoGeneration([Photo])
     
     // 영상 완료 플로우
-    case animationResult(data: Data?, url: URL?, format: AnimationFormat)
-
+    case animationResult(
+        data: Data?,
+        url: URL?,
+        format: AnimationFormat,
+        startDate: Date?,
+        endDate: Date?
+    )
+    
     // Identifiable 구현
     var id: String {
         switch self {
@@ -42,7 +48,7 @@ enum AppRoute: Hashable, Identifiable {
             return "video_selection_\(project.id ?? UUID())"
         case .videoGeneration(let photos):
             return "video_generation_\(photos.count)"
-        case .animationResult(_, _, let format):
+        case .animationResult(_, _, let format, _, _):
             return "animation_result_\(format.rawValue)"
         }
     }
