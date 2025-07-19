@@ -79,9 +79,7 @@ struct HomeView: View {
     private var categoryHeader: some View {
         HStack {
             Button(action: vm.previousCategory) {
-                Image(systemName: "chevron.left")
-                    .font(.title2)
-                    .foregroundColor(.green)
+                Image("btn-left1")
                     .padding()
             }
             
@@ -89,16 +87,7 @@ struct HomeView: View {
             
             VStack {
                 // Category dots indicator
-                HStack(spacing: 8) {
-                    ForEach(Category.allCases, id: \.self) { category in
-                        Circle()
-                            .fill(category == vm.currentCategory ? Color.green : Color.gray.opacity(0.3))
-                            .frame(
-                                width: category == vm.currentCategory ? 10 : 8,
-                                height: category == vm.currentCategory ? 10 : 8)
-                    }
-                }
-                
+                Image(vm.currentCategory.icon)
                 
                 Text(vm.currentCategory.displayName)
                     .font(.headline)
@@ -108,9 +97,7 @@ struct HomeView: View {
             Spacer()
             
             Button(action: vm.nextCategory) {
-                Image(systemName: "chevron.right")
-                    .font(.title2)
-                    .foregroundColor(.green)
+                Image("btn-right1")
                     .padding()
             }
         }
@@ -124,8 +111,6 @@ struct HomeView: View {
         ScrollView {
             LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: 24), count: 3), spacing: 12) {
                 // Add new project button (always first)
-                ProjectAddButton(isEnabled: !vm.isEditMode) {
-                    vm.startNewProject()
                 }
                 
                 // Existing projects
@@ -137,6 +122,7 @@ struct HomeView: View {
             .padding(.top, 20)
         }
     }
+
     
     // MARK: - Project Grid Item
     private func projectGridItem(_ project: Project) -> some View {

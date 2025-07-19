@@ -28,10 +28,10 @@ enum Category: String, CaseIterable {
     
     var icon: String {
         switch self {
-        case .garden: return "leaf.fill"
-        case .jungle: return "house.fill"
-        case .desert: return "sun.max.fill"
-        case .rooftop: return "camera.macro"
+        case .garden: return "category-garden"
+        case .jungle: return "category-jungle"
+        case .desert: return "category-desert"
+        case .rooftop: return "category-roof"
         }
     }
 }
