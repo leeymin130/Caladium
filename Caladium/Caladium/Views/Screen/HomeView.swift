@@ -55,7 +55,7 @@ struct HomeView: View {
     private var categoryHeader: some View {
         HStack {
             Button(action: vm.previousCategory) {
-                Image("btn-left1")
+                Image("btn-left")
                     .padding()
             }
             
@@ -73,7 +73,7 @@ struct HomeView: View {
             Spacer()
             
             Button(action: vm.nextCategory) {
-                Image("btn-right1")
+                Image("btn-right")
                     .padding()
             }
         }
@@ -87,7 +87,7 @@ struct HomeView: View {
         ScrollView {
             LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: 24), count: 3), spacing: 12) {
                 // Add new project button (always first)
-                //                newProjectButton
+                // newProjectButton
                 ProjectAddButton(isEnabled: !vm.isEditMode) {
                     vm.startNewProject()
                 }
@@ -132,109 +132,115 @@ struct HomeView: View {
     
     // MARK: - Bottom Toolbar
     private var bottomToolbar: some View {
-        HStack {
-            switch vm.editMode {
-            case .normal:
-                Button {
-                    vm.startDeleteMode()
-                } label: {
-                    VStack {
-                        Image(systemName: "trash")
-                            .font(.title2)
-                        Text("지우기")
-                            .font(.caption)
-                    }
-                    .foregroundColor(.red)
-                }
-                .disabled(projects.isEmpty)
-                
-                Spacer()
-                
-                Button {
-                    vm.startMoveMode()
-                } label: {
-                    VStack {
-                        Image(systemName: "folder")
-                            .font(.title2)
-                        Text("옮기기")
-                            .font(.caption)
-                    }
-                }
-                .disabled(projects.isEmpty)
-                
-            case .delete(_):
-                Button {
-                    vm.exitEditMode()
-                } label: {
-                    VStack{
-                        Image(systemName: "xmark")
-                            .font(.title2)
-                        Text("취소")
-                            .font(.caption)
-                    }
-                }
-                
-                Spacer()
-                
-                if vm.selectedProjectsCount > 0 {
-                    Text("\(vm.selectedProjectsCount)개 선택됨")
-                        .font(.caption)
-                        .foregroundColor(.secondary)
-                }
-                
-                Spacer()
-                
-                Button {
-                    vm.isShowingDeleteAlert = true
-                    // TODO: 선택한 프로젝트들 삭제 로직 호출
-                } label: {
-                    VStack{
-                        Image(systemName: "checkmark")
-                            .font(.title2)
-                        Text("확인")
-                            .font(.caption)
-                    }
-                }
-                
-            case .move(_):
-                Button {
-                    vm.exitEditMode()
-                } label: {
-                    VStack{
-                        Image(systemName: "xmark")
-                            .font(.title2)
-                        Text("취소")
-                            .font(.caption)
-                    }
-                }
-                
-                Spacer()
-                
-                if vm.selectedProjectsCount > 0 {
-                    Text("\(vm.selectedProjectsCount)개 선택됨")
-                        .font(.caption)
-                        .foregroundColor(.secondary)
-                }
-                
-                Spacer()
-                
-                Button {
-                    vm.isShowingMoveAlert = true
-                } label: {
-                    VStack{
-                        Image(systemName: "checkmark")
-                            .font(.title2)
-                        Text("확인")
-                            .font(.caption)
-                    }
-                }
-            }
+        VStack(spacing: 0) {
+            Rectangle()
+                .fill(Color.green500)
+                .frame(height: 5)
+                .frame(maxWidth: .infinity)
             
+            HStack {
+                switch vm.editMode {
+                case .normal:
+                    Button {
+                        vm.startDeleteMode()
+                    } label: {
+                        VStack {
+                            Image(systemName: "trash")
+                                .font(.title2)
+                            Text("지우기")
+                                .font(.caption)
+                        }
+                        .foregroundColor(.red)
+                    }
+                    .disabled(projects.isEmpty)
+                    
+                    Spacer()
+                    
+                    Button {
+                        vm.startMoveMode()
+                    } label: {
+                        VStack {
+                            Image(systemName: "folder")
+                                .font(.title2)
+                            Text("옮기기")
+                                .font(.caption)
+                        }
+                    }
+                    .disabled(projects.isEmpty)
+                    
+                case .delete(_):
+                    Button {
+                        vm.exitEditMode()
+                    } label: {
+                        VStack{
+                            Image(systemName: "xmark")
+                                .font(.title2)
+                            Text("취소")
+                                .font(.caption)
+                        }
+                    }
+                    
+                    Spacer()
+                    
+                    if vm.selectedProjectsCount > 0 {
+                        Text("\(vm.selectedProjectsCount)개 선택됨")
+                            .font(.caption)
+                            .foregroundColor(.secondary)
+                    }
+                    
+                    Spacer()
+                    
+                    Button {
+                        vm.isShowingDeleteAlert = true
+                        // TODO: 선택한 프로젝트들 삭제 로직 호출
+                    } label: {
+                        VStack{
+                            Image(systemName: "checkmark")
+                                .font(.title2)
+                            Text("확인")
+                                .font(.caption)
+                        }
+                    }
+                    
+                case .move(_):
+                    Button {
+                        vm.exitEditMode()
+                    } label: {
+                        VStack{
+                            Image(systemName: "xmark")
+                                .font(.title2)
+                            Text("취소")
+                                .font(.caption)
+                        }
+                    }
+                    
+                    Spacer()
+                    
+                    if vm.selectedProjectsCount > 0 {
+                        Text("\(vm.selectedProjectsCount)개 선택됨")
+                            .font(.caption)
+                            .foregroundColor(.secondary)
+                    }
+                    
+                    Spacer()
+                    
+                    Button {
+                        vm.isShowingMoveAlert = true
+                    } label: {
+                        VStack{
+                            Image(systemName: "checkmark")
+                                .font(.title2)
+                            Text("확인")
+                                .font(.caption)
+                        }
+                    }
+                }
+                
+            }
+            .padding(.horizontal, 40)
+            .padding(.vertical, 16)
+            .background(Color.gray0)
         }
-        .padding(.horizontal, 40)
-        .padding(.vertical, 16)
-        .background(Color(.systemBackground))
-        .shadow(color: .black.opacity(0.1), radius: 1, x: 0, y: -1)
         
     }
 }
