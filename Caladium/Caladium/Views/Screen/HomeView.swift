@@ -44,7 +44,17 @@ struct HomeView: View {
                 }
                 .padding()
                 
-                bottomToolbar
+                //                bottomToolbar
+                BottomToolbar(
+                    homeEditMode: vm.editMode,
+                    style: .home,
+                    hasItems: !projects.isEmpty,
+                    onDeleteStart: vm.startDeleteMode,
+                    onMoveStart: vm.startMoveMode,
+                    onCancel: vm.exitEditMode,
+                    onDeleteConfirm: { vm.isShowingDeleteAlert = true },
+                    onMoveConfirm: { vm.isShowingMoveAlert = true }
+                )
             }
             .navigationTitle("") // 빈 문자열로 설정
             .ignoresSafeArea(.container, edges: .bottom)
