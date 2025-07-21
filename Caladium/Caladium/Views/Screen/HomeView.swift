@@ -24,7 +24,9 @@ struct HomeView: View {
     var body: some View {
         VStack(spacing: 0) {
             // Header with category navigation
-            categoryHeader
+            if case .normal = vm.editMode {
+                categoryHeader
+            }
             
             projectsGrid
                 .alert(isPresented: $vm.isShowingDeleteAlert) {
@@ -46,9 +48,9 @@ struct HomeView: View {
                     /// ALERT CONTENT
                     CategoryChangePopup(selectedCategory: vm.currentCategory, cancelButtonAction: {
                         vm.isShowingMoveAlert = false
-                    }, confirmButtonAction: {
+                    }, confirmButtonAction: { selectedCategory in
                         // TODO: 선택한 프로젝트들 옮기기 로직 호출
-                        vm.moveSelectedProjects()
+                        vm.moveSelectedProjects(to: selectedCategory)
                     })
                     .padding(.horizontal)
 
@@ -122,6 +124,15 @@ struct HomeView: View {
     // MARK: - Projects Grid
     private var projectsGrid: some View {
         ScrollView {
+            // 편집 모드 가이드 배너
+            if case .delete = vm.editMode {
+                guideBanner(
+                    text: "삭제할 식물을 \n선택해주세요"
+                )
+            } else if case .move = vm.editMode {
+                guideBanner(text: "장소를 옮길 식물을 \n선택해주세요")
+            }
+            
             LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: 24), count: 3), spacing: 12) {
                 // Add new project button (always first)
                 ProjectAddButton(isEnabled: !vm.isEditMode) {
@@ -133,9 +144,26 @@ struct HomeView: View {
                     projectGridItem(project)
                 }
             }
-            .padding(.horizontal, 16)
+            .padding(.horizontal, 24)
             .padding(.top, 20)
         }
+    }
+    
+    // MARK: - Guide Banner
+    private func guideBanner(text: String) -> some View {
+        VStack(alignment: .leading) {
+            Text(text)
+                .font(.system(size: 24, weight: .semibold))
+                .lineSpacing(8)
+
+            }
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .padding(.horizontal, 24)
+        .padding(.top, 63)
+        .transition(.asymmetric(
+            insertion: .move(edge: .top).combined(with: .opacity),
+            removal: .move(edge: .top).combined(with: .opacity)
+        ))
     }
     
     // MARK: - Project Grid Item
@@ -275,7 +303,7 @@ struct HomeView: View {
 }
 
 #Preview {
-    HomeView(vm: HomeViewModel(coordinator: AppCoordinator()))
+    HomeView(vm: HomeViewModel(coordinator: AppCoordinator(), coreDataService: CoreDataService()))
         .environment(\.managedObjectContext, CoreDataManager.preview.mainContext)
 }
 

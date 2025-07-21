@@ -33,16 +33,53 @@ struct ProjectDetailView: View {
                     cameraButton
                         .padding()
                 }
-            
+                .alert(isPresented: $vm.isShowingDeleteAlert) {
+                    /// ALERT CONTENT
+                    PhotoDeleteConfirmPopup(cancelButtonAction: {
+                        vm.isShowingDeleteAlert = false
+                    }, confirmButtonAction: {
+                        vm.deleteSelectedPhotos()
+                    })
+                    .padding(.horizontal)
+
+                } background: {
+                    /// BACKGROUND
+                    Rectangle()
+                        .fill(.primary.opacity(0.35))
+                }
+                .alert(isPresented: $vm.isShowingFormatSelectAlert) {
+                    FormatSelectPopupView {
+                        /// mov로 애니메이션 만들기 로직
+                        vm.selectMovFormat()
+                    } confirmButtonAction: {
+                        /// gif로 애니메이션 만들기 로직
+                        vm.selectGifFormat()
+                    }
+                    .padding(.horizontal)
+
+                } background: {
+                    Rectangle()
+                        .fill(.primary.opacity(0.35))
+                }
+
             bottomToolbar
+        }
+        .overlay {
+            // 로딩 오버레이
+            if vm.isGeneratingAnimation {
+                LoadingView()
+            }
         }
         .navigationTitle("")
         .navigationBarTitleDisplayMode(.inline)
+        .navigationBarHidden(vm.isGeneratingAnimation) // 로딩 중에는 네비게이션 바 숨기기
         .toolbar {
-            ToolbarItem(placement: .principal) {
-                Text(dateRangeText)
-                    .font(.subheadline) // 또는 .caption, .footnote
-                    .foregroundColor(.primary)
+            if case .normal = vm.editMode {
+                ToolbarItem(placement: .principal) {
+                    Text(dateRangeText)
+                        .font(.subheadline)
+                        .foregroundColor(.primary)
+                }
             }
         }
         
@@ -51,54 +88,79 @@ struct ProjectDetailView: View {
     // MARK: - Photo Grid
 
     private var photoGrid: some View {
-        ScrollView {
-            LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: 3), count: 3), spacing: 3) {
-                ForEach(photos, id: \.objectID) { photo in
-                    photoGridItem(photo: photo)
+        GeometryReader { geo in
+            let spacing: CGFloat = 3
+            let totalSpacing = spacing * 2
+            let availableWidth = geo.size.width - totalSpacing - 2
+            let itemSize = availableWidth / 3
+            
+            ScrollView {
+                // 편집 모드 가이드 배너
+                if case .delete = vm.editMode {
+                    guideBanner(
+                        text: "삭제할 식물을 선택해주세요"
+                    )
+                } else if case .makeVideo = vm.editMode {
+                    guideBanner(text: "영상에 추가할 사진을 고르세요", guideText : "사진을 많이 선택할수록 영상이 풍성해져요")
                 }
+                
+                LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: 3), count: 3), spacing: 3) {
+                    ForEach(photos, id: \.objectID) { photo in
+                        photoGridItem(photo: photo, size: itemSize)
+                    }
+                }
+                .padding(.horizontal, 1)
+                
             }
-            .padding(.horizontal, 1)
-
         }
     }
     
-    private func photoGridItem(photo: Photo) -> some View {
-            ZStack {
-                AsyncPhotoImage(photo: photo)
-                    .frame(width:128, height: 128)
-                    .clipped()
-                    .onTapGesture {
-                        if vm.isEditMode {
-                            vm.togglePhotoSelection(photo)
-                        } else {
-                            // TODO: 사진 상세보기로 이동
-                            vm.navigateToPhotoDetail(photo: photo, project: project)
-                        }
-                    }
-                
-                // 선택 표시
+    // MARK: - Guide Banner
+    private func guideBanner(text: String, guideText: String? = nil) -> some View {
+        VStack(alignment: .leading, spacing: 8) {
+            Text(text)
+                .font(.system(size: 24, weight: .semibold))
+            
+            if let guideText = guideText {
+                Text(guideText)
+                    .font(.system(size: 16, weight: .regular))
+                    .foregroundStyle(.secondary)
+            }
+            
+        }
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .padding(.horizontal, 24)
+        .padding(.top, 20)
+        .transition(.asymmetric(
+            insertion: .move(edge: .top).combined(with: .opacity),
+            removal: .move(edge: .top).combined(with: .opacity)
+        ))
+    }
+    
+    private func photoGridItem(photo: Photo, size: CGFloat) -> some View {
+        PhotoThumbnail(
+            photo: photo,
+            state: photoThumbnailState(for: photo),
+            size: size,
+            action: {
                 if vm.isEditMode {
-                    VStack {
-                        HStack {
-                            Spacer()
-                            Circle()
-                                .fill(vm.isPhotoSelected(photo) ? Color.blue : Color.clear)
-                                .stroke(Color.white, lineWidth: 2)
-                                .frame(width: 24, height: 24)
-                                .overlay(
-                                    Image(systemName: "checkmark")
-                                        .font(.system(size: 12, weight: .bold))
-                                        .foregroundColor(.white)
-                                        .opacity(vm.isPhotoSelected(photo) ? 1 : 0)
-                                )
-                                .padding(8)
-                        }
-                        Spacer()
-                    }
+                    vm.togglePhotoSelection(photo)
+                } else {
+                    vm.navigateToPhotoDetail(photo: photo, project: project)
                 }
             }
-        }
+        )
+    }
     
+    private func photoThumbnailState(for photo: Photo) -> PhotoThumbnailState {
+        switch vm.editMode {
+        case .normal:
+            return .normal
+        case .delete(let selectedPhotos), .makeVideo(let selectedPhotos):
+            return selectedPhotos.contains(photo) ? .selected : .normal
+        }
+    }
+
     private var cameraButton: some View {
         HStack(alignment: .center,spacing: 18){
             Image(systemName: "camera.fill")
@@ -167,9 +229,9 @@ struct ProjectDetailView: View {
                     vm.startVideoMode()
                 } label: {
                     VStack {
-                        Image(systemName: "folder")
+                        Image(systemName: "film.stack")
                             .font(.title2)
-                        Text("옮기기")
+                        Text("영상 만들기")
                             .font(.caption)
                     }
                 }
@@ -189,8 +251,8 @@ struct ProjectDetailView: View {
                 
                 Spacer()
                 
-                if vm.selectedProjectsCount > 0 {
-                    Text("\(vm.selectedProjectsCount)개 선택됨")
+                if vm.selectedPhotosCount > 0 {
+                    Text("\(vm.selectedPhotosCount)개 선택됨")
                         .font(.caption)
                         .foregroundColor(.secondary)
                 }
@@ -199,6 +261,7 @@ struct ProjectDetailView: View {
                 
                 Button {
                    // TODO: 선택한 프로젝트들 삭제 로직 호출
+                    vm.isShowingDeleteAlert = true
                 } label: {
                     VStack{
                         Image(systemName: "checkmark")
@@ -222,8 +285,8 @@ struct ProjectDetailView: View {
                 
                 Spacer()
                 
-                if vm.selectedProjectsCount > 0 {
-                    Text("\(vm.selectedProjectsCount)개 선택됨")
+                if vm.selectedPhotosCount > 0 {
+                    Text("\(vm.selectedPhotosCount)개 선택됨")
                         .font(.caption)
                         .foregroundColor(.secondary)
                 }
@@ -232,6 +295,7 @@ struct ProjectDetailView: View {
                 
                 Button {
                     // TODO: 비디오 만들기 로직 호출
+                    vm.isShowingFormatSelectAlert = true
                 } label: {
                     VStack{
                         Image(systemName: "checkmark")
@@ -240,6 +304,7 @@ struct ProjectDetailView: View {
                             .font(.caption)
                     }
                 }
+                .disabled(vm.selectedPhotosCount == 0)
             }
             
         }
@@ -263,37 +328,4 @@ struct ProjectDetailView: View {
         
         return "\(startDate) ~ \(endDate)"
     }
-}
-
-
-
-
-#Preview {
-    let context = CoreDataManager.preview.mainContext
-    let sampleProject = getSampleProject(from: context)
-    
-    return ProjectDetailView(
-        vm: ProjectDetailViewModel(coordinator: AppCoordinator()),
-        project: sampleProject
-    )
-    .environment(\.managedObjectContext, context)
-}
-
-
-// Preview 밖에서 helper 함수 정의
-private func getSampleProject(from context: NSManagedObjectContext) -> Project {
-    let fetchRequest: NSFetchRequest<Project> = Project.fetchRequest()
-    fetchRequest.fetchLimit = 1
-    
-    if let existingProject = try? context.fetch(fetchRequest).first {
-        return existingProject
-    }
-    
-    // 없으면 새로 생성
-    let project = Project(context: context)
-    project.id = UUID()
-    project.createdDate = Date()
-    project.updatedDate = Date()
-    project.category = Category.rooftop.rawValue
-    return project
 }

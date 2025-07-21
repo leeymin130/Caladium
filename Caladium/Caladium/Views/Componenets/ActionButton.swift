@@ -41,7 +41,7 @@ struct ActionButton: View {
             action()
         }) {
             Text(title)
-                .padding(.horizontal, 32)
+                .padding(.horizontal, 20)
                 .padding(.vertical, 12)
                 .foregroundColor(determineTextColor())
                 .background(backgroundColor)
