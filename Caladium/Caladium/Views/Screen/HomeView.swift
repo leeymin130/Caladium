@@ -47,6 +47,7 @@ struct HomeView: View {
                 bottomToolbar
             }
             .navigationTitle("") // 빈 문자열로 설정
+            .ignoresSafeArea(.container, edges: .bottom)
         }
         
     }
@@ -144,13 +145,7 @@ struct HomeView: View {
                     Button {
                         vm.startDeleteMode()
                     } label: {
-                        VStack {
-                            Image(systemName: "trash")
-                                .font(.title2)
-                            Text("지우기")
-                                .font(.caption)
-                        }
-                        .foregroundColor(.red)
+                        Image("btn-delete-0")
                     }
                     .disabled(projects.isEmpty)
                     
@@ -159,12 +154,7 @@ struct HomeView: View {
                     Button {
                         vm.startMoveMode()
                     } label: {
-                        VStack {
-                            Image(systemName: "folder")
-                                .font(.title2)
-                            Text("옮기기")
-                                .font(.caption)
-                        }
+                        Image("btn-move-0")
                     }
                     .disabled(projects.isEmpty)
                     
@@ -172,12 +162,7 @@ struct HomeView: View {
                     Button {
                         vm.exitEditMode()
                     } label: {
-                        VStack{
-                            Image(systemName: "xmark")
-                                .font(.title2)
-                            Text("취소")
-                                .font(.caption)
-                        }
+                        Image("btn-cancel-0")
                     }
                     
                     Spacer()
@@ -194,24 +179,14 @@ struct HomeView: View {
                         vm.isShowingDeleteAlert = true
                         // TODO: 선택한 프로젝트들 삭제 로직 호출
                     } label: {
-                        VStack{
-                            Image(systemName: "checkmark")
-                                .font(.title2)
-                            Text("확인")
-                                .font(.caption)
-                        }
+                        Image("btn-select-0")
                     }
                     
                 case .move(_):
                     Button {
                         vm.exitEditMode()
                     } label: {
-                        VStack{
-                            Image(systemName: "xmark")
-                                .font(.title2)
-                            Text("취소")
-                                .font(.caption)
-                        }
+                        Image("btn-cancel-0")
                     }
                     
                     Spacer()
@@ -227,18 +202,11 @@ struct HomeView: View {
                     Button {
                         vm.isShowingMoveAlert = true
                     } label: {
-                        VStack{
-                            Image(systemName: "checkmark")
-                                .font(.title2)
-                            Text("확인")
-                                .font(.caption)
-                        }
+                        Image("btn-select-0")
                     }
                 }
                 
             }
-            .padding(.horizontal, 40)
-            .padding(.vertical, 16)
             .background(Color.gray0)
         }
         
