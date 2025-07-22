@@ -61,8 +61,24 @@ struct ProjectDetailView: View {
                     Rectangle()
                         .fill(.primary.opacity(0.35))
                 }
-
-            bottomToolbar
+            
+            //            bottomToolbar
+            BottomToolbar(
+                projectEditMode: vm.editMode,
+                style: .projectDetail,
+                hasItems: !photos.isEmpty,
+                onDeleteStart: vm.startDeleteMode,
+                onMoveStart: {}, // ProjectDetail에서는 사용하지 않음
+                onCancel: vm.exitEditMode,
+                onDeleteConfirm: {
+                    // TODO: 선택한 사진들 삭제 로직 호출
+                },
+                onMoveConfirm: {}, // ProjectDetail에서는 사용하지 않음
+                onVideoStart: vm.startVideoMode,
+                onVideoConfirm: {
+                    // TODO: 비디오 만들기 로직 호출
+                }
+            )
         }
         .overlay {
             // 로딩 오버레이
@@ -82,11 +98,12 @@ struct ProjectDetailView: View {
                 }
             }
         }
+        .ignoresSafeArea(.container, edges: .bottom)
         
     }
     
     // MARK: - Photo Grid
-
+    
     private var photoGrid: some View {
         GeometryReader { geo in
             let spacing: CGFloat = 3
@@ -167,10 +184,10 @@ struct ProjectDetailView: View {
                 .font(.system(size: 30, weight: .medium))
                 .foregroundColor(.white)
                 .background{
-                   Rectangle()
+                    Rectangle()
                         .fill(Color.green500)
                         .frame(width: 60, height: 60)
-                        
+                    
                 }
                 .padding(.leading, 8)
             
@@ -183,8 +200,8 @@ struct ProjectDetailView: View {
                     .foregroundStyle(.secondary)
             }
             .padding(.leading,10)
-        
-
+            
+            
         }
         .onTapGesture {
             vm.addNewPhoto(currentProject: project)
@@ -193,128 +210,16 @@ struct ProjectDetailView: View {
         .background{
             Rectangle()
                 .fill(Color.white)
-               
+            
         }
         .clipShape(RoundedRectangle(cornerRadius: 12))
         .overlay(
             RoundedRectangle(cornerRadius: 10)
                 .stroke(Color.gray400, lineWidth: 2)
         )
-
+        
         
     }
-    
-    
-    private var bottomToolbar: some View {
-        HStack {
-            
-            switch vm.editMode {
-            case .normal:
-                Button {
-                    vm.startDeleteMode()
-                } label: {
-                    VStack {
-                        Image(systemName: "trash")
-                            .font(.title2)
-                        Text("지우기")
-                            .font(.caption)
-                    }
-                    .foregroundColor(.red)
-                }
-                .disabled(photos.isEmpty)
-                
-                Spacer()
-                
-                Button {
-                    vm.startVideoMode()
-                } label: {
-                    VStack {
-                        Image(systemName: "film.stack")
-                            .font(.title2)
-                        Text("영상 만들기")
-                            .font(.caption)
-                    }
-                }
-                .disabled(photos.isEmpty)
-
-            case .delete(_):
-                Button {
-                    vm.exitEditMode()
-                } label: {
-                    VStack{
-                        Image(systemName: "xmark")
-                            .font(.title2)
-                        Text("취소")
-                            .font(.caption)
-                    }
-                }
-                
-                Spacer()
-                
-                if vm.selectedPhotosCount > 0 {
-                    Text("\(vm.selectedPhotosCount)개 선택됨")
-                        .font(.caption)
-                        .foregroundColor(.secondary)
-                }
-                
-                Spacer()
-                
-                Button {
-                   // TODO: 선택한 프로젝트들 삭제 로직 호출
-                    vm.isShowingDeleteAlert = true
-                } label: {
-                    VStack{
-                        Image(systemName: "checkmark")
-                            .font(.title2)
-                        Text("확인")
-                            .font(.caption)
-                    }
-                }
-
-            case .makeVideo(_):
-                Button {
-                    vm.exitEditMode()
-                } label: {
-                    VStack{
-                        Image(systemName: "xmark")
-                            .font(.title2)
-                        Text("취소")
-                            .font(.caption)
-                    }
-                }
-                
-                Spacer()
-                
-                if vm.selectedPhotosCount > 0 {
-                    Text("\(vm.selectedPhotosCount)개 선택됨")
-                        .font(.caption)
-                        .foregroundColor(.secondary)
-                }
-                
-                Spacer()
-                
-                Button {
-                    // TODO: 비디오 만들기 로직 호출
-                    vm.isShowingFormatSelectAlert = true
-                } label: {
-                    VStack{
-                        Image(systemName: "checkmark")
-                            .font(.title2)
-                        Text("확인")
-                            .font(.caption)
-                    }
-                }
-                .disabled(vm.selectedPhotosCount == 0)
-            }
-            
-        }
-        .padding(.horizontal, 40)
-        .padding(.vertical, 16)
-        .background(Color(.systemBackground))
-        .shadow(color: .black.opacity(0.1), radius: 1, x: 0, y: -1)
-        
-    }
-    
     
     private var dateRangeText: String {
         let formatter = Date.FormatStyle()

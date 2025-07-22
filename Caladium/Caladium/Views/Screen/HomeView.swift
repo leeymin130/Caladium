@@ -22,28 +22,17 @@ struct HomeView: View {
     }
     
     var body: some View {
+        ZStack(alignment: .leading){
+            Image(vm.currentCategory.background)
+                .resizable()
+                .scaledToFit()
+                .ignoresSafeArea()
         VStack(spacing: 0) {
             // Header with category navigation
             if case .normal = vm.editMode {
                 categoryHeader
             }
-            
-            projectsGrid
-                .alert(isPresented: $vm.isShowingDeleteAlert) {
-                    /// ALERT CONTENT
-                    DeleteConfirmPopup {
-                        vm.isShowingDeleteAlert = false
-                    } confirmButtonAction: {
-                        // TODO: 선택한 프로젝트들 삭제 로직 호출
-                        vm.deleteSelectedProjects()
-                    }
-                    .padding(.horizontal)
-
-                } background: {
-                    /// BACKGROUND
-                    Rectangle()
-                        .fill(.primary.opacity(0.35))
-                }
+                projectsGrid
                 .alert(isPresented: $vm.isShowingMoveAlert) {
                     /// ALERT CONTENT
                     CategoryChangePopup(selectedCategory: vm.currentCategory, cancelButtonAction: {
@@ -67,23 +56,32 @@ struct HomeView: View {
                 vm.addMockData()
             } label: {
                 Text("Mock Data Add")
-
             }
-            .padding()
-
-            
-            bottomToolbar
+                .padding()
+                
+                //                bottomToolbar
+                BottomToolbar(
+                    homeEditMode: vm.editMode,
+                    style: .home,
+                    hasItems: !projects.isEmpty,
+                    onDeleteStart: vm.startDeleteMode,
+                    onMoveStart: vm.startMoveMode,
+                    onCancel: vm.exitEditMode,
+                    onDeleteConfirm: { vm.isShowingDeleteAlert = true },
+                    onMoveConfirm: { vm.isShowingMoveAlert = true }
+                )
+            }         
+            .navigationTitle("") // 빈 문자열로 설정
+            .ignoresSafeArea(.container, edges: .bottom)
         }
-        .navigationTitle("") // 빈 문자열로 설정
+        
     }
     
     // MARK: - Category Header
     private var categoryHeader: some View {
         HStack {
             Button(action: vm.previousCategory) {
-                Image(systemName: "chevron.left")
-                    .font(.title2)
-                    .foregroundColor(.green)
+                Image("btn-left")
                     .padding()
             }
             
@@ -91,16 +89,7 @@ struct HomeView: View {
             
             VStack {
                 // Category dots indicator
-                HStack(spacing: 8) {
-                    ForEach(Category.allCases, id: \.self) { category in
-                        Circle()
-                            .fill(category == vm.currentCategory ? Color.green : Color.gray.opacity(0.3))
-                            .frame(
-                                width: category == vm.currentCategory ? 10 : 8,
-                                height: category == vm.currentCategory ? 10 : 8)
-                    }
-                }
-                
+                Image(vm.currentCategory.icon)
                 
                 Text(vm.currentCategory.displayName)
                     .font(.headline)
@@ -110,9 +99,7 @@ struct HomeView: View {
             Spacer()
             
             Button(action: vm.nextCategory) {
-                Image(systemName: "chevron.right")
-                    .font(.title2)
-                    .foregroundColor(.green)
+                Image("btn-right")
                     .padding()
             }
         }
@@ -135,6 +122,7 @@ struct HomeView: View {
             
             LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: 24), count: 3), spacing: 12) {
                 // Add new project button (always first)
+                // newProjectButton
                 ProjectAddButton(isEnabled: !vm.isEditMode) {
                     vm.startNewProject()
                 }
@@ -195,109 +183,82 @@ struct HomeView: View {
     
     // MARK: - Bottom Toolbar
     private var bottomToolbar: some View {
-        HStack {
+        VStack(spacing: 0) {
+            Rectangle()
+                .fill(Color.green500)
+                .frame(height: 5)
+                .frame(maxWidth: .infinity)
             
-            switch vm.editMode {
-            case .normal:
-                Button {
-                    vm.startDeleteMode()
-                } label: {
-                    VStack {
-                        Image(systemName: "trash")
-                            .font(.title2)
-                        Text("지우기")
-                            .font(.caption)
+            HStack {
+                switch vm.editMode {
+                case .normal:
+                    Button {
+                        vm.startDeleteMode()
+                    } label: {
+                        Image("btn-delete-0")
                     }
-                    .foregroundColor(.red)
-                }
-                .disabled(projects.isEmpty)
-                
-                Spacer()
-                
-                Button {
-                    vm.startMoveMode()
-                } label: {
-                    VStack {
-                        Image(systemName: "folder")
-                            .font(.title2)
-                        Text("옮기기")
-                            .font(.caption)
+                    .disabled(projects.isEmpty)
+                    
+                    Spacer()
+                    
+                    Button {
+                        vm.startMoveMode()
+                    } label: {
+                        Image("btn-move-0")
                     }
-                }
-                .disabled(projects.isEmpty)
-
-            case .delete(_):
-                Button {
-                    vm.exitEditMode()
-                } label: {
-                    VStack{
-                        Image(systemName: "xmark")
-                            .font(.title2)
-                        Text("취소")
-                            .font(.caption)
+                    .disabled(projects.isEmpty)
+                    
+                case .delete(_):
+                    Button {
+                        vm.exitEditMode()
+                    } label: {
+                        Image("btn-cancel-0")
                     }
-                }
-                
-                Spacer()
-                
-                if vm.selectedProjectsCount > 0 {
-                    Text("\(vm.selectedProjectsCount)개 선택됨")
-                        .font(.caption)
-                        .foregroundColor(.secondary)
-                }
-                
-                Spacer()
-                
-                Button {
-                    vm.isShowingDeleteAlert = true
-                } label: {
-                    VStack{
-                        Image(systemName: "checkmark")
-                            .font(.title2)
-                        Text("확인")
+                    
+                    Spacer()
+                    
+                    if vm.selectedProjectsCount > 0 {
+                        Text("\(vm.selectedProjectsCount)개 선택됨")
                             .font(.caption)
+                            .foregroundColor(.secondary)
                     }
-                }
-
-            case .move(_):
-                Button {
-                    vm.exitEditMode()
-                } label: {
-                    VStack{
-                        Image(systemName: "xmark")
-                            .font(.title2)
-                        Text("취소")
+                    
+                    Spacer()
+                    
+                    Button {
+                        vm.isShowingDeleteAlert = true
+                        // TODO: 선택한 프로젝트들 삭제 로직 호출
+                    } label: {
+                        Image("btn-select-0")
+                    }
+                    
+                case .move(_):
+                    Button {
+                        vm.exitEditMode()
+                    } label: {
+                        Image("btn-cancel-0")
+                    }
+                    
+                    Spacer()
+                    
+                    if vm.selectedProjectsCount > 0 {
+                        Text("\(vm.selectedProjectsCount)개 선택됨")
                             .font(.caption)
+                            .foregroundColor(.secondary)
+                    }
+                    
+                    Spacer()
+                    
+                    Button {
+                        vm.isShowingMoveAlert = true
+                    } label: {
+                        Image("btn-select-0")
                     }
                 }
                 
-                Spacer()
-                
-                if vm.selectedProjectsCount > 0 {
-                    Text("\(vm.selectedProjectsCount)개 선택됨")
-                        .font(.caption)
-                        .foregroundColor(.secondary)
-                }
-                
-                Spacer()
-                
-                Button {
-                    vm.isShowingMoveAlert = true
-                } label: {
-                    VStack{
-                        Image(systemName: "checkmark")
-                            .font(.title2)
-                        Text("확인")
-                            .font(.caption)
-                    }
-                }
             }
-            
+            .background(Color.gray0)
         }
-        .padding(.horizontal, 40)
-        .padding(.vertical, 16)
-        .background(Color(.systemBackground))
-        .shadow(color: .black.opacity(0.1), radius: 1, x: 0, y: -1)
         
     }
 }
@@ -306,4 +267,3 @@ struct HomeView: View {
     HomeView(vm: HomeViewModel(coordinator: AppCoordinator(), coreDataService: CoreDataService()))
         .environment(\.managedObjectContext, CoreDataManager.preview.mainContext)
 }
-
