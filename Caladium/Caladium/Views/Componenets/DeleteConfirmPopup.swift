@@ -8,6 +8,9 @@
 import SwiftUI
 
 struct DeleteConfirmPopup: View {
+    let cancelButtonAction: () -> Void
+    let confirmButtonAction: () -> Void
+    
     var body: some View {
         VStack(alignment: .center, spacing: 20) {
             // 제목 헤더
@@ -18,7 +21,10 @@ struct DeleteConfirmPopup: View {
                     .font(.system(size: 16, weight: .bold))
                     .foregroundStyle(Color.gray900)
                     .padding(.bottom, 8)
-                Text("삭제하면 식물과 관련된 모든 정보가 완전히 사라지며, 되돌릴 수 없습니다.")
+                Text("삭제하면 식물과 관련된 모든 정보가 완전히 사라지며,")
+                    .font(.system(size: 12))
+                    .foregroundStyle(Color.gray500)
+                Text("되돌릴 수 없습니다.")
                     .font(.system(size: 12))
                     .foregroundStyle(Color.gray500)
             }
@@ -57,7 +63,7 @@ struct DeleteConfirmPopup: View {
                 backgroundColor: .gray200,
                 borderColor: .gray300,
                 action: {
-                    print("취소")
+                    cancelButtonAction()
                 }
             )
             
@@ -66,7 +72,7 @@ struct DeleteConfirmPopup: View {
                 backgroundColor: .pink300,
                 borderColor: .pink600,
                 action: {
-                    print("확인")
+                    confirmButtonAction()
                 }
             )
         }
@@ -74,6 +80,6 @@ struct DeleteConfirmPopup: View {
 }
 
 #Preview {
-    DeleteConfirmPopup()
-        .padding()
+    DeleteConfirmPopup(cancelButtonAction: {}, confirmButtonAction: {})
+    .padding()
 }

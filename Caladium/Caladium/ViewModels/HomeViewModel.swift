@@ -11,14 +11,16 @@ final class HomeViewModel: ObservableObject {
     
     @Published var currentCategory: Category
     @Published var editMode: HomeEditMode = .normal
+    @Published var isShowingDeleteAlert: Bool = false
+    @Published var isShowingMoveAlert: Bool = false
     
     private let coordinator: AppCoordinator
     private let coreDataService: CoreDataService
     
-    init(coordinator: AppCoordinator) {
+    init(coordinator: AppCoordinator, coreDataService: CoreDataService) {
         self.coordinator = coordinator
         self.currentCategory = coordinator.currentCategory
-        self.coreDataService = CoreDataService()
+        self.coreDataService = coreDataService
     }
     
     // MARK: - Category Navigation
@@ -104,34 +106,31 @@ final class HomeViewModel: ObservableObject {
     func deleteSelectedProjects() {
         guard case .delete(let projects) = editMode else { return }
         
-        // Coordinator를 통해 Alert 표시 및 삭제 처리
-//        coordinator.showDeleteConfirmAlert(count: projects.count) {
-//            // 실제 삭제 로직 수행
-//            self.performDelete(projects: projects)
-//            self.exitEditMode()
-//        }
+        performDelete(projects: projects)
+        exitEditMode()
+        self.isShowingDeleteAlert = false
     }
     
-    func moveSelectedProjects() {
+    func moveSelectedProjects(to tagetCategory: Category) {
         guard case .move(let projects) = editMode else { return }
         
-        // Coordinator를 통해 카테고리 선택 Alert 표시
-//        coordinator.showMoveCategoryAlert(projects: projects) { category in
-//            // 실제 이동 로직 수행
-//            self.performMove(projects: projects, to: category)
-//            self.exitEditMode()
-//        }
+        performMove(projects: projects, to: tagetCategory)
+        exitEditMode()
+        self.isShowingMoveAlert = false
     }
     
     // MARK: - Private Methods
     private func performDelete(projects: Set<Project>) {
-        // CoreData 삭제 로직
-        // TODO: 실제 Core Data 삭제 구현 / CoreDataService 주입
+        for project in projects {
+            coreDataService.deleteProject(project)
+        }
+ 
     }
     
     private func performMove(projects: Set<Project>, to category: Category) {
-        // CoreData 카테고리 이동 로직
-        // TODO: 실제 Core Data 업데이트 구현 / CoreDataService 주입 
+        for project in projects {
+            coreDataService.moveCategory(project, to: category)
+        }
     }
     
     var isEditMode: Bool {

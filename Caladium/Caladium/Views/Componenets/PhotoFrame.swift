@@ -8,19 +8,13 @@
 import SwiftUI
 
 struct PhotoFrame: View {
-    let photo: Photo?
-        let previewImage: UIImage?
-    @State private var loadedImage: UIImage?
-    @State private var isImageLoading = true
+    let photo: Photo
     
-    // CoreDataService 인스턴스
-    private let coreDataService = CoreDataService()
-    
-    // 날짜 포맷터
     private let dateFormatter: DateFormatter = {
         let formatter = DateFormatter()
-        formatter.dateFormat = "yyyy년 M월 d일"
-        formatter.locale = Locale(identifier: "ko_KR")
+        formatter.dateStyle = .long
+        formatter.timeStyle = .none
+        formatter.locale = Locale.current // 시스템 현재 언어 설정 사용
         return formatter
     }()
     
@@ -40,8 +34,9 @@ struct PhotoFrame: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
             // 사진 표시 영역
-            photoImageView
+            AsyncPhotoImage(photo: photo, ContentMode: .fit)
                 .cornerRadius(5)
+                .frame(maxWidth: 320, maxHeight: 420)
             
             // 사진 촬영 날짜
             Text(formatDate(photo?.capturedDate ?? Date()))
@@ -59,74 +54,12 @@ struct PhotoFrame: View {
                 .inset(by: 0.5)
                 .stroke(Color.gray400, lineWidth: 1)
         )
-        .onAppear {
-            loadImage()
-        }
-    }
-    
-    // MARK: - Views
-    
-    @ViewBuilder
-    private var photoImageView: some View {
-        if isImageLoading {
-            // 로딩 상태
-            Rectangle()
-                .foregroundColor(.gray200)
-                .frame(width: 321, height: 423)
-                .overlay(
-                    ProgressView()
-                        .progressViewStyle(CircularProgressViewStyle(tint: .gray600))
-                )
-        } else if let image = loadedImage {
-            // 이미지 로드 성공
-            Image(uiImage: image)
-                .resizable()
-                .aspectRatio(contentMode: .fill)
-                .frame(width: 321, height: 423)
-                .clipped()
-        } else {
-            // 이미지 로드 실패 - 플레이스홀더
-            Rectangle()
-                .foregroundColor(.gray300)
-                .frame(width: 321, height: 423)
-                .overlay(
-                    VStack(spacing: 8) {
-                        Image(systemName: "photo")
-                            .font(.system(size: 50))
-                            .foregroundColor(.gray600)
-                        Text("이미지를 불러올 수 없습니다")
-                            .font(.caption)
-                            .foregroundColor(.gray600)
-                    }
-                )
-        }
-    }
-    
-    // MARK: - Methods
-    
-    /// 이미지 비동기 로딩
-    private func loadImage() {
-           guard let photo = photo,
-                 let fileName = photo.fileName else {
-               self.isImageLoading = false
-               return
-           }
         
-        // 백그라운드에서 이미지 로딩
-        DispatchQueue.global(qos: .userInitiated).async {
-            let image = coreDataService.loadImageFromFile(fileName: fileName)
-            
-            DispatchQueue.main.async {
-                self.loadedImage = image
-                self.isImageLoading = false
-            }
-        }
     }
     
-    /// 날짜 포맷 함수
     private func formatDate(_ date: Date?) -> String {
         guard let date = date else {
-            return "날짜 정보 없음"
+            return NSLocalizedString("date_info_unavailable", value: "날짜 정보 없음", comment: "날짜 정보가 없을 때 표시되는 메시지")
         }
         return dateFormatter.string(from: date)
     }

@@ -19,9 +19,6 @@ final class AppCoordinator: ObservableObject {
     @AppStorage("onboarding_completed") var isOnboardingComplete: Bool = false
     @AppStorage("last_selected_category") var currentCategory: Category = .garden
     
-    // Alert States
-    @Published var showingAlert: AlertType?
-    
     // MARK: - Navigation Methods
     func navigate(to route: AppRoute) {
         path.append(route)
@@ -69,13 +66,11 @@ final class AppCoordinator: ObservableObject {
         switch context {
         case .newProject:
             // 새 프로젝트 생성 후 홈으로
-            createNewProject(with: image)
             dismissFullScreen()
             popToRoot()
             
         case .existingProject(let project):
             // 기존 프로젝트에 사진 추가 후 프로젝트 상세로
-            addPhoto(image, to: project)
             dismissFullScreen()
         }
     }
@@ -101,39 +96,5 @@ final class AppCoordinator: ObservableObject {
     
     func completeVideoGeneration() {
         dismissSheet()
-    }
-    
-    // MARK: - Alert 관리
-    func showAlert(_ alertType: AlertType) {
-        showingAlert = alertType
-    }
-    
-    func dismissAlert() {
-        showingAlert = nil
-    }
-    
-    // MARK: - Private Helper Methods
-    private func createNewProject(with image: UIImage) {
-        // CoreData 새 프로젝트 생성 로직
-    }
-    
-    private func addPhoto(_ image: UIImage, to project: Project) {
-        // CoreData 사진 추가 로직
-    }
-    
-}
-
-enum AlertType: Identifiable {
-    case cameraEnvironmentCheck(onConfirm: () -> Void, onCancel: () -> Void)
-    case confirmDelete(count: Int, onConfirm: () -> Void)
-    case selectMoveCategory(projects: Set<Project>, onSelect: (
-    Category) -> Void)
-    
-    var id: String {
-        switch self {
-        case .cameraEnvironmentCheck: return "camera_check"
-        case .confirmDelete: return "confirm_delete"
-        case .selectMoveCategory: return "select_category"
-        }
     }
 }

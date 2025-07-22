@@ -41,4 +41,15 @@ public class Project: NSManagedObject {
         return photos?.count ?? 0
     }
     
+    // 가장 최근의 Photo 가져오기
+    var latestPhoto: Photo? {
+        guard let photos = photos as? Set<Photo> else { return nil }
+        return photos.max { photo1, photo2 in
+            guard let date1 = photo1.capturedDate,
+                  let date2 = photo2.capturedDate else {
+                return false
+            }
+            return date1 < date2
+        }
+    }
 }
