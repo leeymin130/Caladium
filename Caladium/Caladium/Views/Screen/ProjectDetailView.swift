@@ -72,11 +72,13 @@ struct ProjectDetailView: View {
                 onCancel: vm.exitEditMode,
                 onDeleteConfirm: {
                     // TODO: 선택한 사진들 삭제 로직 호출
+                    vm.isShowingDeleteAlert = true
                 },
                 onMoveConfirm: {}, // ProjectDetail에서는 사용하지 않음
                 onVideoStart: vm.startVideoMode,
                 onVideoConfirm: {
                     // TODO: 비디오 만들기 로직 호출
+                    vm.isShowingFormatSelectAlert = true
                 }
             )
         }

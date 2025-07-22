@@ -27,36 +27,49 @@ struct HomeView: View {
                 .resizable()
                 .scaledToFit()
                 .ignoresSafeArea()
-        VStack(spacing: 0) {
-            // Header with category navigation
-            if case .normal = vm.editMode {
-                categoryHeader
-            }
-                projectsGrid
-                .alert(isPresented: $vm.isShowingMoveAlert) {
-                    /// ALERT CONTENT
-                    CategoryChangePopup(selectedCategory: vm.currentCategory, cancelButtonAction: {
-                        vm.isShowingMoveAlert = false
-                    }, confirmButtonAction: { selectedCategory in
-                        // TODO: 선택한 프로젝트들 옮기기 로직 호출
-                        vm.moveSelectedProjects(to: selectedCategory)
-                    })
-                    .padding(.horizontal)
-
-                } background: {
-                    /// BACKGROUND
-                    Rectangle()
-                        .fill(.primary.opacity(0.35))
+            VStack(spacing: 0) {
+                // Header with category navigation
+                if case .normal = vm.editMode {
+                    categoryHeader
                 }
-            
-            
-            Spacer()
-            
-            Button {
-                vm.addMockData()
-            } label: {
-                Text("Mock Data Add")
-            }
+                projectsGrid
+                    .alert(isPresented: $vm.isShowingMoveAlert) {
+                        /// ALERT CONTENT
+                        CategoryChangePopup(selectedCategory: vm.currentCategory, cancelButtonAction: {
+                            vm.isShowingMoveAlert = false
+                        }, confirmButtonAction: { selectedCategory in
+                            vm.moveSelectedProjects(to: selectedCategory)
+                        })
+                        .padding(.horizontal)
+                        
+                    } background: {
+                        /// BACKGROUND
+                        Rectangle()
+                            .fill(.primary.opacity(0.35))
+                    }
+                    .alert(isPresented: $vm.isShowingDeleteAlert) {
+                        /// ALERT CONTENT
+                        DeleteConfirmPopup {
+                            vm.isShowingDeleteAlert = false
+                        } confirmButtonAction: {
+                            vm.deleteSelectedProjects()
+                        }
+                        .padding(.horizontal)
+
+                        
+                    } background: {
+                        /// BACKGROUND
+                        Rectangle()
+                            .fill(.primary.opacity(0.35))
+                    }
+                
+                Spacer()
+                
+                Button {
+                    vm.addMockData()
+                } label: {
+                    Text("Mock Data Add")
+                }
                 .padding()
                 
                 //                bottomToolbar
@@ -70,7 +83,7 @@ struct HomeView: View {
                     onDeleteConfirm: { vm.isShowingDeleteAlert = true },
                     onMoveConfirm: { vm.isShowingMoveAlert = true }
                 )
-            }         
+            }
             .navigationTitle("") // 빈 문자열로 설정
             .ignoresSafeArea(.container, edges: .bottom)
         }
@@ -143,8 +156,8 @@ struct HomeView: View {
             Text(text)
                 .font(.system(size: 24, weight: .semibold))
                 .lineSpacing(8)
-
-            }
+            
+        }
         .frame(maxWidth: .infinity, alignment: .leading)
         .padding(.horizontal, 24)
         .padding(.top, 63)
