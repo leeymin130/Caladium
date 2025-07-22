@@ -10,7 +10,7 @@ import RiveRuntime
 
 struct RiveViewSample: View {
     var body: some View {
-        RiveViewModel(fileName: "loading").view()
+        RiveViewModel(fileName: "loading_jegeo").view()
             
     }
 }
