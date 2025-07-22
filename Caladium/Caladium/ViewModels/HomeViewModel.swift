@@ -17,10 +17,10 @@ final class HomeViewModel: ObservableObject {
     private let coordinator: AppCoordinator
     private let coreDataService: CoreDataService
     
-    init(coordinator: AppCoordinator) {
+    init(coordinator: AppCoordinator, coreDataService: CoreDataService) {
         self.coordinator = coordinator
         self.currentCategory = coordinator.currentCategory
-        self.coreDataService = CoreDataService()
+        self.coreDataService = coreDataService
     }
     
     // MARK: - Category Navigation
@@ -106,24 +106,31 @@ final class HomeViewModel: ObservableObject {
     func deleteSelectedProjects() {
         guard case .delete(let projects) = editMode else { return }
         
+        performDelete(projects: projects)
+        exitEditMode()
         self.isShowingDeleteAlert = false
     }
     
-    func moveSelectedProjects() {
+    func moveSelectedProjects(to tagetCategory: Category) {
         guard case .move(let projects) = editMode else { return }
         
+        performMove(projects: projects, to: tagetCategory)
+        exitEditMode()
         self.isShowingMoveAlert = false
     }
     
     // MARK: - Private Methods
     private func performDelete(projects: Set<Project>) {
-        // CoreData 삭제 로직
-        // TODO: 실제 Core Data 삭제 구현 / CoreDataService 주입
+        for project in projects {
+            coreDataService.deleteProject(project)
+        }
+ 
     }
     
     private func performMove(projects: Set<Project>, to category: Category) {
-        // CoreData 카테고리 이동 로직
-        // TODO: 실제 Core Data 업데이트 구현 / CoreDataService 주입 
+        for project in projects {
+            coreDataService.moveCategory(project, to: category)
+        }
     }
     
     var isEditMode: Bool {
