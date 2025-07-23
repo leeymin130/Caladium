@@ -49,6 +49,8 @@ final class AppCoordinator: ObservableObject {
     
     func dismissFullScreen() {
         presentedFullScreen = nil
+        // 카메라 풀스크린 닫을 때 카메라 내부 네비게이션도 초기화
+        cameraPath = NavigationPath()
     }
     
     // MARK: - 카테고리 변경
@@ -61,7 +63,20 @@ final class AppCoordinator: ObservableObject {
         isOnboardingComplete = true  // @AppStorage가 자동으로 저장
     }
     
-    // MARK: - 촬영 플로우
+    // MARK: - 촬영 플로우 (카메라 내부 네비게이션)
+    @Published var cameraPath = NavigationPath()
+    
+    func pushToPhotoConfirm(_ image: UIImage, context: CameraContext) {
+        // 카메라 내부 네비게이션 스택에 PhotoConfirm 추가
+        cameraPath.append(AppRoute.photoConfirm(image, context))
+    }
+    
+    func popCameraView() {
+        if !cameraPath.isEmpty {
+            cameraPath.removeLast()
+        }
+    }
+    
     func confirmPhoto(_ image: UIImage, context: CameraContext) {
         switch context {
         case .newProject:
@@ -76,7 +91,7 @@ final class AppCoordinator: ObservableObject {
     }
     
     func retakePhoto() {
-        goBack()  // 촬영 화면으로 돌아가기
+        popCameraView()  // 카메라 내부 네비게이션에서 뒤로가기
     }
     
     // MARK: - 프로젝트 상세 액션들

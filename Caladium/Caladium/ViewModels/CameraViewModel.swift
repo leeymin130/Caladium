@@ -53,12 +53,12 @@ final class CameraViewModel: ObservableObject {
         print("이미지 처리 시작")
         self.overlayImage = image
         
-//        if let context = currentContext {
-//            print("네비게이션 실행")
-//            coordinator.presentFullScreen(.photoConfirm(image, context))
-//        } else {
-//            print("context가 nil")
-//        }
+        if let context = currentContext {
+            print("네비게이션 실행")
+            coordinator.pushToPhotoConfirm(image, context: context)
+        } else {
+            print("context가 nil")
+        }
     }
     
     func switchOverlay() {

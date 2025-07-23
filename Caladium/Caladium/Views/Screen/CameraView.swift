@@ -11,41 +11,59 @@ import AVFoundation
 // MARK: - Camera View
 struct CameraView: View {
     @StateObject private var vm: CameraViewModel
+    @ObservedObject var coordinator: AppCoordinator
     let context: CameraContext
     
-    init(vm: CameraViewModel, context: CameraContext) {
+    init(vm: CameraViewModel, coordinator: AppCoordinator, context: CameraContext) {
         self._vm = StateObject(wrappedValue: vm)
+        self.coordinator = coordinator
         self.context = context
     }
     
     var body: some View {
-        ZStack {
-            // 메인 카메라 화면
-            mainCameraView
-            
-            // 커스텀 팝업 오버레이
-            if vm.isShowingAlert {
-                Color.black.opacity(0.4)
-                    .ignoresSafeArea()
+        NavigationStack(path: $coordinator.cameraPath) {
+            ZStack {
+                // 메인 카메라 화면
+                mainCameraView
                 
-                CameraPopup(
-                    cancelButtonAction: {
-                        vm.cancelAlert()
-                    },
-                    confirmButtonAction: {
-                        vm.confirmAlert()
-                    }
-                )
-                .padding(.horizontal, 20)
+                // 커스텀 팝업 오버레이
+                if vm.isShowingAlert {
+                    Color.black.opacity(0.4)
+                        .ignoresSafeArea()
+                    
+                    CameraPopup(
+                        cancelButtonAction: {
+                            vm.cancelAlert()
+                        },
+                        confirmButtonAction: {
+                            vm.confirmAlert()
+                        }
+                    )
+                    .padding(.horizontal, 20)
+                }
+            }
+            .foregroundColor(.gray0)
+            .background(Color.gray900)
+            .navigationBarHidden(true)
+            .navigationDestination(for: AppRoute.self) { route in
+                destinationView(for: route)
+            }
+            .onAppear {
+                print("🔥 onAppear 호출됨")
+                vm.setContext(context)
+                vm.cameraService.requestCameraPermission()
             }
         }
-        .foregroundColor(.gray0)
-        .background(Color.gray900)
-        .navigationBarHidden(true)
-        .onAppear {
-            print("🔥 onAppear 호출됨")
-            vm.setContext(context)
-            vm.cameraService.requestCameraPermission()
+    }
+    
+    @ViewBuilder
+    private func destinationView(for route: AppRoute) -> some View {
+        switch route {
+        case .photoConfirm(let image, let context):
+            PhotoConfirmView(image: image, vm: vm, context: context)
+                .environmentObject(coordinator)
+        default:
+            EmptyView()
         }
     }
     
@@ -153,5 +171,5 @@ struct CameraView: View {
 }
 
 #Preview {
-    CameraView(vm: CameraViewModel(coordinator: AppCoordinator()), context: .newProject)
+    CameraView(vm: CameraViewModel(coordinator: AppCoordinator()), coordinator: AppCoordinator(), context: .newProject)
 }
