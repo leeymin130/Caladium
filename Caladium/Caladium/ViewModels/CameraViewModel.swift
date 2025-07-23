@@ -15,6 +15,7 @@ final class CameraViewModel: ObservableObject {
     
     @Published var isOverlayOn = false
     @Published var overlayImage: UIImage?
+    @Published var isShowingAlert: Bool = true
     
     private var currentContext: CameraContext?
     private var cancellables = Set<AnyCancellable>()
@@ -64,5 +65,17 @@ final class CameraViewModel: ObservableObject {
         print("오버레이")
         isOverlayOn.toggle()
     }
+    
+    // 팝업 확인 버튼 액션
+        func confirmAlert() {
+            isShowingAlert = false
+        }
+        
+        // 팝업 취소 버튼 액션
+        func cancelAlert() {
+            isShowingAlert = false
+            // 취소시 이전 화면으로 돌아가기
+            coordinator.dismissFullScreen()
+        }
     
 }

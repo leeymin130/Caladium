@@ -19,6 +19,38 @@ struct CameraView: View {
     }
     
     var body: some View {
+        ZStack {
+            // 메인 카메라 화면
+            mainCameraView
+            
+            // 커스텀 팝업 오버레이
+            if vm.isShowingAlert {
+                Color.black.opacity(0.4)
+                    .ignoresSafeArea()
+                
+                CameraPopup(
+                    cancelButtonAction: {
+                        vm.cancelAlert()
+                    },
+                    confirmButtonAction: {
+                        vm.confirmAlert()
+                    }
+                )
+                .padding(.horizontal, 20)
+            }
+        }
+        .foregroundColor(.gray0)
+        .background(Color.gray900)
+        .navigationBarHidden(true)
+        .onAppear {
+            print("🔥 onAppear 호출됨")
+            vm.setContext(context)
+            vm.cameraService.requestCameraPermission()
+        }
+    }
+    
+    // MARK: - 메인 카메라 뷰
+    private var mainCameraView: some View {
         VStack(spacing: 0) {
             // 상단 툴바 영역
             HStack {
@@ -63,7 +95,6 @@ struct CameraView: View {
                     Rectangle()
                         .fill(Color.clear)
                         .frame(width: 75, height: 78)
-                    
                 }
                 
                 // 촬영 버튼
@@ -113,25 +144,13 @@ struct CameraView: View {
                 }
                 
                 Spacer()
-                
             }
             .padding(.top, 54)
-            .padding(.bottom, 20) // 하단 패딩값 확인
+            .padding(.bottom, 20)
             .background(Color.gray900)
-            
         }
-        .foregroundColor(.gray0)
-        .background(Color.gray900)
-        .navigationBarHidden(true)
-        .onAppear {
-            print("🔥 onAppear 호출됨")
-            vm.setContext(context)
-            vm.cameraService.requestCameraPermission()
-        }
-        
     }
 }
-
 
 #Preview {
     CameraView(vm: CameraViewModel(coordinator: AppCoordinator()), context: .newProject)
