@@ -52,7 +52,7 @@ struct PhotoConfirmView: View {
                 
                 
                 // 촬영된 이미지
-                PhotoFrame(image: image)
+//                PhotoFrame(image: image)
 //                Image(uiImage: image)
 //                    .resizable()
 //                    .aspectRatio(4/3, contentMode: .fit)

@@ -31,6 +31,7 @@ struct CameraViewController: UIViewControllerRepresentable {
     // UIViewController 업데이트
     func updateUIViewController(_ uiViewController: UIViewController, context: Context) {
         // SwiftUI 상태 변경 시 호출
+        cameraService.previewLayer.frame = uiViewController.view.bounds
     }
     
 }

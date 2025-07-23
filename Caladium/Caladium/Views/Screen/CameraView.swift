@@ -121,6 +121,7 @@ struct CameraView: View {
             
         }
         .foregroundColor(.gray0)
+        .background(Color.gray900)
         .navigationBarHidden(true)
         .onAppear {
             print("🔥 onAppear 호출됨")

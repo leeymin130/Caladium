@@ -16,7 +16,7 @@ class CameraService: NSObject, ObservableObject {
     // Preview Layer 생성
     lazy var previewLayer: AVCaptureVideoPreviewLayer = {
         let layer = AVCaptureVideoPreviewLayer(session: captureSession)
-        layer.videoGravity = .resizeAspectFill  // 설정 한 번만
+        layer.videoGravity = .resizeAspect  // 설정 한 번만
         return layer
     }()
     // 첫 번째 호출 시에만 생성, 이후엔 같은 객체 재사용
@@ -52,6 +52,11 @@ class CameraService: NSObject, ObservableObject {
     func setupCamera() {
         print("🎬 setupCamera 호출됨")
         captureSession.beginConfiguration() // 설정 시작
+        
+        // 여기에 추가: 세션 프리셋 설정
+        if captureSession.canSetSessionPreset(.photo) {
+            captureSession.sessionPreset = .photo
+           }
         
         // Input 설정
         // 후면 카메라 찾기

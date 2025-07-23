@@ -18,19 +18,6 @@ struct PhotoFrame: View {
         return formatter
     }()
     
-    // 기존 Photo 이니셜라이저
-    init(photo: Photo) {
-        self.photo = photo
-        self.previewImage = nil
-    }
-    
-    // UIImage용 이니셜라이저
-    init(image: UIImage) {
-        self.photo = nil
-        self.previewImage = image
-    }
-
-    
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
             // 사진 표시 영역
@@ -39,7 +26,7 @@ struct PhotoFrame: View {
                 .frame(maxWidth: 320, maxHeight: 420)
             
             // 사진 촬영 날짜
-            Text(formatDate(photo?.capturedDate ?? Date()))
+            Text(formatDate(photo.capturedDate))
                 .fontWeight(.semibold)
                 .foregroundColor(.gray900)
         }
