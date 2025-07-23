@@ -13,6 +13,7 @@ struct PhotoConfirmView: View {
     let context: CameraContext
     @EnvironmentObject var coordinator: AppCoordinator
     @ObservedObject private var vm: CameraViewModel
+    @State private var isButtonPressed = false
     
     init(image: UIImage, vm: CameraViewModel, context: CameraContext) {
         self.image = image
@@ -102,8 +103,12 @@ struct PhotoConfirmView: View {
                 Button {
                     coordinator.confirmPhoto(image, context: context)
                 } label: {
-                    Image("btn-select-0")
+                    Image(isButtonPressed ? "btn-select-1" : "btn-select-0")
                 }
+                .buttonStyle(PlainButtonStyle())
+                .onLongPressGesture(minimumDuration: 0, maximumDistance: .infinity, pressing: { pressing in
+                                    isButtonPressed = pressing
+                                }, perform: {})
 
             }
             .background(Color.gray0)
