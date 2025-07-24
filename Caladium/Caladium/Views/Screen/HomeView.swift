@@ -100,13 +100,15 @@ struct HomeView: View {
             
             Spacer()
             
-            VStack {
+            VStack(spacing: 0) {
                 // Category dots indicator
                 Image(vm.currentCategory.icon)
                 
                 Text(vm.currentCategory.displayName)
-                    .font(.headline)
+                    .customFont(.categoryTitle)
+                    .background(Color.red)
                     .padding(.top, 4)
+                    .background(Color.yellow)
             }
             
             Spacer()
