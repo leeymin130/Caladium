@@ -45,8 +45,7 @@ struct CategoryChangePopup: View {
     // MARK: - 제목 헤더
     private var titleHeader: some View {
         Text("카테고리 변경")
-            .font(.system(size: 16, weight: .bold))
-            .multilineTextAlignment(.center)
+            .customFont(.popupTitle)
             .foregroundColor(.gray0)
             .frame(maxWidth: .infinity)
             .frame(height: 44)
@@ -72,8 +71,8 @@ struct CategoryChangePopup: View {
                     .foregroundColor(.green700)
             }
             
-            Text("칼라디움의 \(selectedCategory.displayName)")
-                .font(.system(size: 16, weight: .bold))
+            Text("\(selectedCategory.displayName)")
+                .customFont(.popupCategory)
                 .foregroundColor(.gray900)
             
             Button(action: {

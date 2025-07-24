@@ -95,8 +95,8 @@ struct ProjectDetailView: View {
             if case .normal = vm.editMode {
                 ToolbarItem(placement: .principal) {
                     Text(dateRangeText)
-                        .font(.subheadline)
-                        .foregroundColor(.primary)
+                        .customFont(.photoDate)
+                        .foregroundColor(.gray900)
                 }
             }
         }
@@ -136,14 +136,14 @@ struct ProjectDetailView: View {
     
     // MARK: - Guide Banner
     private func guideBanner(text: String, guideText: String? = nil) -> some View {
-        VStack(alignment: .leading, spacing: 8) {
+        VStack(alignment: .leading, spacing: 0) {
             Text(text)
-                .font(.system(size: 24, weight: .semibold))
+                .customFont(.navigationBarTitle)
             
             if let guideText = guideText {
                 Text(guideText)
-                    .font(.system(size: 16, weight: .regular))
-                    .foregroundStyle(.secondary)
+                    .customFont(.categoryButtonBody)
+                    .foregroundStyle(.gray500)
             }
             
         }
@@ -182,9 +182,7 @@ struct ProjectDetailView: View {
 
     private var cameraButton: some View {
         HStack(alignment: .center,spacing: 18){
-            Image(systemName: "camera.fill")
-                .font(.system(size: 30, weight: .medium))
-                .foregroundColor(.white)
+            Image("camera")
                 .background{
                     Rectangle()
                         .fill(Color.green500)
@@ -193,13 +191,13 @@ struct ProjectDetailView: View {
                 }
                 .padding(.leading, 8)
             
-            VStack(spacing: 4){
+            VStack(spacing: 0){
                 Text("새로운 사진")
-                    .font(.caption)
-                    .foregroundStyle(.primary)
+                    .customFont(.categoryButtonTitle)
+                    .foregroundStyle(.gray900)
                 Text("촬영하기")
-                    .font(.caption2)
-                    .foregroundStyle(.secondary)
+                    .customFont(.categoryButtonBody)
+                    .foregroundStyle(.gray400)
             }
             .padding(.leading,10)
             

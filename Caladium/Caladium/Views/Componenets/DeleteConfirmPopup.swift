@@ -16,16 +16,16 @@ struct DeleteConfirmPopup: View {
             // 제목 헤더
             titleHeader
             
-            VStack(alignment: .center, spacing: 4){
+            VStack(alignment: .center, spacing: 0){
                 Text("정말로 이 식물을 삭제하시겠어요?")
-                    .font(.system(size: 16, weight: .bold))
+                    .customFont(.popupCategory)
                     .foregroundStyle(Color.gray900)
-                    .padding(.bottom, 8)
+                    .padding(.bottom, 4)
                 Text("삭제하면 식물과 관련된 모든 정보가 완전히 사라지며,")
-                    .font(.system(size: 12))
+                    .customFont(.categoryButtonBody)
                     .foregroundStyle(Color.gray500)
                 Text("되돌릴 수 없습니다.")
-                    .font(.system(size: 12))
+                    .customFont(.categoryButtonBody)
                     .foregroundStyle(Color.gray500)
             }
             .padding(.horizontal, 20)
@@ -46,8 +46,7 @@ struct DeleteConfirmPopup: View {
     // MARK: - 제목 헤더
     private var titleHeader: some View {
         Text("식물 삭제하기")
-            .font(.system(size: 16, weight: .bold))
-            .multilineTextAlignment(.center)
+            .customFont(.popupTitle)
             .foregroundColor(.gray0)
             .frame(maxWidth: .infinity)
             .frame(height: 44)

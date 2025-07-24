@@ -23,16 +23,16 @@ struct FormatSelectPopupView: View {
             titleHeader
             
             // 영상 포멧 선택 안내문구
-            VStack(alignment: .center, spacing: 4){
+            VStack(alignment: .center, spacing: 0){
                 Text("저장 방식을 선택해주세요")
-                    .font(.system(size: 16, weight: .bold))
+                    .customFont(.popupCategory)
                     .foregroundStyle(Color.gray900)
-                    .padding(.bottom, 8)
-                Text("GIF는 작은 용량으로 어디든 쉽게 공유할 수 있어요")
-                    .font(.system(size: 12))
+                    .padding(.bottom, 4)
+                Text("GIF는 작은 용량으로 어디든 쉽게 공유할 수 있어요.")
+                    .customFont(.categoryButtonBody)
                     .foregroundStyle(Color.gray500)
                 Text("MOV는 고화질로 오래 보관하기 좋아요.")
-                    .font(.system(size: 12))
+                    .customFont(.categoryButtonBody)
                     .foregroundStyle(Color.gray500)
             }
             .padding(.horizontal, 20)
@@ -54,8 +54,7 @@ struct FormatSelectPopupView: View {
     // MARK: - 제목 헤더
     private var titleHeader: some View {
         Text("영상 공유하기")
-            .font(.system(size: 16, weight: .bold))
-            .multilineTextAlignment(.center)
+            .customFont(.popupTitle)
             .foregroundColor(.gray0)
             .frame(maxWidth: .infinity)
             .frame(height: 44)

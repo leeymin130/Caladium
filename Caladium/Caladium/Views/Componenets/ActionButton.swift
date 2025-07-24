@@ -41,6 +41,7 @@ struct ActionButton: View {
             action()
         }) {
             Text(title)
+                .customFont(.categoryButtonTitle)
                 .padding(.horizontal, 20)
                 .padding(.vertical, 12)
                 .foregroundColor(determineTextColor())
