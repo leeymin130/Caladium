@@ -10,6 +10,7 @@ import SwiftUI
 final class AppCoordinator: ObservableObject {
     // Navigation Stack
     @Published var path = NavigationPath()
+    @Published var cameraPath = NavigationPath()
     
     // Modal Presentaion
     @Published var presentedSheet: AppRoute?
@@ -64,11 +65,11 @@ final class AppCoordinator: ObservableObject {
     }
     
     // MARK: - 촬영 플로우 (카메라 내부 네비게이션)
-    @Published var cameraPath = NavigationPath()
-    
     func pushToPhotoConfirm(_ image: UIImage, context: CameraContext) {
         // 카메라 내부 네비게이션 스택에 PhotoConfirm 추가
-        cameraPath.append(AppRoute.photoConfirm(image, context))
+        DispatchQueue.main.async {
+            self.cameraPath.append(AppRoute.photoConfirm(image, context))
+        }
     }
     
     func popCameraView() {
@@ -77,39 +78,9 @@ final class AppCoordinator: ObservableObject {
         }
     }
     
-    func confirmPhoto(_ image: UIImage, context: CameraContext) {
-        switch context {
-        case .newProject:
-            // 새 프로젝트 생성 후 홈으로
-            dismissFullScreen()
-            popToRoot()
-            
-        case .existingProject(let project):
-            // 기존 프로젝트에 사진 추가 후 프로젝트 상세로
-            dismissFullScreen()
-        }
-    }
-    
-    func retakePhoto() {
-        popCameraView()  // 카메라 내부 네비게이션에서 뒤로가기
-    }
-    
     // MARK: - 프로젝트 상세 액션들
     func addPhotoToProject(_ project: Project) {
         presentFullScreen(.camera(.existingProject(project)))
     }
     
-    func startVideoCreation(for project: Project) {
-        presentSheet(.videoPhotoSelection(project))
-    }
-    
-    // MARK: - 영상 만들기 플로우
-    func createVideoWithPhotos(_ photos: [Photo]) {
-        dismissSheet()  // 사진 선택 화면 닫기
-        presentSheet(.videoGeneration(photos))  // 영상 생성 화면 열기
-    }
-    
-    func completeVideoGeneration() {
-        dismissSheet()
-    }
 }

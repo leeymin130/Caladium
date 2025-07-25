@@ -14,7 +14,7 @@ struct PhotoFrame: View {
         let formatter = DateFormatter()
         formatter.dateStyle = .long
         formatter.timeStyle = .none
-        formatter.locale = Locale.current // 시스템 현재 언어 설정 사용
+        formatter.locale = Locale(identifier: "ko_KR")
         return formatter
     }()
     

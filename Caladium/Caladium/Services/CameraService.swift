@@ -7,6 +7,7 @@
 
 import AVFoundation
 import SwiftUI
+import Combine
 
 class CameraService: NSObject, ObservableObject {
     
@@ -20,10 +21,10 @@ class CameraService: NSObject, ObservableObject {
         return layer
     }()
     
-    @Published var capturedImage: UIImage?
     @Published var permissionGranted = false
     @Published var isSessionRunning = false
-    
+    let capturedImageSubject = PassthroughSubject<UIImage, Never>()
+
     // 세션 정리용 큐
     private let sessionQueue = DispatchQueue(label: "camera.session.queue")
     
@@ -172,8 +173,7 @@ class CameraService: NSObject, ObservableObject {
     // 촬영된 사진 처리
     private func handleCapturedPhoto(_ image: UIImage) {
         DispatchQueue.main.async {
-            self.capturedImage = image
-            print("📸 CameraService: capturedImage 설정됨 \(image.size)")
+            self.capturedImageSubject.send(image)
         }
     }
     
@@ -243,9 +243,6 @@ class CameraService: NSObject, ObservableObject {
         // 4. 입력/출력 정리
         captureSession.inputs.forEach { captureSession.removeInput($0) }
         captureSession.outputs.forEach { captureSession.removeOutput($0) }
-        
-        // 5. 메모리 해제
-        capturedImage = nil
         
         print("✅ CameraService deinit 완료")
     }

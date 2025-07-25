@@ -18,10 +18,6 @@ enum AppRoute: Hashable, Identifiable {
     case camera(CameraContext)
     case photoConfirm(UIImage, CameraContext)
     
-    // 영상 만들기 플로우
-    case videoPhotoSelection(Project)
-    case videoGeneration([Photo])
-    
     // 영상 완료 플로우
     case animationResult(
         data: Data?,
@@ -44,10 +40,6 @@ enum AppRoute: Hashable, Identifiable {
             return "camera_\(context.id)"
         case .photoConfirm(_, let context):
             return "photo_confirm_\(context.id)"
-        case .videoPhotoSelection(let project):
-            return "video_selection_\(project.id ?? UUID())"
-        case .videoGeneration(let photos):
-            return "video_generation_\(photos.count)"
         case .animationResult(_, _, let format, _, _):
             return "animation_result_\(format.rawValue)"
         }

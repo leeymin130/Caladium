@@ -9,16 +9,13 @@ import SwiftUI
 
 // MARK: - Photo Confirm View
 struct PhotoConfirmView: View {
-    let image: UIImage
-    let context: CameraContext
-    @EnvironmentObject var coordinator: AppCoordinator
-    @ObservedObject private var vm: CameraViewModel
+
+    @StateObject private var vm: PhotoConfirmViewModel
+    
     @State private var isButtonPressed = false
     
-    init(image: UIImage, vm: CameraViewModel, context: CameraContext) {
-        self.image = image
-        self._vm = ObservedObject(wrappedValue: vm)
-        self.context = context
+    init(vm: PhotoConfirmViewModel) {
+        self._vm = StateObject(wrappedValue: vm)
     }
     
     var body: some View {
@@ -27,7 +24,7 @@ struct PhotoConfirmView: View {
                 .resizable()
                 .scaledToFill()
                 .ignoresSafeArea()
-            
+             
             VStack(spacing: 0) {
                 // 상단 툴바 영역
                 HStack {
@@ -37,7 +34,7 @@ struct PhotoConfirmView: View {
                         impactFeedback.impactOccurred()
                         
                         // 카메라 내부 네비게이션에서 뒤로가기
-                        coordinator.popCameraView()
+                        vm.retakePhoto()
                     } label: {
                         Image("arrow-back-green700")
                     }
@@ -64,12 +61,7 @@ struct PhotoConfirmView: View {
                 .padding(.bottom, 21)
                 
                 // 촬영된 이미지
-//                PhotoFrame(photo: Photo)
-                Image(uiImage: image)
-                    .resizable()
-                    .aspectRatio(4/3, contentMode: .fit)
-                    .clipped()
-                    .padding(.horizontal, 18)
+                PhotoConfirmFrame(image: vm.image)
                 
                 Spacer()
                 
@@ -83,7 +75,7 @@ struct PhotoConfirmView: View {
     }
     
     private var contextDescription: String {
-        switch context {
+        switch vm.context {
         case .newProject:
             return "이 사진으로 새 프로젝트를 시작하시겠습니까?"
         case .existingProject:
@@ -101,7 +93,7 @@ struct PhotoConfirmView: View {
             HStack {
                 Spacer()
                 Button {
-                    coordinator.confirmPhoto(image, context: context)
+                    vm.confirmPhoto()
                 } label: {
                     Image(isButtonPressed ? "btn-select-1" : "btn-select-0")
                 }
@@ -116,6 +108,53 @@ struct PhotoConfirmView: View {
     }
 }
 
+struct PhotoConfirmFrame: View {
+    let image: UIImage
+    
+    private let dateFormatter: DateFormatter = {
+        let formatter = DateFormatter()
+        formatter.dateStyle = .long
+        formatter.timeStyle = .none
+        formatter.locale =  Locale(identifier: "ko_KR")// 시스템 현재 언어 설정 사용
+        return formatter
+    }()
+    
+    var body: some View {
+        VStack(alignment: .leading, spacing: 8) {
+            // 사진 표시 영역
+            Image(uiImage: image)
+                .resizable()
+                .aspectRatio(contentMode: .fit)
+                .cornerRadius(5)
+                .frame(maxWidth: 320, maxHeight: 420)
+            
+            // 사진 촬영 날짜
+            Text(formatDate(.now))
+                .fontWeight(.semibold)
+                .foregroundColor(.gray900)
+        }
+        .padding(.horizontal, 18)
+        .padding(.top, 18)
+        .padding(.bottom, 48)
+        .background(.gray0)
+        .cornerRadius(14)
+        .shadow(color: .gray900.opacity(0.25), radius: 2, x: 0, y: 3)
+        .overlay(
+            RoundedRectangle(cornerRadius: 14)
+                .inset(by: 0.5)
+                .stroke(Color.gray400, lineWidth: 1)
+        )
+        
+    }
+    
+    private func formatDate(_ date: Date?) -> String {
+        guard let date = date else {
+            return NSLocalizedString("date_info_unavailable", value: "날짜 정보 없음", comment: "날짜 정보가 없을 때 표시되는 메시지")
+        }
+        return dateFormatter.string(from: date)
+    }
+}
+
 #Preview {
-    PhotoConfirmView(image: UIImage(named: "sample") ?? UIImage(), vm: CameraViewModel(coordinator: AppCoordinator()), context: .newProject)
+    PhotoConfirmView(vm: PhotoConfirmViewModel(coordinator: AppCoordinator(), coreDataService: CoreDataService(), imgae: UIImage(), context: .newProject))
 }

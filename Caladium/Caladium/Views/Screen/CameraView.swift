@@ -10,17 +10,14 @@ import AVFoundation
 
 struct CameraView: View {
     @StateObject private var vm: CameraViewModel
-    @ObservedObject var coordinator: AppCoordinator
-    let context: CameraContext
+    @Environment(\.dependencies) private var dependencies
     
-    init(vm: CameraViewModel, coordinator: AppCoordinator, context: CameraContext) {
+    init(vm: CameraViewModel) {
         self._vm = StateObject(wrappedValue: vm)
-        self.coordinator = coordinator
-        self.context = context
     }
     
     var body: some View {
-        NavigationStack(path: $coordinator.cameraPath) {
+        NavigationStack(path: $vm.coordinator.cameraPath) {
             ZStack {
                 // 전체 배경을 검정으로
                 Color.black
@@ -37,7 +34,7 @@ struct CameraView: View {
                     bottomControls
                 }
                 
-                // 권한 팝업
+                // 촬영 장소 안내  팝업
                 if vm.isShowingAlert {
                     Color.black.opacity(0.4)
                         .ignoresSafeArea()
@@ -58,7 +55,6 @@ struct CameraView: View {
                 destinationView(for: route)
             }
             .onAppear {
-                vm.setContext(context)
                 vm.cameraService.requestCameraPermission()
             }
         }
@@ -131,7 +127,7 @@ struct CameraView: View {
                 .disabled(vm.isLoading)
                 
                 // 오버레이 토글 - 우측에 위치
-                if context != .newProject {
+                if vm.currentContext != .newProject {
                     HStack {
                         Spacer()
                         
@@ -182,8 +178,7 @@ struct CameraView: View {
     private func destinationView(for route: AppRoute) -> some View {
         switch route {
         case .photoConfirm(let image, let context):
-            PhotoConfirmView(image: image, vm: vm, context: context)
-                .environmentObject(coordinator)
+            PhotoConfirmView(vm: dependencies.makePhotoConfirmViewModel(image: image , context: context))
         default:
             EmptyView()
         }
@@ -192,5 +187,5 @@ struct CameraView: View {
 
 
 #Preview {
-    CameraView(vm: CameraViewModel(coordinator: AppCoordinator()), coordinator: AppCoordinator(), context: .newProject)
+    CameraView(vm: CameraViewModel(coordinator: AppCoordinator(), cameraService: CameraService(), context: .newProject))
 }
