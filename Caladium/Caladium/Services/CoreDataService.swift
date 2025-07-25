@@ -28,7 +28,8 @@ final class CoreDataService {
     func createNewProject(category:Category, image: UIImage){
         let newProject = Project(context: context, category: category)
         do {
-            try createPhoto(image: image, project: newProject)
+            let fixedImage = image.fixedOrientation()
+            try createPhoto(image: fixedImage, project: newProject)
         } catch(let error) {
             print(error.localizedDescription)
         }
@@ -53,11 +54,13 @@ final class CoreDataService {
     
     // 새 사진 생성 (파일과 함께)
     func createPhoto(image: UIImage, fileName: String? = nil, project: Project) throws {
+        let fixedImage = image.fixedOrientation()
+
         // 고유한 파일명 생성
         let uniqueFileName = fileName ?? "\(UUID().uuidString).jpg"
         
         // 파일 저장
-        try saveImageToFile(image, fileName: uniqueFileName)
+        try saveImageToFile(fixedImage, fileName: uniqueFileName)
         
         // CoreData에 메타데이터 저장
         _ = Photo(context: context, fileName: uniqueFileName, project: project)

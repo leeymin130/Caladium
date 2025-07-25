@@ -14,6 +14,9 @@ class VideoCreator {
             return
         }
         
+        // ✅ 모든 이미지의 방향을 먼저 수정
+        let fixedImages = images.map { $0.fixedOrientation() }
+        
         // 기존 파일이 있다면 삭제
         if FileManager.default.fileExists(atPath: outputURL.path) {
             try? FileManager.default.removeItem(at: outputURL)
@@ -28,8 +31,8 @@ class VideoCreator {
             return
         }
         
-        // 첫 번째 이미지의 크기를 기준으로 비디오 설정
-        let firstImage = images[0]
+        // ✅ 방향이 수정된 첫 번째 이미지의 크기를 기준으로 비디오 설정
+        let firstImage = fixedImages[0]
         let videoSize = firstImage.size
         
         let videoSettings: [String: Any] = [
@@ -61,16 +64,17 @@ class VideoCreator {
         videoWriter.startWriting()
         videoWriter.startSession(atSourceTime: .zero)
         
-        let frameDuration = CMTime(seconds: duration / Double(images.count), preferredTimescale: 600)
+        let frameDuration = CMTime(seconds: duration / Double(fixedImages.count), preferredTimescale: 600)
         var frameCount = 0
         
         let serialQueue = DispatchQueue(label: "videoWriterQueue")
         
         videoWriterInput.requestMediaDataWhenReady(on: serialQueue) {
-            while videoWriterInput.isReadyForMoreMediaData && frameCount < images.count {
+            while videoWriterInput.isReadyForMoreMediaData && frameCount < fixedImages.count {
                 let presentationTime = CMTimeMultiply(frameDuration, multiplier: Int32(frameCount))
                 
-                if let pixelBuffer = self.pixelBuffer(from: images[frameCount], size: videoSize) {
+                // ✅ 방향이 수정된 이미지들 사용
+                if let pixelBuffer = self.pixelBuffer(from: fixedImages[frameCount], size: videoSize) {
                     if !pixelBufferAdaptor.append(pixelBuffer, withPresentationTime: presentationTime) {
                         print("PixelBuffer 추가 실패")
                         break
@@ -80,7 +84,7 @@ class VideoCreator {
                 frameCount += 1
             }
             
-            if frameCount >= images.count {
+            if frameCount >= fixedImages.count {
                 videoWriterInput.markAsFinished()
                 videoWriter.finishWriting {
                     DispatchQueue.main.async {
@@ -138,9 +142,24 @@ class VideoCreator {
         cgContext.setFillColor(UIColor.white.cgColor)
         cgContext.fill(CGRect(origin: .zero, size: size))
         
-        // 이미지를 정상 방향으로 그리기 (좌표 변환 없음)
+        // ✅ 이미지는 이미 방향이 수정되었으므로 그대로 그리기
         if let cgImage = image.cgImage {
-            cgContext.draw(cgImage, in: CGRect(origin: .zero, size: size))
+            // 이미지를 적절한 크기로 조정하여 그리기 (aspect ratio 유지)
+            let aspectRatio = image.size.width / image.size.height
+            let targetAspectRatio = size.width / size.height
+            
+            var drawRect: CGRect
+            if aspectRatio > targetAspectRatio {
+                // 이미지가 더 넓음 - 높이에 맞춤
+                let drawWidth = size.height * aspectRatio
+                drawRect = CGRect(x: (size.width - drawWidth) / 2, y: 0, width: drawWidth, height: size.height)
+            } else {
+                // 이미지가 더 높음 - 너비에 맞춤
+                let drawHeight = size.width / aspectRatio
+                drawRect = CGRect(x: 0, y: (size.height - drawHeight) / 2, width: size.width, height: drawHeight)
+            }
+            
+            cgContext.draw(cgImage, in: drawRect)
         }
         
         CVPixelBufferUnlockBaseAddress(buffer, CVPixelBufferLockFlags(rawValue: 0))

@@ -263,7 +263,10 @@ extension CameraService: AVCapturePhotoCaptureDelegate {
             return
         }
         
-        print("✅ 사진 촬영 성공!")
-        handleCapturedPhoto(uiImage)
+        // ✅ 방향 정보를 고려한 이미지 정규화
+        let orientationFixedImage = uiImage.fixedOrientation()
+        
+        print("✅ 사진 촬영 성공! (방향 수정 완료)")
+        handleCapturedPhoto(orientationFixedImage)
     }
 }
