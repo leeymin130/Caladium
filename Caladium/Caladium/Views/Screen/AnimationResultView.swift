@@ -43,13 +43,7 @@ struct AnimationResultView: View {
             Button {
                 shareAnimation()
             } label: {
-                VStack {
-                    Image(systemName: "square.and.arrow.up")
-                        .font(.title2)
-                    
-                    Text("공유하기")
-                        .font(.caption)
-                }
+                Image("btn-export-0")
             }
             
         }
@@ -72,8 +66,7 @@ struct AnimationResultView: View {
                         
                         if let start = startDate, let end = endDate {
                             Text(dateRangeText(start: start, end: end))
-                                .font(.system(size: 15))
-                                .fontWeight(.semibold)
+                                .customFont(.photoDate)
                                 .foregroundStyle(.gray900)
                         }
                     }
@@ -99,8 +92,7 @@ struct AnimationResultView: View {
                         
                         if let start = startDate, let end = endDate {
                             Text(dateRangeText(start: start, end: end))
-                                .font(.system(size: 15))
-                                .fontWeight(.semibold)
+                                .customFont(.photoDate)
                                 .foregroundStyle(.gray900)
                         }
 
@@ -124,15 +116,15 @@ struct AnimationResultView: View {
                         .cornerRadius(5)
                         .frame(maxWidth: 320, maxHeight: 420)
                         .overlay {
-                            VStack(spacing: 12) {
+                            VStack(spacing: 5) {
                                 Image(systemName: "exclamationmark.triangle")
                                     .font(.largeTitle)
                                     .foregroundColor(.red)
                                 Text("생성 실패")
-                                    .font(.headline)
+                                    .customFont(.categoryTitle)
                                     .foregroundColor(.red)
                                 Text("다시 시도해주세요")
-                                    .font(.caption)
+                                    .customFont(.categoryButtonBody)
                                     .foregroundColor(.secondary)
                             }
                         }

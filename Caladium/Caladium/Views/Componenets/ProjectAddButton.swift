@@ -33,13 +33,13 @@ struct ProjectAddButton: View {
                 Rectangle()
                     .fill(Color.gray0)
                     .overlay(
-                        VStack(alignment: .center, spacing: 2){
+                        VStack(alignment: .center, spacing: 0){
                             Text("새로운 식물")
+                                .customFont(.categoryButtonTitle)
                                 .foregroundColor(.gray900)
-                                .font(.system(size: 13))
                             Text("추가하기")
+                                .customFont(.categoryButtonBody)
                                 .foregroundColor(.gray400)
-                                .font(.system(size: 12))
                         }
                         .padding(.bottom, 8)
                     )

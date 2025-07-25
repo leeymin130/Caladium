@@ -67,8 +67,8 @@ struct ProjectThumbnail: View {
                     } else {
                         // 사진이 없을 때 기본 아이콘
                         Image(systemName: "leaf.fill")
-                            .font(.title)
-                            .foregroundColor(.green)
+                            .customFont(.categoryButtonTitle)
+                            .foregroundColor(.green500)
                     }
                 }
                 
@@ -84,10 +84,9 @@ struct ProjectThumbnail: View {
                                 .frame(width: 40, height: 40)
                             
                             Text("선택")
-                                .font(.headline)
-                                .foregroundColor(.white)
-                                .padding(6)
-                                .cornerRadius(8)
+                                .customFont(.categoryButtonTitle)
+                                .foregroundColor(.gray0)
+                                .padding(4)
                         }
                         
                     }

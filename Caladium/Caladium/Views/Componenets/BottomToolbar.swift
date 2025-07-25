@@ -194,9 +194,9 @@ struct BottomToolbar: View {
             Spacer()
             
             if selectedCount > 0 {
-                Text("\(selectedCount)개 선택됨")
-                    .font(.caption)
-                    .foregroundColor(.secondary)
+                Text("\(selectedCount)개의 식물 선택")
+                    .customFont(.categoryButtonBody)
+                    .foregroundColor(.gray800)
             }
             
             Spacer()
@@ -220,9 +220,9 @@ struct BottomToolbar: View {
             Spacer()
             
             if selectedCount > 0 {
-                Text("\(selectedCount)개 선택됨")
-                    .font(.caption)
-                    .foregroundColor(.secondary)
+                Text("\(selectedCount)개의 식물 선택")
+                    .customFont(.categoryButtonBody)
+                    .foregroundColor(.gray800)
             }
             
             Spacer()
