@@ -27,14 +27,13 @@ final class PhotoConfirmViewModel: ObservableObject {
     func retakePhoto() {
         coordinator.popCameraView()
     }
-    
 
     func confirmPhoto() {
         switch context {
         // 카테고리 선택뷰 이동하기 
         // When: 프로젝트 생성 context일때, coreDataService 이용해서 방금 찍은 사진으로 새로운 프로젝트 생성하기
         case .newProject:
-            return
+            coordinator.pushToCategorySelectView(image)
         // When : 사진 찍기 context 일때, coreDataService 이용해서 현재 프로젝트에 사진 추가하기
         case .existingProject(let project):
             return

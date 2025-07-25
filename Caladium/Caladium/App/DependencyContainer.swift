@@ -76,4 +76,8 @@ final class DependencyContainer: ObservableObject {
         return PhotoConfirmViewModel(coordinator: appCoordinator, coreDataService: coreDataService, imgae: image, context: context)
     }
     
+    func makeNewProjectCategorySelectViewModel(image: UIImage) -> NewProjectCategorySelectViewModel {
+        return NewProjectCategorySelectViewModel(coordinator: appCoordinator, coreDataService: coreDataService, image: image)
+    }
+    
 }

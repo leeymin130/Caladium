@@ -25,6 +25,16 @@ final class CoreDataService {
     /// Fetch 같은 경우 @FetchRequest 활용해서 View 단에서 처리게 함
 
     // 새 프로젝트 생성
+    func createNewProject(category:Category, image: UIImage){
+        let newProject = Project(context: context, category: category)
+        do {
+            try createPhoto(image: image, project: newProject)
+        } catch(let error) {
+            print(error.localizedDescription)
+        }
+        
+    }
+    
     func createProject(category: Category) {
         _ = Project(context: context, category: category)
         coreDataManager.saveContext()

@@ -17,6 +17,7 @@ enum AppRoute: Hashable, Identifiable {
     // 촬영 플로우
     case camera(CameraContext)
     case photoConfirm(UIImage, CameraContext)
+    case saveNewProject(UIImage)
     
     // 영상 완료 플로우
     case animationResult(
@@ -40,6 +41,8 @@ enum AppRoute: Hashable, Identifiable {
             return "camera_\(context.id)"
         case .photoConfirm(_, let context):
             return "photo_confirm_\(context.id)"
+        case .saveNewProject(let image):
+            return "save_new_project_\(image.hashValue)"
         case .animationResult(_, _, let format, _, _):
             return "animation_result_\(format.rawValue)"
         }

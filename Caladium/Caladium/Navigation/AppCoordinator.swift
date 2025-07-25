@@ -49,9 +49,9 @@ final class AppCoordinator: ObservableObject {
     }
     
     func dismissFullScreen() {
-        presentedFullScreen = nil
         // 카메라 풀스크린 닫을 때 카메라 내부 네비게이션도 초기화
         cameraPath = NavigationPath()
+        presentedFullScreen = nil
     }
     
     // MARK: - 카테고리 변경
@@ -72,15 +72,14 @@ final class AppCoordinator: ObservableObject {
         }
     }
     
+    func pushToCategorySelectView(_ image: UIImage){
+        cameraPath.append(AppRoute.saveNewProject(image))
+    }
+    
     func popCameraView() {
         if !cameraPath.isEmpty {
             cameraPath.removeLast()
         }
-    }
-    
-    // MARK: - 프로젝트 상세 액션들
-    func addPhotoToProject(_ project: Project) {
-        presentFullScreen(.camera(.existingProject(project)))
     }
     
 }

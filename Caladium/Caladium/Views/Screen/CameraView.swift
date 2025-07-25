@@ -179,6 +179,8 @@ struct CameraView: View {
         switch route {
         case .photoConfirm(let image, let context):
             PhotoConfirmView(vm: dependencies.makePhotoConfirmViewModel(image: image , context: context))
+        case .saveNewProject(let image):
+            NewProjectCategorySelectView(vm: dependencies.makeNewProjectCategorySelectViewModel(image: image))
         default:
             EmptyView()
         }
