@@ -65,13 +65,6 @@ struct HomeView: View {
                 
                 Spacer()
                 
-                Button {
-                    vm.addMockData()
-                } label: {
-                    Text("Mock Data Add")
-                }
-                .padding()
-                
                 //                bottomToolbar
                 BottomToolbar(
                     homeEditMode: vm.editMode,
