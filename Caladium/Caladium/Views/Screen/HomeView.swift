@@ -93,12 +93,13 @@ struct HomeView: View {
             
             Spacer()
             
-            VStack {
+            VStack(spacing: 0) {
                 // Category dots indicator
                 Image(vm.currentCategory.icon)
                 
                 Text(vm.currentCategory.displayName)
-                    .font(.headline)
+                    .customFont(.categoryTitle)
+                    .foregroundColor(.gray900)
                     .padding(.top, 4)
             }
             
@@ -147,8 +148,8 @@ struct HomeView: View {
     private func guideBanner(text: String) -> some View {
         VStack(alignment: .leading) {
             Text(text)
-                .font(.system(size: 24, weight: .semibold))
-                .lineSpacing(8)
+                .customFont(.navigationBarTitle)
+                .lineSpacing(4)
             
         }
         .frame(maxWidth: .infinity, alignment: .leading)
@@ -224,9 +225,9 @@ struct HomeView: View {
                     Spacer()
                     
                     if vm.selectedProjectsCount > 0 {
-                        Text("\(vm.selectedProjectsCount)개 선택됨")
-                            .font(.caption)
-                            .foregroundColor(.secondary)
+                        Text("\(vm.selectedProjectsCount)개의 식물 선택")
+                            .customFont(.categoryButtonBody)
+                            .foregroundColor(.gray800)
                     }
                     
                     Spacer()
@@ -248,9 +249,10 @@ struct HomeView: View {
                     Spacer()
                     
                     if vm.selectedProjectsCount > 0 {
-                        Text("\(vm.selectedProjectsCount)개 선택됨")
-                            .font(.caption)
-                            .foregroundColor(.secondary)
+                        Text("\(vm.selectedProjectsCount)개의 식물 선택")
+                            .customFont(.categoryButtonBody)
+                            .foregroundColor(.gray800)
+
                     }
                     
                     Spacer()

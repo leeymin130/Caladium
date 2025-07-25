@@ -6,13 +6,30 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		AF11C73D2E2F94D00018F613 /* RiveRuntime in Frameworks */ = {isa = PBXBuildFile; productRef = AF11C73C2E2F94D00018F613 /* RiveRuntime */; };
+/* End PBXBuildFile section */
+
 /* Begin PBXFileReference section */
 		7D1EB95D2DF8143E0078D689 /* Caladium.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Caladium.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		7DD10B722E32CD70007F0269 /* Exceptions for "Caladium" folder in "Caladium" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = 7DA13EA72DEF21E800CD6643 /* Caladium */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
+
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		7DA13EAA2DEF21E800CD6643 /* Caladium */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				7DD10B722E32CD70007F0269 /* Exceptions for "Caladium" folder in "Caladium" target */,
+			);
 			path = Caladium;
 			sourceTree = "<group>";
 		};
@@ -23,6 +40,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				AF11C73D2E2F94D00018F613 /* RiveRuntime in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -57,6 +75,7 @@
 			);
 			name = Caladium;
 			packageProductDependencies = (
+				AF11C73C2E2F94D00018F613 /* RiveRuntime */,
 			);
 			productName = Caladium;
 			productReference = 7D1EB95D2DF8143E0078D689 /* Caladium.app */;
@@ -86,6 +105,9 @@
 			);
 			mainGroup = 7DA13E9F2DEF21E800CD6643;
 			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				AF11C73B2E2F94D00018F613 /* XCRemoteSwiftPackageReference "rive-ios" */,
+			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 7DA13E9F2DEF21E800CD6643;
 			projectDirPath = "";
@@ -245,10 +267,11 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = ZWTS2P7AH7;
+				DEVELOPMENT_TEAM = "";
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_NSCameraUsageDescription = "촬영을 위해 카메라 접근 권한이 필요합니다.";
+				INFOPLIST_FILE = Caladium/Info.plist;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -274,10 +297,11 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = ZWTS2P7AH7;
+				DEVELOPMENT_TEAM = "";
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_NSCameraUsageDescription = "촬영을 위해 카메라 접근 권한이 필요합니다.";
+				INFOPLIST_FILE = Caladium/Info.plist;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -318,6 +342,25 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		AF11C73B2E2F94D00018F613 /* XCRemoteSwiftPackageReference "rive-ios" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/rive-app/rive-ios";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 6.11.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		AF11C73C2E2F94D00018F613 /* RiveRuntime */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = AF11C73B2E2F94D00018F613 /* XCRemoteSwiftPackageReference "rive-ios" */;
+			productName = RiveRuntime;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 7DA13EA02DEF21E800CD6643 /* Project object */;
 }

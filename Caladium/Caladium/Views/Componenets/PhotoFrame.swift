@@ -27,7 +27,7 @@ struct PhotoFrame: View {
             
             // 사진 촬영 날짜
             Text(formatDate(photo.capturedDate))
-                .fontWeight(.semibold)
+                .customFont(.photoDate)
                 .foregroundColor(.gray900)
         }
         .padding(.horizontal, 18)

@@ -53,8 +53,8 @@ struct PhotoThumbnail: View {
                                 .frame(width: size * 0.3, height: size * 0.3)
                             
                             Text("선택")
-                                .font(.headline)
-                                .foregroundColor(.white)
+                                .customFont(.categoryButtonTitle)
+                                .foregroundColor(.gray0)
                                 .padding(6)
                         }
                         
