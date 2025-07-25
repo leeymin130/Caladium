@@ -15,67 +15,77 @@ final class CameraViewModel: ObservableObject {
     
     @Published var isOverlayOn = false
     @Published var overlayImage: UIImage?
-    @Published var isShowingAlert: Bool = true
+    @Published var isShowingAlert: Bool = false  
+    @Published var isLoading = false
     
     private var currentContext: CameraContext?
     private var cancellables = Set<AnyCancellable>()
     
     init(coordinator: AppCoordinator) {
         self.coordinator = coordinator
-        
-        // CameraService의 capturedImage 변경 감지
+        setupBindings()
+    }
+    
+    private func setupBindings() {
         cameraService.$capturedImage
-            .compactMap { $0 } // nil이 아닌 값만 통과
+            .compactMap { $0 }
             .sink { [weak self] image in
-                print("📸 ViewModel: 새로운 이미지 수신됨")
                 self?.handleCapturedImage(image)
+            }
+            .store(in: &cancellables)
+        
+        cameraService.$permissionGranted
+            .sink { [weak self] granted in
+                if !granted {
+                    self?.isShowingAlert = true
+                }
             }
             .store(in: &cancellables)
     }
     
     func setContext(_ context: CameraContext) {
-        print("🔥 setContext 호출됨: \(context)")
         self.currentContext = context
     }
     
-    
     func cancel() {
-        print("취소")
+        cameraService.stopSession()
         coordinator.dismissFullScreen()
     }
     
     func capturePhoto() {
-        print("촬영")
+        guard !isLoading else { return }
+        
+        isLoading = true
         cameraService.capturePhoto()
+        
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+            self.isLoading = false
+        }
     }
     
-    func handleCapturedImage(_ image: UIImage) {
-        print("이미지 처리 시작")
-        self.overlayImage = image
+    private func handleCapturedImage(_ image: UIImage) {
+        isLoading = false
         
-        if let context = currentContext {
-            print("네비게이션 실행")
-            coordinator.pushToPhotoConfirm(image, context: context)
-        } else {
-            print("context가 nil")
-        }
+        guard let context = currentContext else { return }
+        coordinator.pushToPhotoConfirm(image, context: context)
     }
     
     func switchOverlay() {
-        print("오버레이")
-        isOverlayOn.toggle()
+        withAnimation(.easeInOut(duration: 0.2)) {
+            isOverlayOn.toggle()
+        }
     }
     
-    // 팝업 확인 버튼 액션
-        func confirmAlert() {
-            isShowingAlert = false
-        }
-        
-        // 팝업 취소 버튼 액션
-        func cancelAlert() {
-            isShowingAlert = false
-            // 취소시 이전 화면으로 돌아가기
-            coordinator.dismissFullScreen()
-        }
+    func confirmAlert() {
+        isShowingAlert = false
+    }
     
+    func cancelAlert() {
+        isShowingAlert = false
+        coordinator.dismissFullScreen()
+    }
+    
+    deinit {
+        cameraService.stopSession()
+    }
 }
