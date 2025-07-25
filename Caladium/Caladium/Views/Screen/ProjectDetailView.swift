@@ -206,7 +206,9 @@ struct ProjectDetailView: View {
             
         }
         .onTapGesture {
-            vm.addNewPhoto(currentProject: project)
+            // 최신 사진을 찾아서 카메라에 전달
+            let latestPhoto = getLatestPhoto()
+            vm.addNewPhoto(currentProject: project, latestPhoto: latestPhoto)
         }
         .frame(width: 158, height: 58, alignment: .leading)
         .background{
@@ -221,6 +223,10 @@ struct ProjectDetailView: View {
         )
         
         
+    }
+    // 최신 사진을 가져오는 helper 함수 추가
+    private func getLatestPhoto() -> Photo? {
+        return photos.last // photos는 이미 capturedDate로 정렬되어 있음 (ascending: true)
     }
     
     private var dateRangeText: String {

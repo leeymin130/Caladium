@@ -40,8 +40,8 @@ final class ProjectDetailViewModel: ObservableObject {
     }
     
     // 새로운 사진 찍기
-    func addNewPhoto(currentProject: Project) {
-        coordinator.presentFullScreen(.camera(.existingProject(currentProject)))
+    func addNewPhoto(currentProject: Project, latestPhoto: Photo?) {
+        coordinator.presentFullScreen(.camera(.existingProject(currentProject), latestPhoto))
     }
     
     // 지우기 모드 들어가기 -> 사진선택 -> 취소 or 삭제

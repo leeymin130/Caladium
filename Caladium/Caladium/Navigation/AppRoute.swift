@@ -15,7 +15,7 @@ enum AppRoute: Hashable, Identifiable {
     case photoDetail(Photo, Project)
     
     // 촬영 플로우
-    case camera(CameraContext)
+    case camera(CameraContext,  Photo?)
     case photoConfirm(UIImage, CameraContext)
     case saveNewProject(UIImage)
     
@@ -37,7 +37,7 @@ enum AppRoute: Hashable, Identifiable {
             return "project_\(project.id ?? UUID())"
         case .photoDetail(let photo, _):
             return "photo_\(photo.id ?? UUID())"
-        case .camera(let context):
+        case .camera(let context, _):
             return "camera_\(context.id)"
         case .photoConfirm(_, let context):
             return "photo_confirm_\(context.id)"

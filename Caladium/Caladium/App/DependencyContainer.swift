@@ -68,8 +68,8 @@ final class DependencyContainer: ObservableObject {
         return ProjectDetailViewModel(coordinator: appCoordinator, coreDataService: coreDataService, gifService: gifCreatorService, videoService: movCreatorService)
     }
     
-    func makeCameraViewModel(context: CameraContext) -> CameraViewModel {
-        return CameraViewModel(coordinator: appCoordinator, cameraService: cameraService, context: context)
+    func makeCameraViewModel(context: CameraContext, latestPhoto: Photo? = nil) -> CameraViewModel {
+        return CameraViewModel(coordinator: appCoordinator, cameraService: cameraService, context: context, latestPhoto: latestPhoto)
     }
     
     func makePhotoConfirmViewModel(image: UIImage, context: CameraContext) -> PhotoConfirmViewModel {

@@ -21,11 +21,27 @@ final class CameraViewModel: ObservableObject {
     var currentContext: CameraContext
     private var cancellables = Set<AnyCancellable>()
     
-    init(coordinator: AppCoordinator, cameraService: CameraService, context: CameraContext) {
+    init(coordinator: AppCoordinator, cameraService: CameraService, context: CameraContext, latestPhoto: Photo? = nil) {
         self.coordinator = coordinator
         self.cameraService = cameraService
         self.currentContext = context
+        
+        // 기존 프로젝트에서 촬영할 때 최신 사진을 오버레이로 설정
+        if case .existingProject = context, let photo = latestPhoto {
+            setupOverlayImage(from: photo)
+            self.isOverlayOn = true  // 자동으로 오버레이 켜기
+        }
+        
         setupBindings()
+    }
+    
+    private func setupOverlayImage(from photo: Photo) {
+        guard let fileURL = photo.getFileURL(),
+              let imageData = try? Data(contentsOf: fileURL),
+              let image = UIImage(data: imageData) else {
+            return
+        }
+        self.overlayImage = image
     }
     
     private func setupBindings() {
