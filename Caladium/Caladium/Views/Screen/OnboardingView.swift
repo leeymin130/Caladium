@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import RiveRuntime
 
 // MARK: - Onboarding Views
 struct OnboardingContainerView: View {
@@ -18,52 +19,110 @@ struct OnboardingContainerView: View {
     }
     
     var body: some View {
-        VStack(spacing: 20) {
+        VStack(spacing: 0) {
             Text("온보딩 - \(currentStep.rawValue + 1)/\(OnboardingStep.allCases.count)")
                 .font(.title2)
                 .bold()
             
             switch currentStep {
             case .welcome:
-                VStack(spacing: 15) {
-                    Text("🌱 Caladium에 오신 것을 환영합니다!")
-                        .font(.title)
-                    Text("식물의 성장을 기록하고 타임랩스 영상을 만들어보세요")
-                        .foregroundColor(.secondary)
+                VStack(spacing: 0) {
+                    RiveViewModel(fileName: "onborading1").view()
+
+                    Image("onboarding1")
+                        .padding(.bottom, 31)
+                    Text("사진으로 만드는 식물 기록 영상")
+                        .customFont(.navigationBarTitle)
+                        .padding(.bottom, 16)
+                    Text("긴 촬영 없이도 식물 타임랩스를 만들 수 있어요.")
+                        .customFont(.categoryButtonBody)
+                        .foregroundStyle(.gray600)
+                        .padding(.bottom, 221)
+                    
                 }
                 
+                
             case .features:
-                VStack(spacing: 15) {
-                    Text("✨ 주요 기능")
-                        .font(.title)
-                    VStack(alignment: .leading, spacing: 10) {
-                        Text("📸 정기적인 사진 촬영")
-                        Text("🎬 타임랩스 영상 제작")
-                        Text("🗂 카테고리별 정리")
-                        Text("📈 성장 과정 추적")
-                    }
+                VStack(spacing: 0) {
+                    RiveViewModel(fileName: "onboarding2").view()
+      
+                    Image("onboarding2")
+                        .padding(.bottom, 31)
+                    Text("같은 자리에서 찍을 수 있도록")
+                        .customFont(.navigationBarTitle)
+                        .padding(.bottom, 16)
+                    Text("최근 사진 필터를 통해\n비슷한 구도로 쉽게 찍을 수 있어요.")
+                        .customFont(.categoryButtonBody)
+                        .foregroundStyle(.gray600)
+                        .multilineTextAlignment(.center)
+                        .padding(.bottom, 204)
                 }
                 
             case .permissions:
-                VStack(spacing: 15) {
-                    Text("📷 권한 설정")
-                        .font(.title)
-                    Text("카메라 권한이 필요합니다")
-                        .foregroundColor(.secondary)
-                    Button("권한 허용하기") {
-                        // 실제로는 권한 요청 로직
+                VStack(spacing: 0) {
+                    RiveViewModel(fileName: "onboarding4").view()
+               
+                    Image("onboarding3")
+                    Text("버튼 한 번이면 영상 완성")
+                        .customFont(.navigationBarTitle)
+                    Text("원하는 사진들을 선택해 영상을 만들고,\n저장하거나 공유할 수 있어요.")
+                        .customFont(.categoryButtonBody)
+                        .foregroundStyle(.gray600)
+                        .multilineTextAlignment(.center)
+                        .padding(.bottom, 70)
+                    
+                    Button {
+                        // 다음 화면으로 이동
                         currentStep = .complete
+                    } label: {
+                        Text("칼라디움 시작하기")
+                            .customFont(.categoryButtonTitle)
+                            .padding(.horizontal, 32)
+                            .padding(.vertical, 12)
+                            .foregroundColor(.gray0)
+                            .background(Color.green500)
+                            .cornerRadius(10)
+                            .overlay(
+                                RoundedRectangle(cornerRadius: 10)
+                                    .stroke(.green700, lineWidth: 1)
+                            )
                     }
-                    .buttonStyle(.borderedProminent)
+                    
                 }
                 
             case .complete:
-                VStack(spacing: 15) {
-                    Text("🎉 설정 완료!")
-                        .font(.title)
-                    Text("이제 첫 번째 식물을 추가해보세요")
-                        .foregroundColor(.secondary)
+                ZStack(alignment: .leading) {
+                    Image("bg-picture")
+                        .resizable()
+                        .scaledToFit()
+                        .ignoresSafeArea()
+                    VStack(spacing: 0) {
+                        Text("지금 바로 식물을 찍어볼까요?")
+                            .customFont(.navigationBarTitle)
+                            .foregroundStyle(.gray900)
+                        Text("가볍게 식물 타임랩스 만들기를 시작해보세요.")
+                            .customFont(.categoryButtonBody)
+                            .foregroundStyle(.gray600)
+                        Button {
+                            // 촬영화면 이동
+                            currentStep = .complete
+                        } label: {
+                            Text("사진 찍기")
+                                .customFont(.categoryButtonTitle)
+                                .padding(.horizontal, 32)
+                                .padding(.vertical, 12)
+                                .foregroundColor(.gray0)
+                                .background(Color.green500)
+                                .cornerRadius(10)
+                                .overlay(
+                                    RoundedRectangle(cornerRadius: 10)
+                                        .stroke(.green700, lineWidth: 1)
+                                )
+                        }
+                        .padding(.bottom, 95)
+                    }
                 }
+                
             }
             
             Spacer()
@@ -96,5 +155,9 @@ struct OnboardingContainerView: View {
         }
         .padding()
     }
+}
+
+#Preview {
+    OnboardingContainerView(coordinator: AppCoordinator())
 }
 
