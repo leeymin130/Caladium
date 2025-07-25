@@ -77,9 +77,7 @@ final class AppCoordinator: ObservableObject {
     }
     
     func popCameraView() {
-        if !cameraPath.isEmpty {
-            cameraPath.removeLast()
-        }
+        cameraPath = NavigationPath()
     }
     
 }

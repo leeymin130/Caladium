@@ -29,6 +29,7 @@ final class CameraViewModel: ObservableObject {
     }
     
     private func setupBindings() {
+        cancellables.removeAll()
         cameraService.capturedImageSubject
             .sink { [weak self] image in
                 self?.handleCapturedImage(image)
