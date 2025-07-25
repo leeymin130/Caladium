@@ -6,82 +6,188 @@
 //
 
 import SwiftUI
+import AVFoundation
 
-// MARK: - Camera View
 struct CameraView: View {
     @StateObject private var vm: CameraViewModel
-    let context: CameraContext
+    @Environment(\.dependencies) private var dependencies
     
-    init(vm: CameraViewModel, context: CameraContext) {
+    init(vm: CameraViewModel) {
         self._vm = StateObject(wrappedValue: vm)
-        self.context = context
     }
     
     var body: some View {
-        VStack {
-            Spacer()
-            
-            VStack(spacing: 20) {
-                Text("📷 카메라")
-                    .font(.largeTitle)
-                    .bold()
+        NavigationStack(path: $vm.coordinator.cameraPath) {
+            ZStack {
+                // 전체 배경을 검정으로
+                Color.black
+                    .ignoresSafeArea()
                 
-                Text(contextDescription)
-                    .foregroundColor(.secondary)
-                
-                RoundedRectangle(cornerRadius: 12)
-                    .fill(Color.gray.opacity(0.3))
-                    .aspectRatio(4/3, contentMode: .fit)
-                    .overlay {
-                        Text("카메라 뷰 영역")
-                            .foregroundColor(.gray)
-                    }
-            }
-            
-            Spacer()
-            
-            // 촬영 버튼
-            Button {
-                // 임시 이미지로 다음 단계로
-                let tempImage = UIImage(systemName: "photo") ?? UIImage()
-
-            } label: {
-                Circle()
-                    .fill(Color.white)
-                    .frame(width: 80, height: 80)
-                    .overlay {
-                        Circle()
-                            .stroke(Color.black, lineWidth: 3)
-                            .frame(width: 70, height: 70)
-                    }
-            }
-            .padding(.bottom, 50)
-        }
-        .background(Color.black)
-        .foregroundColor(.white)
-        .navigationBarHidden(true)
-        .toolbar {
-            ToolbarItem(placement: .bottomBar) {
-                Button("취소") {
-                    vm.cancel()
+                VStack(spacing: 0) {
+                    // 상단 툴바 영역
+                    topToolbar
+                    
+                    // 가운데 카메라 프리뷰 영역
+                    cameraPreviewArea
+                    
+                    // 하단 컨트롤 영역
+                    bottomControls
                 }
-                .font(.headline)
-                .foregroundColor(.white)
+                
+                // 촬영 장소 안내  팝업
+                if vm.isShowingAlert {
+                    Color.black.opacity(0.4)
+                        .ignoresSafeArea()
+                    
+                    CameraPopup(
+                        cancelButtonAction: {
+                            vm.cancelAlert()
+                        },
+                        confirmButtonAction: {
+                            vm.confirmAlert()
+                        })
+                    .padding(.horizontal, 20)
+                }
+            }
+            .foregroundColor(.gray0)
+            .navigationBarHidden(true)
+            .navigationDestination(for: AppRoute.self) { route in
+                destinationView(for: route)
+            }
+            .onAppear {
+                vm.cameraService.requestCameraPermission()
             }
         }
     }
     
-    private var contextDescription: String {
-        switch context {
-        case .newProject:
-            return "새로운 식물의 첫 번째 사진을 찍어보세요"
-        case .existingProject(let project):
-            return "\(project.categoryEnum.displayName) 프로젝트에 사진을 추가합니다"
+    // MARK: - 상단 툴바
+    private var topToolbar: some View {
+        HStack {
+            Button {
+                let impactFeedback = UIImpactFeedbackGenerator(style: .medium)
+                impactFeedback.impactOccurred()
+                vm.cancel()
+            } label: {
+                Image("arrow-back-gray0")
+            }
+            Spacer()
+        }
+        .padding(.horizontal, 24)
+        .padding(.vertical, 16)
+        .frame(height: 80) // 상단 영역 높이 고정
+        .background(Color.black)
+    }
+    
+    // MARK: - 카메라 프리뷰 영역 (커스터마이징 가능)
+    private var cameraPreviewArea: some View {
+            ZStack {
+                // 카메라 프리뷰
+                CameraViewController(cameraService: vm.cameraService)
+                    .frame(minHeight: 530)
+                    .clipped()
+                
+                // 오버레이 이미지
+                if vm.isOverlayOn, let uiImage = vm.overlayImage {
+                    Image(uiImage: uiImage)
+                        .resizable()
+                        .aspectRatio(contentMode: .fill)
+                        .frame(minHeight: 530)
+                        .opacity(0.5)
+                        .clipped()
+                }
+        
+            }
+    }
+    
+    // MARK: - 하단 컨트롤
+    private var bottomControls: some View {
+        VStack(spacing: 0) {
+            // 컨트롤 버튼들
+            ZStack {
+                // 촬영 버튼 - 항상 정중앙
+                Button {
+                    let impactFeedback = UIImpactFeedbackGenerator(style: .medium)
+                    impactFeedback.impactOccurred()
+                    vm.capturePhoto()
+                } label: {
+                    Circle()
+                        .fill(vm.isLoading ? Color.gray : Color.green500)
+                        .frame(width: 78, height: 78)
+                        .overlay {
+                            if vm.isLoading {
+                                ProgressView()
+                                    .progressViewStyle(CircularProgressViewStyle(tint: .white))
+                            } else {
+                                Circle()
+                                    .fill(Color.gray0)
+                                    .frame(width: 64, height: 64)
+                            }
+                        }
+                }
+                .disabled(vm.isLoading)
+                
+                // 오버레이 토글 - 우측에 위치
+                if vm.currentContext != .newProject {
+                    HStack {
+                        Spacer()
+                        
+                        VStack(alignment: .center, spacing: 9) {
+                            Button {
+                                let impactFeedback = UIImpactFeedbackGenerator(style: .medium)
+                                impactFeedback.impactOccurred()
+                                vm.switchOverlay()
+                            } label: {
+                                ZStack {
+                                    RoundedRectangle(cornerRadius: 100)
+                                        .fill(vm.isOverlayOn ? Color.green400 : Color.gray500)
+                                        .frame(width: 51, height: 31)
+                                    
+                                    Circle()
+                                        .fill(Color.white)
+                                        .frame(width: 27, height: 27)
+                                        .offset(x: vm.isOverlayOn ? 10 : -10)
+                                }
+                            }
+                            .buttonStyle(PlainButtonStyle())
+                            
+                            Text("최근 사진 필터")
+                                .font(.caption)
+                                .foregroundColor(.gray0)
+                        }
+                        .padding(.trailing, 24) // 우측 여백
+                    }
+                }
+                
+            }
+            .padding(.top, 30)
+            .padding(.bottom, 50) // Safe Area 고려
+        }
+        .background(
+            LinearGradient(
+                gradient: Gradient(colors: [
+                    Color.black.opacity(0.7),
+                    Color.black
+                ]),
+                startPoint: .top,
+                endPoint: .bottom
+            )
+        )
+    }
+    
+    @ViewBuilder
+    private func destinationView(for route: AppRoute) -> some View {
+        switch route {
+        case .photoConfirm(let image, let context):
+            PhotoConfirmView(vm: dependencies.makePhotoConfirmViewModel(image: image , context: context))
+        case .saveNewProject(let image):
+            NewProjectCategorySelectView(vm: dependencies.makeNewProjectCategorySelectViewModel(image: image))
+        default:
+            EmptyView()
         }
     }
 }
 
 
 #Preview {
-    CameraView(vm: CameraViewModel(coordinator: AppCoordinator()), context: .newProject)
+    CameraView(vm: CameraViewModel(coordinator: AppCoordinator(), cameraService: CameraService(), context: .newProject))
 }

@@ -19,6 +19,7 @@ struct CaladiumApp: App {
                      dependencyContainer.coreDataManager.mainContext
                 )
                 .environment(\.dependencies, dependencyContainer)
+                .preferredColorScheme(.light)
         }
     }
 }

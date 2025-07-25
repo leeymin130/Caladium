@@ -25,6 +25,17 @@ final class CoreDataService {
     /// Fetch 같은 경우 @FetchRequest 활용해서 View 단에서 처리게 함
 
     // 새 프로젝트 생성
+    func createNewProject(category:Category, image: UIImage){
+        let newProject = Project(context: context, category: category)
+        do {
+            let fixedImage = image.fixedOrientation()
+            try createPhoto(image: fixedImage, project: newProject)
+        } catch(let error) {
+            print(error.localizedDescription)
+        }
+        
+    }
+    
     func createProject(category: Category) {
         _ = Project(context: context, category: category)
         coreDataManager.saveContext()
@@ -43,11 +54,13 @@ final class CoreDataService {
     
     // 새 사진 생성 (파일과 함께)
     func createPhoto(image: UIImage, fileName: String? = nil, project: Project) throws {
+        let fixedImage = image.fixedOrientation()
+
         // 고유한 파일명 생성
         let uniqueFileName = fileName ?? "\(UUID().uuidString).jpg"
         
         // 파일 저장
-        try saveImageToFile(image, fileName: uniqueFileName)
+        try saveImageToFile(fixedImage, fileName: uniqueFileName)
         
         // CoreData에 메타데이터 저장
         _ = Photo(context: context, fileName: uniqueFileName, project: project)

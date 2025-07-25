@@ -49,7 +49,7 @@ final class HomeViewModel: ObservableObject {
     
     // MARK: -  Project Actions
     func startNewProject() {
-        coordinator.presentFullScreen(.camera(.newProject))
+        coordinator.presentFullScreen(.camera(.newProject, nil))
     }
     
     func selectProject(selectedProject: Project) {

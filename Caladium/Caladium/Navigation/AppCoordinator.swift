@@ -10,6 +10,7 @@ import SwiftUI
 final class AppCoordinator: ObservableObject {
     // Navigation Stack
     @Published var path = NavigationPath()
+    @Published var cameraPath = NavigationPath()
     
     // Modal Presentaion
     @Published var presentedSheet: AppRoute?
@@ -48,6 +49,8 @@ final class AppCoordinator: ObservableObject {
     }
     
     func dismissFullScreen() {
+        // 카메라 풀스크린 닫을 때 카메라 내부 네비게이션도 초기화
+        cameraPath = NavigationPath()
         presentedFullScreen = nil
     }
     
@@ -61,40 +64,20 @@ final class AppCoordinator: ObservableObject {
         isOnboardingComplete = true  // @AppStorage가 자동으로 저장
     }
     
-    // MARK: - 촬영 플로우
-    func confirmPhoto(_ image: UIImage, context: CameraContext) {
-        switch context {
-        case .newProject:
-            // 새 프로젝트 생성 후 홈으로
-            dismissFullScreen()
-            popToRoot()
-            
-        case .existingProject(let project):
-            // 기존 프로젝트에 사진 추가 후 프로젝트 상세로
-            dismissFullScreen()
+    // MARK: - 촬영 플로우 (카메라 내부 네비게이션)
+    func pushToPhotoConfirm(_ image: UIImage, context: CameraContext) {
+        // 카메라 내부 네비게이션 스택에 PhotoConfirm 추가
+        DispatchQueue.main.async {
+            self.cameraPath.append(AppRoute.photoConfirm(image, context))
         }
     }
     
-    func retakePhoto() {
-        goBack()  // 촬영 화면으로 돌아가기
+    func pushToCategorySelectView(_ image: UIImage){
+        cameraPath.append(AppRoute.saveNewProject(image))
     }
     
-    // MARK: - 프로젝트 상세 액션들
-    func addPhotoToProject(_ project: Project) {
-        presentFullScreen(.camera(.existingProject(project)))
+    func popCameraView() {
+        cameraPath = NavigationPath()
     }
     
-    func startVideoCreation(for project: Project) {
-        presentSheet(.videoPhotoSelection(project))
-    }
-    
-    // MARK: - 영상 만들기 플로우
-    func createVideoWithPhotos(_ photos: [Photo]) {
-        dismissSheet()  // 사진 선택 화면 닫기
-        presentSheet(.videoGeneration(photos))  // 영상 생성 화면 열기
-    }
-    
-    func completeVideoGeneration() {
-        dismissSheet()
-    }
 }

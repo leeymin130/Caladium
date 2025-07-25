@@ -44,6 +44,11 @@ final class DependencyContainer: ObservableObject {
         return VideoCreator()
     }()
     
+    // MARK: - Camera Service
+    lazy var cameraService: CameraService = {
+        return CameraService()
+    }()
+    
     // MARK: - Preview/Test Container
     static var preview: DependencyContainer = {
         let container = DependencyContainer()
@@ -61,6 +66,18 @@ final class DependencyContainer: ObservableObject {
     
     func makeProjectDetailViewModel() -> ProjectDetailViewModel {
         return ProjectDetailViewModel(coordinator: appCoordinator, coreDataService: coreDataService, gifService: gifCreatorService, videoService: movCreatorService)
+    }
+    
+    func makeCameraViewModel(context: CameraContext, latestPhoto: Photo? = nil) -> CameraViewModel {
+        return CameraViewModel(coordinator: appCoordinator, cameraService: cameraService, context: context, latestPhoto: latestPhoto)
+    }
+    
+    func makePhotoConfirmViewModel(image: UIImage, context: CameraContext) -> PhotoConfirmViewModel {
+        return PhotoConfirmViewModel(coordinator: appCoordinator, coreDataService: coreDataService, imgae: image, context: context)
+    }
+    
+    func makeNewProjectCategorySelectViewModel(image: UIImage) -> NewProjectCategorySelectViewModel {
+        return NewProjectCategorySelectViewModel(coordinator: appCoordinator, coreDataService: coreDataService, image: image)
     }
     
 }
