@@ -74,7 +74,7 @@ struct NewProjectCategorySelectView: View {
                     .padding(.bottom, 35)
                 
                 categorySelector
-                    .padding(.horizontal, 41)
+                    .padding(.horizontal)
                 
                 Spacer()
                 

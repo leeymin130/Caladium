@@ -36,7 +36,8 @@ final class PhotoConfirmViewModel: ObservableObject {
             coordinator.pushToCategorySelectView(image)
         // When : 사진 찍기 context 일때, coreDataService 이용해서 현재 프로젝트에 사진 추가하기
         case .existingProject(let project):
-            return
+            try? coreDataService.createPhoto(image: image, project: project)
+            coordinator.dismissFullScreen()
         }
     }
 
