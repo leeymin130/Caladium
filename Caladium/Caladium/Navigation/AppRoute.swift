@@ -50,10 +50,10 @@ enum AppRoute: Hashable, Identifiable {
 }
 
 enum OnboardingStep: Int, CaseIterable {
-    case welcome = 0
-    case features = 1
-    case permissions = 2
-    case complete = 3
+    case intro = 0
+    case guide = 1
+    case start = 2
+    case camera = 3
     
     var next: OnboardingStep? {
         guard let nextCase = OnboardingStep(rawValue: self.rawValue + 1) else {
