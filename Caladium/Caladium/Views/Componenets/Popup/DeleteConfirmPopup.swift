@@ -15,7 +15,7 @@ struct DeleteConfirmPopup: View {
         Rectangle()
             .fill(Color.gray0)
             .cornerRadius(14)
-            .frame(width: 357, height: 212)
+            .frame(maxWidth: 357, maxHeight: 212)
             .shadow(color: .gray900.opacity(0.25), radius: 1.5, x: 0, y: 2)
             .overlay(
                 RoundedRectangle(cornerRadius: 14)
