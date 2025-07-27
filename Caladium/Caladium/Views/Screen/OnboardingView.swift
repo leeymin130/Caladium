@@ -6,11 +6,13 @@
 //
 
 import SwiftUI
+import RiveRuntime
 
 // MARK: - Onboarding Views
 struct OnboardingContainerView: View {
     private var coordinator: AppCoordinator
-    @State private var currentStep: OnboardingStep = .welcome
+    @State private var currentStep: OnboardingStep = .intro
+    @State private var showCameraView: Bool = false
     
     init(coordinator: AppCoordinator) {
         self.coordinator = coordinator
@@ -18,83 +20,190 @@ struct OnboardingContainerView: View {
     }
     
     var body: some View {
-        VStack(spacing: 20) {
-            Text("온보딩 - \(currentStep.rawValue + 1)/\(OnboardingStep.allCases.count)")
-                .font(.title2)
-                .bold()
-            
-            switch currentStep {
-            case .welcome:
-                VStack(spacing: 15) {
-                    Text("🌱 Caladium에 오신 것을 환영합니다!")
-                        .font(.title)
-                    Text("식물의 성장을 기록하고 타임랩스 영상을 만들어보세요")
-                        .foregroundColor(.secondary)
-                }
-                
-            case .features:
-                VStack(spacing: 15) {
-                    Text("✨ 주요 기능")
-                        .font(.title)
-                    VStack(alignment: .leading, spacing: 10) {
-                        Text("📸 정기적인 사진 촬영")
-                        Text("🎬 타임랩스 영상 제작")
-                        Text("🗂 카테고리별 정리")
-                        Text("📈 성장 과정 추적")
+        if showCameraView {
+            CameraOnboardingView(coordinator: coordinator)
+        } else {
+            TabView(selection: $currentStep) {
+                //        case .intro:
+                GeometryReader { geometry in
+                    VStack(spacing: 0) {
+                        VStack(spacing: 0) {
+                            RiveViewModel(fileName: "onborading1").view()
+                                .padding(.top, 58)
+                        }
+                        .frame(height: geometry.size.height * 3/5, alignment: .center)
+                        
+                        VStack(spacing: 0) {
+                            Image("onboarding1")
+                                .padding(.bottom, 29)
+                            
+                            Text("사진으로 만드는 식물 기록 영상")
+                                .customFont(.navigationBarTitle)
+                                .padding(.bottom, 16)
+                            
+                            Text("긴 촬영 없이도 식물 타임랩스를 만들 수 있어요.")
+                                .customFont(.categoryButtonBody)
+                                .foregroundStyle(.gray600)
+                        }
+                        .frame(height: geometry.size.height * 2/5, alignment: .top)
                     }
                 }
+                .tag(OnboardingStep.intro)
                 
-            case .permissions:
-                VStack(spacing: 15) {
-                    Text("📷 권한 설정")
-                        .font(.title)
-                    Text("카메라 권한이 필요합니다")
-                        .foregroundColor(.secondary)
-                    Button("권한 허용하기") {
-                        // 실제로는 권한 요청 로직
-                        currentStep = .complete
+                //        case .guide:
+                GeometryReader { geometry in
+                    VStack(spacing: 0) {
+                        VStack(spacing: 0) {
+                            RiveViewModel(fileName: "onboarding2").view()
+                                .padding(.top, 58)
+                        }
+                        .frame(height: geometry.size.height * 3/5, alignment: .center)
+                        
+                        VStack(spacing: 0) {
+                            Image("onboarding2")
+                                .padding(.bottom, 29)
+                            
+                            Text("같은 자리에서 찍을 수 있도록")
+                                .customFont(.navigationBarTitle)
+                                .padding(.bottom, 16)
+                            
+                            Text("최근 사진 필터를 통해\n비슷한 구도로 쉽게 찍을 수 있어요.")
+                                .customFont(.categoryButtonBody)
+                                .foregroundStyle(.gray600)
+                                .multilineTextAlignment(.center)
+                                .lineSpacing(4)
+                        }
+                        .frame(height: geometry.size.height * 2/5, alignment: .top)
                     }
-                    .buttonStyle(.borderedProminent)
                 }
+                .tag(OnboardingStep.guide)
                 
-            case .complete:
-                VStack(spacing: 15) {
-                    Text("🎉 설정 완료!")
-                        .font(.title)
-                    Text("이제 첫 번째 식물을 추가해보세요")
-                        .foregroundColor(.secondary)
+                //        case .start:
+                GeometryReader { geometry in
+                    VStack(spacing: 0) {
+                        VStack(spacing: 0) {
+                            RiveViewModel(fileName: "onboarding4").view()
+                                .padding(.top, 58)
+                        }
+                        .frame(height: geometry.size.height * 3/5, alignment: .center)
+                        
+                        VStack(spacing: 0) {
+                            Image("onboarding3")
+                                .padding(.bottom, 29)
+                            
+                            Text("버튼 한 번이면 영상 완성")
+                                .customFont(.navigationBarTitle)
+                                .padding(.bottom, 16)
+                            
+                            Text("원하는 사진들을 선택해 영상을 만들고,\n저장하거나 공유할 수 있어요.")
+                                .customFont(.categoryButtonBody)
+                                .foregroundStyle(.gray600)
+                                .multilineTextAlignment(.center)
+                                .lineSpacing(4)
+                                .padding(.bottom, 70)
+                            
+                            Button {
+                                let impactFeedback = UIImpactFeedbackGenerator(style: .medium)
+                                impactFeedback.impactOccurred()
+                                
+                                showCameraView = true
+                                currentStep = .camera // 인디케이터 업데이트
+                                
+                            } label: {
+                                Text("칼라디움 시작하기")
+                                    .customFont(.categoryButtonTitle)
+                                    .padding(.horizontal, 32)
+                                    .padding(.vertical, 12)
+                                    .foregroundColor(.gray0)
+                                    .background(Color.green500)
+                                    .cornerRadius(10)
+                                    .overlay(
+                                        RoundedRectangle(cornerRadius: 10)
+                                            .stroke(.green700, lineWidth: 1)
+                                    )
+                            }
+                        }
+                        .frame(height: geometry.size.height * 2/5, alignment: .top)
+                    }
                 }
+                .tag(OnboardingStep.start)
+                
             }
+            .tabViewStyle(.page(indexDisplayMode: .never))
+            .animation(.easeInOut(duration: 0.3), value: currentStep)
+        }
+        
+    }
+    
+}
+
+// MARK: - Camera 온보딩 화면 (별도 컴포넌트)
+struct CameraOnboardingView: View {
+    let coordinator: AppCoordinator
+    @State private var currentStep: OnboardingStep = .camera
+    
+    var body: some View {
+        //        case .camera:
+        ZStack(alignment: .center) {
+            Image("bg-picture")
+                .resizable()
+                .scaledToFill()
+                .ignoresSafeArea()
+            Rectangle()
+                .foregroundColor(.clear)
+                .frame(width: 344, height: 233)
+                .background(.gray0)
+                .cornerRadius(14)
+                .shadow(color: .gray900.opacity(0.25), radius: 1.5, x: 0, y: 2)
+                .overlay(
+                    RoundedRectangle(cornerRadius: 14)
+                        .inset(by: 0.5)
+                        .stroke(.gray400, lineWidth: 1)
+                )
             
-            Spacer()
-            
-            HStack {
-                if currentStep != .welcome {
-                    Button("이전") {
-                        if let previous = currentStep.previous {
-                            currentStep = previous
-                        }
-                    }
+            VStack(spacing: 0) {
+                Text("바로 사진을 찍어볼까요?")
+                    .customFont(.navigationBarTitle)
+                    .foregroundStyle(.gray900)
+                    .padding(.bottom, 12)
+                
+                Text("사진을 촬영하고 저장하면,\n나만의 식물 프로젝트를 만들 수 있어요.")
+                    .customFont(.categoryButtonBody)
+                    .foregroundStyle(.gray600)
+                    .multilineTextAlignment(.center)
+                    .lineSpacing(4)
+                    .padding(.bottom, 37)
+                
+                Button {
+                    let impactFeedback = UIImpactFeedbackGenerator(style: .medium)
+                    impactFeedback.impactOccurred()
+                    
+                    // 촬영화면 이동
+                    coordinator.presentFullScreen(.camera(.newProject, nil))
+                    coordinator.completeOnboarding()
+                } label: {
+                    Text("사진 찍기")
+                        .customFont(.categoryButtonTitle)
+                        .padding(.horizontal, 32)
+                        .padding(.vertical, 12)
+                        .foregroundColor(.gray0)
+                        .background(Color.green500)
+                        .cornerRadius(10)
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 10)
+                                .stroke(.green700, lineWidth: 1)
+                        )
                 }
                 
-                Spacer()
-                
-                if currentStep == .complete {
-                    Button("시작하기") {
-                        coordinator.completeOnboarding()
-                    }
-                    .buttonStyle(.borderedProminent)
-                } else {
-                    Button("다음") {
-                        if let next = currentStep.next {
-                            currentStep = next
-                        }
-                    }
-                    .buttonStyle(.borderedProminent)
-                }
             }
         }
-        .padding()
     }
+    
+}
+
+
+
+#Preview {
+    OnboardingContainerView(coordinator: AppCoordinator())
 }
 
