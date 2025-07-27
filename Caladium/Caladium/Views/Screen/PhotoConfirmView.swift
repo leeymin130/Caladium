@@ -62,6 +62,7 @@ struct PhotoConfirmView: View {
                 
                 // 촬영된 이미지
                 PhotoConfirmFrame(image: vm.image)
+                    .padding(.bottom, 16)
                 
                 Spacer()
                 
@@ -120,18 +121,20 @@ struct PhotoConfirmFrame: View {
     }()
     
     var body: some View {
-        VStack(alignment: .leading, spacing: 8) {
+        VStack(alignment: .leading, spacing: 0) {
             // 사진 표시 영역
             Image(uiImage: image)
                 .resizable()
-                .aspectRatio(contentMode: .fit)
+                .aspectRatio(contentMode: .fill)
+                .frame(maxWidth: 321, maxHeight: 423)
+                .clipped()
                 .cornerRadius(5)
-                .frame(maxWidth: 320, maxHeight: 420)
             
             // 사진 촬영 날짜
             Text(formatDate(.now))
-                .fontWeight(.semibold)
+                .customFont(.photoDate)
                 .foregroundColor(.gray900)
+                .padding(.top, 18)
         }
         .padding(.horizontal, 18)
         .padding(.top, 18)
