@@ -173,7 +173,8 @@ struct AnimationResultView: View {
     
     private func dateRangeText(start: Date, end: Date) -> String {
         let formatter = DateFormatter()
-        formatter.dateStyle = .medium
+        formatter.dateStyle = .long
+        formatter.locale = Locale(identifier: "ko_KR")
         
         let startString = formatter.string(from: start)
         let endString = formatter.string(from: end)
