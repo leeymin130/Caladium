@@ -29,7 +29,8 @@ final class NewProjectCategorySelectViewModel: ObservableObject {
     
     
     func back(){
-        coordinator.popCameraView()
+//        coordinator.popCameraView()
+        coordinator.popToPreviousCameraView()
     }
     
     func saveNewProject(){
