@@ -12,6 +12,7 @@ import CoreData
 struct ProjectDetailView: View {
     
     @StateObject private var vm: ProjectDetailViewModel
+    @Environment(\.dismiss) private var dismiss
     
     let project: Project
     @FetchRequest private var photos: FetchedResults<Photo>
@@ -28,6 +29,9 @@ struct ProjectDetailView: View {
     
     var body: some View {
         VStack(spacing: 0) {
+            // 상단 툴바 영역
+            customToolbar
+
             photoGrid
                 .overlay(alignment: .bottomTrailing){
                     cameraButton
@@ -87,24 +91,41 @@ struct ProjectDetailView: View {
                 LoadingView()
             }
         }
-        .navigationTitle("")
-        .navigationBarTitleDisplayMode(.inline)
-        .navigationBarHidden(vm.isGeneratingAnimation) // 로딩 중에는 네비게이션 바 숨기기
-        .toolbar {
-            if case .normal = vm.editMode {
-                ToolbarItem(placement: .principal) {
-                    Text(dateRangeText)
-                        .customFont(.photoDate)
-                        .foregroundColor(.gray900)
-                }
-            }
-        }
+        .navigationBarHidden(true)
         .ignoresSafeArea(.container, edges: .bottom)
         
     }
     
-    // MARK: - Photo Grid
+    // MARK: - Custom Toolbar
+        private var customToolbar: some View {
+            HStack {
+                // 뒤로가기 버튼
+                Button {
+                    // 햅틱 피드백 추가
+                    let impactFeedback = UIImpactFeedbackGenerator(style: .medium)
+                    impactFeedback.impactOccurred()
+                    
+                    // 뒤로가기
+                    dismiss()
+                } label: {
+                    Image("arrow-back-green700")
+                        .padding(.horizontal, 24)
+                }
+                
+                // 날짜 범위 텍스트 (일반 모드일 때만 표시)
+                if case .normal = vm.editMode {
+                    Text(dateRangeText)
+                        .customFont(.photoDate)
+                        .foregroundColor(.gray900)
+                }
+                
+                Spacer()
+            }
+            .frame(height: 68)
+            .background(Color.gray0)
+        }
     
+    // MARK: - Photo Grid
     private var photoGrid: some View {
         GeometryReader { geo in
             let spacing: CGFloat = 3
@@ -116,7 +137,7 @@ struct ProjectDetailView: View {
                 // 편집 모드 가이드 배너
                 if case .delete = vm.editMode {
                     guideBanner(
-                        text: "삭제할 식물을 선택해주세요"
+                        text: "삭제할 사진을 선택해주세요"
                     )
                 } else if case .makeVideo = vm.editMode {
                     guideBanner(text: "영상에 추가할 사진을 고르세요", guideText : "사진을 많이 선택할수록 영상이 풍성해져요")
@@ -138,17 +159,18 @@ struct ProjectDetailView: View {
         VStack(alignment: .leading, spacing: 0) {
             Text(text)
                 .customFont(.navigationBarTitle)
+                .foregroundStyle(.gray900)
             
             if let guideText = guideText {
                 Text(guideText)
                     .customFont(.navigationBarBody)
                     .foregroundStyle(.gray500)
+                    .padding(.top, 5)
             }
             
         }
         .frame(maxWidth: .infinity, alignment: .leading)
         .padding(.horizontal, 24)
-        .padding(.top, 20)
         .transition(.asymmetric(
             insertion: .move(edge: .top).combined(with: .opacity),
             removal: .move(edge: .top).combined(with: .opacity)
@@ -203,6 +225,9 @@ struct ProjectDetailView: View {
             
         }
         .onTapGesture {
+            let impactFeedback = UIImpactFeedbackGenerator(style: .medium)
+            impactFeedback.impactOccurred()
+            
             // 최신 사진을 찾아서 카메라에 전달
             let latestPhoto = getLatestPhoto()
             vm.addNewPhoto(currentProject: project, latestPhoto: latestPhoto)
@@ -210,13 +235,13 @@ struct ProjectDetailView: View {
         .frame(width: 158, height: 58, alignment: .leading)
         .background{
             Rectangle()
-                .fill(Color.white)
+                .fill(Color.gray0)
             
         }
-        .clipShape(RoundedRectangle(cornerRadius: 12))
+        .clipShape(RoundedRectangle(cornerRadius: 10))
         .overlay(
             RoundedRectangle(cornerRadius: 10)
-                .stroke(Color.gray400, lineWidth: 2)
+                .stroke(Color.gray400, lineWidth: 1)
         )
         
         
