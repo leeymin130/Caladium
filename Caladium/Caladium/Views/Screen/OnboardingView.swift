@@ -103,6 +103,9 @@ struct OnboardingContainerView: View {
                                 .padding(.bottom, 70)
                             
                             Button {
+                                let impactFeedback = UIImpactFeedbackGenerator(style: .medium)
+                                impactFeedback.impactOccurred()
+                                
                                 showCameraView = true
                                 currentStep = .camera // 인디케이터 업데이트
                                 
@@ -172,6 +175,9 @@ struct CameraOnboardingView: View {
                     .padding(.bottom, 37)
                 
                 Button {
+                    let impactFeedback = UIImpactFeedbackGenerator(style: .medium)
+                    impactFeedback.impactOccurred()
+                    
                     // 촬영화면 이동
                     coordinator.presentFullScreen(.camera(.newProject, nil))
                     coordinator.completeOnboarding()
