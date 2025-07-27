@@ -53,6 +53,7 @@ struct AnimationResultView: View {
                 Spacer()
                 
                 bottomToolbar
+                    .padding(.bottom, 14)
                 
             }
             .navigationBarHidden(true)
