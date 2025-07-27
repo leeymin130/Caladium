@@ -64,7 +64,6 @@ struct ProjectAddButton: View {
                         Text("추가하기")
                             .customFont(.categoryButtonBody)
                             .foregroundColor(.gray400)
-                            .padding(.top, -2)
                     }, alignment: .top
                 )
         }
