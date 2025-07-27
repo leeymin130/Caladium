@@ -62,7 +62,6 @@ struct ProjectDetailView: View {
                         .fill(.primary.opacity(0.35))
                 }
             
-            //            bottomToolbar
             BottomToolbar(
                 projectEditMode: vm.editMode,
                 style: .projectDetail,
@@ -142,7 +141,7 @@ struct ProjectDetailView: View {
             
             if let guideText = guideText {
                 Text(guideText)
-                    .customFont(.categoryButtonBody)
+                    .customFont(.navigationBarBody)
                     .foregroundStyle(.gray500)
             }
             

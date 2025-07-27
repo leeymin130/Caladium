@@ -194,9 +194,15 @@ struct BottomToolbar: View {
             Spacer()
             
             if selectedCount > 0 {
-                Text("\(selectedCount)개의 식물 선택")
-                    .customFont(.categoryButtonBody)
-                    .foregroundColor(.gray800)
+                HStack(spacing: 0){
+                    Text("\(selectedCount)")
+                        .customFont(.popupCategory)
+                        .foregroundColor(.gray900)
+                    
+                    Text("개의 식물 선택")
+                        .customFont(.navigationBarBody)
+                        .foregroundColor(.gray800)
+                }
             }
             
             Spacer()
@@ -220,9 +226,16 @@ struct BottomToolbar: View {
             Spacer()
             
             if selectedCount > 0 {
-                Text("\(selectedCount)개의 식물 선택")
-                    .customFont(.categoryButtonBody)
-                    .foregroundColor(.gray800)
+                HStack(spacing: 0){
+                    Text("\(selectedCount)")
+                        .customFont(.popupCategory)
+                        .foregroundColor(.gray900)
+                    
+                    Text("개의 식물 선택")
+                        .customFont(.navigationBarBody)
+                        .foregroundColor(.gray800)
+                }
+                
             }
             
             Spacer()

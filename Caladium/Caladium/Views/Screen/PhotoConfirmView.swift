@@ -48,12 +48,12 @@ struct PhotoConfirmView: View {
                 HStack{
                     VStack(alignment: .leading){
                         Text("이 사진으로 할까요?")
-                            .font(.title2)
-                            .bold()
+                            .customFont(.navigationBarTitle)
+                            .foregroundStyle(.gray900)
                             .padding(.bottom, 5)
                         Text(contextDescription)
-                            .foregroundColor(.secondary)
-                            .multilineTextAlignment(.center)
+                            .customFont(.navigationBarBody)
+                            .foregroundStyle(.gray500)
                     }
                     Spacer()
                 }
@@ -77,9 +77,9 @@ struct PhotoConfirmView: View {
     private var contextDescription: String {
         switch vm.context {
         case .newProject:
-            return "이 사진으로 새 프로젝트를 시작하시겠습니까?"
+            return "현재 사진으로 새 프로젝트를 시작하시겠습니까?"
         case .existingProject:
-            return "이 사진을 프로젝트에 추가하시겠습니까?"
+            return "현재 사진을 프로젝트에 추가하시겠습니까?"
         }
     }
     

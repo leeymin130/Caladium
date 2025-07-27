@@ -11,6 +11,7 @@ enum TypographyStyle {
     case categoryButtonTitle
     case categoryButtonBody
     case navigationBarTitle
+    case navigationBarBody
     case photoDate
     case popupTitle
     case popupCategory
@@ -34,6 +35,10 @@ struct CustomFontModifier: ViewModifier {
             content
                 .font(.custom("SUIT-SemiBold", size: 24))
                 .frame(height: 33)
+        case .navigationBarBody:
+            content
+                .font(.custom("SUIT-Regular", size: 16))
+                .frame(height: 18)
         case .photoDate:
             content
                 .font(.custom("SUIT-SemiBold", size: 15))
