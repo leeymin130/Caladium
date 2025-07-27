@@ -25,97 +25,103 @@ struct OnboardingContainerView: View {
         } else {
             TabView(selection: $currentStep) {
                 //        case .intro:
-                VStack(spacing: 0) {
+                GeometryReader { geometry in
                     VStack(spacing: 0) {
-                        RiveViewModel(fileName: "onborading1").view()
-                            .padding(.top, 58)
-                    }
-                    .frame(maxHeight: .infinity, alignment: .center)
-                    
-                    VStack(spacing: 0) {
-                        Image("onboarding1")
-                            .padding(.bottom, 29)
+                        VStack(spacing: 0) {
+                            RiveViewModel(fileName: "onborading1").view()
+                                .padding(.top, 58)
+                        }
+                        .frame(height: geometry.size.height * 3/5, alignment: .center)
                         
-                        Text("사진으로 만드는 식물 기록 영상")
-                            .customFont(.navigationBarTitle)
-                            .padding(.bottom, 16)
-                        
-                        Text("긴 촬영 없이도 식물 타임랩스를 만들 수 있어요.")
-                            .customFont(.categoryButtonBody)
-                            .foregroundStyle(.gray600)
+                        VStack(spacing: 0) {
+                            Image("onboarding1")
+                                .padding(.bottom, 29)
+                            
+                            Text("사진으로 만드는 식물 기록 영상")
+                                .customFont(.navigationBarTitle)
+                                .padding(.bottom, 16)
+                            
+                            Text("긴 촬영 없이도 식물 타임랩스를 만들 수 있어요.")
+                                .customFont(.categoryButtonBody)
+                                .foregroundStyle(.gray600)
+                        }
+                        .frame(height: geometry.size.height * 2/5, alignment: .top)
                     }
-                    .frame(maxHeight: .infinity, alignment: .top)
                 }
                 .tag(OnboardingStep.intro)
                 
                 //        case .guide:
-                VStack(spacing: 0) {
+                GeometryReader { geometry in
                     VStack(spacing: 0) {
-                        RiveViewModel(fileName: "onboarding2").view()
-                            .padding(.top, 58)
-                    }
-                    .frame(maxHeight: .infinity, alignment: .center)
-                    
-                    VStack(spacing: 0) {
-                        Image("onboarding2")
-                            .padding(.bottom, 29)
+                        VStack(spacing: 0) {
+                            RiveViewModel(fileName: "onboarding2").view()
+                                .padding(.top, 58)
+                        }
+                        .frame(height: geometry.size.height * 3/5, alignment: .center)
                         
-                        Text("같은 자리에서 찍을 수 있도록")
-                            .customFont(.navigationBarTitle)
-                            .padding(.bottom, 16)
-                        
-                        Text("최근 사진 필터를 통해\n비슷한 구도로 쉽게 찍을 수 있어요.")
-                            .customFont(.categoryButtonBody)
-                            .foregroundStyle(.gray600)
-                            .multilineTextAlignment(.center)
-                            .lineSpacing(4)
+                        VStack(spacing: 0) {
+                            Image("onboarding2")
+                                .padding(.bottom, 29)
+                            
+                            Text("같은 자리에서 찍을 수 있도록")
+                                .customFont(.navigationBarTitle)
+                                .padding(.bottom, 16)
+                            
+                            Text("최근 사진 필터를 통해\n비슷한 구도로 쉽게 찍을 수 있어요.")
+                                .customFont(.categoryButtonBody)
+                                .foregroundStyle(.gray600)
+                                .multilineTextAlignment(.center)
+                                .lineSpacing(4)
+                        }
+                        .frame(height: geometry.size.height * 2/5, alignment: .top)
                     }
-                    .frame(maxHeight: .infinity, alignment: .top)
                 }
                 .tag(OnboardingStep.guide)
                 
                 //        case .start:
-                VStack(spacing: 0) {
+                GeometryReader { geometry in
                     VStack(spacing: 0) {
-                        RiveViewModel(fileName: "onboarding4").view()
-                            .padding(.top, 58)
-                    }
-                    .frame(maxHeight: .infinity, alignment: .center)
-                    
-                    VStack(spacing: 0) {
-                        Image("onboarding3")
-                            .padding(.bottom, 29)
-                        
-                        Text("버튼 한 번이면 영상 완성")
-                            .customFont(.navigationBarTitle)
-                            .padding(.bottom, 16)
-                        
-                        Text("원하는 사진들을 선택해 영상을 만들고,\n저장하거나 공유할 수 있어요.")
-                            .customFont(.categoryButtonBody)
-                            .foregroundStyle(.gray600)
-                            .multilineTextAlignment(.center)
-                            .lineSpacing(4)
-                            .padding(.bottom, 70)
-                        
-                        Button {
-                            showCameraView = true
-                            currentStep = .camera // 인디케이터 업데이트
-                            
-                        } label: {
-                            Text("칼라디움 시작하기")
-                                .customFont(.categoryButtonTitle)
-                                .padding(.horizontal, 32)
-                                .padding(.vertical, 12)
-                                .foregroundColor(.gray0)
-                                .background(Color.green500)
-                                .cornerRadius(10)
-                                .overlay(
-                                    RoundedRectangle(cornerRadius: 10)
-                                        .stroke(.green700, lineWidth: 1)
-                                )
+                        VStack(spacing: 0) {
+                            RiveViewModel(fileName: "onboarding4").view()
+                                .padding(.top, 58)
                         }
+                        .frame(height: geometry.size.height * 3/5, alignment: .center)
+                        
+                        VStack(spacing: 0) {
+                            Image("onboarding3")
+                                .padding(.bottom, 29)
+                            
+                            Text("버튼 한 번이면 영상 완성")
+                                .customFont(.navigationBarTitle)
+                                .padding(.bottom, 16)
+                            
+                            Text("원하는 사진들을 선택해 영상을 만들고,\n저장하거나 공유할 수 있어요.")
+                                .customFont(.categoryButtonBody)
+                                .foregroundStyle(.gray600)
+                                .multilineTextAlignment(.center)
+                                .lineSpacing(4)
+                                .padding(.bottom, 70)
+                            
+                            Button {
+                                showCameraView = true
+                                currentStep = .camera // 인디케이터 업데이트
+                                
+                            } label: {
+                                Text("칼라디움 시작하기")
+                                    .customFont(.categoryButtonTitle)
+                                    .padding(.horizontal, 32)
+                                    .padding(.vertical, 12)
+                                    .foregroundColor(.gray0)
+                                    .background(Color.green500)
+                                    .cornerRadius(10)
+                                    .overlay(
+                                        RoundedRectangle(cornerRadius: 10)
+                                            .stroke(.green700, lineWidth: 1)
+                                    )
+                            }
+                        }
+                        .frame(height: geometry.size.height * 2/5, alignment: .top)
                     }
-                    .frame(maxHeight: .infinity, alignment: .top)
                 }
                 .tag(OnboardingStep.start)
                 
