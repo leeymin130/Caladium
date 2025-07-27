@@ -12,47 +12,56 @@ struct CameraPopup: View {
     let confirmButtonAction: () -> Void
     
     var body: some View {
-        VStack(alignment: .center, spacing: 20) {
-            // 제목 헤더
-            titleHeader
-            
-            VStack(alignment: .center, spacing: 4){
-                Text("일관적으로 찍을 수 있는 장소인가요?")
-                    .font(.system(size: 16, weight: .bold))
-                    .foregroundStyle(Color.gray900)
-                    .padding(.bottom, 8)
-                Text("일관된 조명과 배경에서 촬영하면")
-                    .font(.system(size: 12))
-                    .foregroundStyle(Color.gray500)
-                Text("완성도 높은 결과물을 얻을 수 있어요")
-                    .font(.system(size: 12))
-                    .foregroundStyle(Color.gray500)
-            }
-            .padding(.horizontal, 20)
-            
-            // 액션 버튼들
-            actionButtons
-        }
-        .padding(.bottom, 20)
-        .background(Color.gray0)
-        .cornerRadius(14)
-        .shadow(color: .gray900.opacity(0.25), radius: 1.5, x: 0, y: 2)
-        .overlay(
-            RoundedRectangle(cornerRadius: 14)
-                .stroke(.gray400, lineWidth: 1)
-        )
+        Rectangle()
+            .fill(Color.gray0)
+            .cornerRadius(14)
+            .frame(maxWidth: 357, maxHeight: 212)
+            .shadow(color: .gray900.opacity(0.25), radius: 1.5, x: 0, y: 2)
+            .overlay(
+                RoundedRectangle(cornerRadius: 14)
+                    .stroke(.gray400, lineWidth: 1)
+            )
+            .overlay(
+                VStack(alignment: .center, spacing: 0){
+                    Text("일관적으로 찍을 수 있는 장소인가요?")
+                        .customFont(.popupCategory)
+                        .foregroundStyle(Color.gray900)
+                        .padding(.bottom, 4)
+                    Text("일관된 조명과 배경에서 촬영하면")
+                        .customFont(.categoryButtonBody)
+                        .foregroundStyle(Color.gray500)
+                    Text("완성도 높은 결과물을 얻을 수 있어요")
+                        .customFont(.categoryButtonBody)
+                        .foregroundStyle(Color.gray500)
+                    
+                    // 액션 버튼들
+                    actionButtons
+                        .padding(.vertical, 20)
+                }
+                    .padding(.horizontal, 20), alignment: .bottom
+            )
+            .overlay(titleHeader, alignment: .top)
+        
     }
     
     // MARK: - 제목 헤더
     private var titleHeader: some View {
-        Text("사진찍기 TIP")
-            .font(.system(size: 16, weight: .bold))
-            .multilineTextAlignment(.center)
-            .foregroundColor(.gray0)
-            .frame(maxWidth: .infinity)
-            .frame(height: 44)
-            .background(.pink300)
-            .clipShape(.rect(topLeadingRadius: 14, topTrailingRadius: 14))
+        UnevenRoundedRectangle(
+            cornerRadii: .init(
+                topLeading: 10,
+                bottomLeading: 0,
+                bottomTrailing: 0,
+                topTrailing: 10
+            )
+        )
+        .fill(.pink300)
+        .stroke(Color.pink600, lineWidth: 1)
+        .frame(height: 44)
+        .overlay(
+            Text("사진찍기 TIP")
+                .customFont(.popupTitle)
+                .foregroundColor(.gray0)
+        )
     }
     
     // MARK: - 액션 버튼들

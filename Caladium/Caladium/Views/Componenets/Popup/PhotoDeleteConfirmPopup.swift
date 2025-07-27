@@ -12,46 +12,56 @@ struct PhotoDeleteConfirmPopup: View {
     let confirmButtonAction: () -> Void
     
     var body: some View {
-        VStack(alignment: .center, spacing: 20) {
-            // 제목 헤더
-            titleHeader
-            
-            VStack(alignment: .center, spacing: 0){
-                Text("정말로 이 사진을 삭제하시겠어요?")
-                    .customFont(.popupCategory)
-                    .foregroundStyle(Color.gray900)
-                    .padding(.bottom, 4)
-                Text("삭제하면 사진과 관련된 모든 정보가 완전히 사라지며,")
-                    .customFont(.categoryButtonBody)
-                    .foregroundStyle(Color.gray500)
-                Text("되돌릴 수 없습니다.")
-                    .customFont(.categoryButtonBody)
-                    .foregroundStyle(Color.gray500)
-            }
-            .padding(.horizontal, 20)
-            
-            // 액션 버튼들
-            actionButtons
-        }
-        .padding(.bottom, 20)
-        .background(Color.gray0)
-        .cornerRadius(14)
-        .shadow(color: .gray900.opacity(0.25), radius: 1.5, x: 0, y: 2)
-        .overlay(
-            RoundedRectangle(cornerRadius: 14)
-                .stroke(.gray400, lineWidth: 1)
-        )
+        Rectangle()
+            .fill(Color.gray0)
+            .cornerRadius(14)
+            .frame(maxWidth: 357, maxHeight: 212)
+            .shadow(color: .gray900.opacity(0.25), radius: 1.5, x: 0, y: 2)
+            .overlay(
+                RoundedRectangle(cornerRadius: 14)
+                    .stroke(.gray400, lineWidth: 1)
+            )
+            .overlay(
+                VStack(alignment: .center, spacing: 0){
+                    Text("정말로 이 사진을 삭제하시겠어요?")
+                        .customFont(.popupCategory)
+                        .foregroundStyle(Color.gray900)
+                        .padding(.bottom, 4)
+                    Text("삭제하면 사진과 관련된 모든 정보가 완전히 사라지며,")
+                        .customFont(.categoryButtonBody)
+                        .foregroundStyle(Color.gray500)
+                    Text("되돌릴 수 없습니다.")
+                        .customFont(.categoryButtonBody)
+                        .foregroundStyle(Color.gray500)
+                    
+                    // 액션 버튼들
+                    actionButtons
+                        .padding(.vertical, 20)
+                }
+                    .padding(.horizontal, 20), alignment: .bottom
+            )
+            .overlay(titleHeader, alignment: .top)
+        
     }
     
     // MARK: - 제목 헤더
     private var titleHeader: some View {
-        Text("사진 삭제하기")
-            .customFont(.popupTitle)
-            .foregroundColor(.gray0)
-            .frame(maxWidth: .infinity)
-            .frame(height: 44)
-            .background(.pink300)
-            .clipShape(.rect(topLeadingRadius: 14, topTrailingRadius: 14))
+        UnevenRoundedRectangle(
+            cornerRadii: .init(
+                topLeading: 10,
+                bottomLeading: 0,
+                bottomTrailing: 0,
+                topTrailing: 10
+            )
+        )
+        .fill(.pink300)
+        .stroke(Color.pink600, lineWidth: 1)
+        .frame(height: 44)
+        .overlay(
+            Text("사진 삭제하기")
+                .customFont(.popupTitle)
+                .foregroundColor(.gray0)
+        )
     }
     
     // MARK: - 액션 버튼들
@@ -80,5 +90,5 @@ struct PhotoDeleteConfirmPopup: View {
 
 #Preview {
     PhotoDeleteConfirmPopup(cancelButtonAction: {}, confirmButtonAction: {})
-    .padding()
+        .padding()
 }
