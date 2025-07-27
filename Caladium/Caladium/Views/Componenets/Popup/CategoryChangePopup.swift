@@ -21,42 +21,58 @@ struct CategoryChangePopup: View {
     }
     
     var body: some View {
-        VStack(alignment: .center, spacing: 20) {
-            // 제목 헤더
-            titleHeader
-            
-            // 카테고리 선택 영역
-            categorySelector
-                .padding(.horizontal, 20)
-            
-            // 액션 버튼들
-            actionButtons
-        }
-        .padding(.bottom, 20)
-        .background(Color.gray0)
-        .cornerRadius(14)
-        .shadow(color: .gray900.opacity(0.25), radius: 1.5, x: 0, y: 2)
-        .overlay(
-            RoundedRectangle(cornerRadius: 14)
-                .stroke(.gray400, lineWidth: 1)
-        )
+        Rectangle()
+            .fill(Color.gray0)
+            .cornerRadius(14)
+            .frame(maxWidth: 357, maxHeight: 212)
+            .shadow(color: .gray900.opacity(0.25), radius: 1.5, x: 0, y: 2)
+            .overlay(
+                RoundedRectangle(cornerRadius: 14)
+                    .stroke(.gray400, lineWidth: 1)
+            )
+            .overlay(
+                VStack(alignment: .center, spacing: 0) {
+                    // 카테고리 선택 영역
+                    categorySelector
+                        .padding(.top, 24)
+                    
+                    // 액션 버튼들
+                    actionButtons
+                        .padding(.vertical, 20)
+                }
+                    .padding(.horizontal, 20), alignment: .bottom
+            )
+            .overlay(titleHeader, alignment: .top)
+        
     }
     
     // MARK: - 제목 헤더
     private var titleHeader: some View {
-        Text("카테고리 변경")
-            .customFont(.popupTitle)
-            .foregroundColor(.gray0)
-            .frame(maxWidth: .infinity)
-            .frame(height: 44)
-            .background(.green500)
-            .clipShape(.rect(topLeadingRadius: 14, topTrailingRadius: 14))
+        UnevenRoundedRectangle(
+            cornerRadii: .init(
+                topLeading: 14,
+                bottomLeading: 0,
+                bottomTrailing: 0,
+                topTrailing: 14
+            )
+        )
+        .fill(.green500)
+        .stroke(Color.green700, lineWidth: 1)
+        .frame(height: 44)
+        .overlay(
+            Text("카테고리 변경")
+                .customFont(.popupTitle)
+                .foregroundColor(.gray0)
+        )
     }
     
     // MARK: - 카테고리 선택 영역
     private var categorySelector: some View {
-        HStack(spacing: 70) {
+        HStack(spacing: 50) {
             Button(action: {
+                let impactFeedback = UIImpactFeedbackGenerator(style: .medium)
+                impactFeedback.impactOccurred()
+                
                 withAnimation(.easeInOut(duration: 0.1)) {
                     let currentIndex = categories.firstIndex(of: selectedCategory) ?? 0
                     if currentIndex > 0 {
@@ -66,16 +82,20 @@ struct CategoryChangePopup: View {
                     }
                 }
             }) {
-                Image(systemName: "chevron.left")
-                    .frame(width: 20, height: 20)
-                    .foregroundColor(.green700)
+                Image("arrow-back-green700")
+
             }
             
             Text("\(selectedCategory.displayName)")
                 .customFont(.popupCategory)
                 .foregroundColor(.gray900)
+                .lineLimit(1)
+                .minimumScaleFactor(0.5)
             
             Button(action: {
+                let impactFeedback = UIImpactFeedbackGenerator(style: .medium)
+                impactFeedback.impactOccurred()
+                
                 withAnimation(.easeInOut(duration: 0.1)) {
                     let currentIndex = categories.firstIndex(of: selectedCategory) ?? 0
                     if currentIndex < categories.count - 1 {
@@ -85,9 +105,8 @@ struct CategoryChangePopup: View {
                     }
                 }
             }) {
-                Image(systemName: "chevron.right")
-                    .frame(width: 20, height: 20)
-                    .foregroundColor(.green700)
+                Image("arrow-back-green700")
+                    .scaleEffect(x: -1)
             }
             
         }
@@ -99,6 +118,13 @@ struct CategoryChangePopup: View {
             RoundedRectangle(cornerRadius: 10)
                 .stroke(.gray300, lineWidth: 1)
         )
+        .overlay(
+            RoundedRectangle(cornerRadius: 10)
+                .stroke(.gray300, lineWidth: 1)
+                .shadow(color: .gray900.opacity(0.25), radius: 2, x: 1, y: 1)
+                .clipShape(RoundedRectangle(cornerRadius: 10))
+        )
+        
     }
     
     // MARK: - 액션 버튼들
@@ -109,7 +135,7 @@ struct CategoryChangePopup: View {
                 backgroundColor: .gray200,
                 borderColor: .gray300,
                 action: {
-                   cancelButtonAction()
+                    cancelButtonAction()
                 }
             )
             
@@ -127,5 +153,5 @@ struct CategoryChangePopup: View {
 
 #Preview {
     CategoryChangePopup(selectedCategory: Category.desert, cancelButtonAction: {}, confirmButtonAction: {_ in })
-    .padding()
+        .padding()
 }

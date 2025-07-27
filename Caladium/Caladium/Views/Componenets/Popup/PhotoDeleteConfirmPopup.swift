@@ -48,10 +48,10 @@ struct PhotoDeleteConfirmPopup: View {
     private var titleHeader: some View {
         UnevenRoundedRectangle(
             cornerRadii: .init(
-                topLeading: 10,
+                topLeading: 14,
                 bottomLeading: 0,
                 bottomTrailing: 0,
-                topTrailing: 10
+                topTrailing: 14
             )
         )
         .fill(.pink300)
