@@ -37,12 +37,13 @@ struct NewProjectCategorySelectView: View {
                         
                     } label: {
                         Image("arrow-back-green700")
+                            .padding(.horizontal, 24)
                     }
                     
                     Spacer()
                 }
-                .padding(.horizontal, 24)
-                .padding(.top, 77)
+                .frame(height: 68)
+                .padding(.top, 54)
                 .padding(.bottom, 10)
                 
                 // 촬영된 이미지

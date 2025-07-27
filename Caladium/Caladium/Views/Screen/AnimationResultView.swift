@@ -16,41 +16,75 @@ struct AnimationResultView: View {
     let endDate: Date?
     @EnvironmentObject var coordinator: AppCoordinator
     
+    @Environment(\.dismiss) private var dismiss
+    
+    @State private var isButtonPressed = false
+    
     var body: some View {
         ZStack {
+            Image("bg-growing")
+                .resizable()
+                .scaledToFill()
+                .ignoresSafeArea()
             
-            Color.green50.ignoresSafeArea()
-            
-            VStack(spacing: 30) {
+            VStack(spacing: 0) {
+                // 상단 툴바 영역
+                HStack {
+                    Button {
+                        // 햅틱 피드백 추가
+                        let impactFeedback = UIImpactFeedbackGenerator(style: .medium)
+                        impactFeedback.impactOccurred()
+                        
+                        // 뒤로가기
+                        dismiss()
+                    } label: {
+                        Image("arrow-back-green700")
+                            .padding(.horizontal, 24)
+                    }
+                    
+                    Spacer()
+                }
+                .frame(height: 68)
+                .padding(.top, 54)
+                .padding(.bottom, 10)
                 // 미리보기 영역
                 previewSection
-                    .padding(.top)
                 
                 Spacer()
                 
                 bottomToolbar
                 
             }
-
+            .navigationBarHidden(true)
+            
         }
-
+        
     }
     
     private var bottomToolbar: some View {
-        HStack {
-            Spacer()
+        VStack(spacing: 0) {
+            Rectangle()
+                .fill(Color.green500)
+                .frame(height: 5)
+                .frame(maxWidth: .infinity)
             
-            Button {
-                shareAnimation()
-            } label: {
-                Image("btn-export-0")
+            HStack {
+                Spacer()
+                
+                Button {
+                    shareAnimation()
+                } label: {
+                    Image(isButtonPressed ? "btn-export-1" : "btn-export-0")
+                }
+                .buttonStyle(PlainButtonStyle())
+                .onLongPressGesture(minimumDuration: 0, maximumDistance: .infinity, pressing: { pressing in
+                    isButtonPressed = pressing
+                }, perform: {})
+                
             }
+            .background(Color.gray0)
             
         }
-        .padding(.horizontal, 40)
-        .padding(.vertical, 16)
-        .background(Color(.systemBackground))
-        .shadow(color: .black.opacity(0.1), radius: 1, x: 0, y: -1)
         
     }
     
@@ -81,10 +115,10 @@ struct AnimationResultView: View {
                             .inset(by: 0.5)
                             .stroke(Color.gray400, lineWidth: 1)
                     )
-
+                    
                     
                 } else if format == .mov, let videoURL = url {
-
+                    
                     
                     VStack(alignment: .leading, spacing: 8){
                         MOVPreviewView(videoURL: videoURL)
@@ -95,7 +129,7 @@ struct AnimationResultView: View {
                                 .customFont(.photoDate)
                                 .foregroundStyle(.gray900)
                         }
-
+                        
                     }
                     .padding(.horizontal, 18)
                     .padding(.top, 18)
@@ -108,7 +142,7 @@ struct AnimationResultView: View {
                             .inset(by: 0.5)
                             .stroke(Color.gray400, lineWidth: 1)
                     )
-
+                    
                 } else {
                     // 실패한 경우
                     RoundedRectangle(cornerRadius: 12)
