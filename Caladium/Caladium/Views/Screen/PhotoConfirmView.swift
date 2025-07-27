@@ -130,6 +130,7 @@ struct PhotoConfirmFrame: View {
                 .frame(maxWidth: 321, maxHeight: 423)
                 .clipped()
                 .cornerRadius(5)
+                .background(.gray200, in: RoundedRectangle(cornerRadius: 5))
             
             // 사진 촬영 날짜
             Text(formatDate(.now))

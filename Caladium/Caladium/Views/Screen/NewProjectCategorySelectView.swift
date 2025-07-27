@@ -20,7 +20,7 @@ struct NewProjectCategorySelectView: View {
     
     var body: some View {
         ZStack {
-            Image("bg-picture")
+            Image("bg-category")
                 .resizable()
                 .scaledToFill()
                 .ignoresSafeArea()
