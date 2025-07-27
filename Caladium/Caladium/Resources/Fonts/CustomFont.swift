@@ -25,30 +25,31 @@ struct CustomFontModifier: ViewModifier {
         case .categoryButtonTitle:
             content
                 .font(.custom("SUIT-SemiBold", size: 13))
-                .padding(.vertical, 1)
+                .frame(height: 15)
         case .categoryButtonBody:
             content
                 .font(.custom("SUIT-Regular", size: 12))
-                .padding(.vertical, 2.5)
+                .frame(height: 17)
         case .navigationBarTitle:
             content
                 .font(.custom("SUIT-SemiBold", size: 24))
-                .padding(.vertical, 4.5)
+                .frame(height: 33)
         case .photoDate:
             content
                 .font(.custom("SUIT-SemiBold", size: 15))
+                .frame(height: 15)
         case .popupTitle:
             content
                 .font(.custom("Paperlogy-6SemiBold", size: 14))
-                .padding(.vertical, 1)
+                .frame(height: 16)
         case .popupCategory:
             content
                 .font(.custom("SUIT-Bold", size: 16))
-                .padding(.vertical, 8.5)
+                .frame(height: 33)
         case .categoryTitle:
             content
                 .font(.custom("Paperlogy-6SemiBold", size: 18))
-                .padding(.vertical, 7.5)  // (33 - 18) / 2 : line height 보정
+                .frame(height: 33)
         }
     }
 }
