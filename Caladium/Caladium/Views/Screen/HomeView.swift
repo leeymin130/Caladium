@@ -65,7 +65,6 @@ struct HomeView: View {
                 
                 Spacer()
                 
-                //                bottomToolbar
                 BottomToolbar(
                     homeEditMode: vm.editMode,
                     style: .home,
@@ -186,88 +185,6 @@ struct HomeView: View {
         case .move(let selectedProjects):
             return selectedProjects.contains(project) ? .selectedForMove : .inactive
         }
-    }
-    
-    // MARK: - Bottom Toolbar
-    private var bottomToolbar: some View {
-        VStack(spacing: 0) {
-            Rectangle()
-                .fill(Color.green500)
-                .frame(height: 5)
-                .frame(maxWidth: .infinity)
-            
-            HStack {
-                switch vm.editMode {
-                case .normal:
-                    Button {
-                        vm.startDeleteMode()
-                    } label: {
-                        Image("btn-delete-0")
-                    }
-                    .disabled(projects.isEmpty)
-                    
-                    Spacer()
-                    
-                    Button {
-                        vm.startMoveMode()
-                    } label: {
-                        Image("btn-move-0")
-                    }
-                    .disabled(projects.isEmpty)
-                    
-                case .delete(_):
-                    Button {
-                        vm.exitEditMode()
-                    } label: {
-                        Image("btn-cancel-0")
-                    }
-                    
-                    Spacer()
-                    
-                    if vm.selectedProjectsCount > 0 {
-                        Text("\(vm.selectedProjectsCount)개의 식물 선택")
-                            .customFont(.categoryButtonBody)
-                            .foregroundColor(.gray800)
-                    }
-                    
-                    Spacer()
-                    
-                    Button {
-                        vm.isShowingDeleteAlert = true
-                        // TODO: 선택한 프로젝트들 삭제 로직 호출
-                    } label: {
-                        Image("btn-select-0")
-                    }
-                    
-                case .move(_):
-                    Button {
-                        vm.exitEditMode()
-                    } label: {
-                        Image("btn-cancel-0")
-                    }
-                    
-                    Spacer()
-                    
-                    if vm.selectedProjectsCount > 0 {
-                        Text("\(vm.selectedProjectsCount)개의 식물 선택")
-                            .customFont(.categoryButtonBody)
-                            .foregroundColor(.gray800)
-
-                    }
-                    
-                    Spacer()
-                    
-                    Button {
-                        vm.isShowingMoveAlert = true
-                    } label: {
-                        Image("btn-select-0")
-                    }
-                }
-                
-            }
-            .background(Color.gray0)
-        }
-        
     }
 }
 
