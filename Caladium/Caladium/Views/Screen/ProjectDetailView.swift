@@ -239,12 +239,12 @@ struct ProjectDetailView: View {
             
         }
         .clipShape(RoundedRectangle(cornerRadius: 10))
+        .shadow(color: .gray900.opacity(0.25), radius: 1.5, x: 0, y: 2)
         .overlay(
             RoundedRectangle(cornerRadius: 10)
                 .stroke(Color.gray400, lineWidth: 1)
         )
-        
-        
+  
     }
     // 최신 사진을 가져오는 helper 함수 추가
     private func getLatestPhoto() -> Photo? {
