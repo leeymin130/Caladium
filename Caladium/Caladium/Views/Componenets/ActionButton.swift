@@ -13,6 +13,7 @@ struct ActionButton: View {
     let backgroundColor: Color
     let borderColor: Color
     let textColor: Color?
+    let horizontalPadding: CGFloat
     let action: () -> Void
     
     @State private var scale: CGFloat = 1.0
@@ -22,12 +23,14 @@ struct ActionButton: View {
             backgroundColor: Color,
             borderColor: Color,
             textColor: Color? = nil,
+            horizontalPadding: CGFloat = 32,
             action: @escaping () -> Void
         ) {
             self.title = title
             self.backgroundColor = backgroundColor
             self.borderColor = borderColor
             self.textColor = textColor
+            self.horizontalPadding = horizontalPadding
             self.action = action
         }
 
@@ -42,7 +45,7 @@ struct ActionButton: View {
         }) {
             Text(title)
                 .customFont(.categoryButtonTitle)
-                .padding(.horizontal, 32)
+                .padding(.horizontal, horizontalPadding)
                 .padding(.vertical, 12)
                 .foregroundColor(determineTextColor())
                 .background(backgroundColor)
@@ -102,6 +105,27 @@ struct ActionButton: View {
             backgroundColor: .pink300,
             borderColor: .pink600,
             action: { print("삭제 버튼 클릭") }
+        )
+        
+        // MOV 저장 버튼
+        ActionButton(
+            title: "MOV로 저장하기",
+            backgroundColor: .gray200,
+            borderColor: .gray300,
+            horizontalPadding: 20,
+            action: {
+                print(
+                    "MOV 버튼 클릭"
+                )
+            })
+        
+        // GIF 저장 버튼
+        ActionButton(
+            title: "GIF로 저장하기",
+            backgroundColor: .green500,
+            borderColor: .green700,
+            horizontalPadding: 20,
+            action: { print("GIF 버튼 클릭") }
         )
     }
     .padding()

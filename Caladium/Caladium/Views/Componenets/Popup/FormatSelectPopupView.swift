@@ -80,21 +80,21 @@ struct FormatSelectPopupView: View {
                 title: "MOV로 만들기",
                 backgroundColor: .gray200,
                 borderColor: .gray300,
+                horizontalPadding: 20,
                 action: {
                    cancelButtonAction()
                 }
             )
-            .padding(.horizontal, -12)
             
             ActionButton(
                 title: "GIF로 만들기",
                 backgroundColor: .green500,
                 borderColor: .green700,
+                horizontalPadding: 20,
                 action: {
                     confirmButtonAction()
                 }
             )
-            .padding(.horizontal, -12)
             
         }
     }
