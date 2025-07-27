@@ -18,48 +18,57 @@ struct FormatSelectPopupView: View {
     }
     
     var body: some View {
-        VStack(alignment: .center, spacing: 20) {
-            // 제목 헤더
-            titleHeader
-            
-            // 영상 포멧 선택 안내문구
-            VStack(alignment: .center, spacing: 0){
-                Text("저장 방식을 선택해주세요")
-                    .customFont(.popupCategory)
-                    .foregroundStyle(Color.gray900)
-                    .padding(.bottom, 4)
-                Text("GIF는 작은 용량으로 어디든 쉽게 공유할 수 있어요.")
-                    .customFont(.categoryButtonBody)
-                    .foregroundStyle(Color.gray500)
-                Text("MOV는 고화질로 오래 보관하기 좋아요.")
-                    .customFont(.categoryButtonBody)
-                    .foregroundStyle(Color.gray500)
-            }
-            .padding(.horizontal, 20)
-            
-            // 액션 버튼들
-            actionButtons
-                .padding(.horizontal, 31)
-        }
-        .padding(.bottom, 20)
-        .background(Color.gray0)
-        .cornerRadius(14)
-        .shadow(color: .gray900.opacity(0.25), radius: 1.5, x: 0, y: 2)
-        .overlay(
-            RoundedRectangle(cornerRadius: 14)
-                .stroke(.gray400, lineWidth: 1)
-        )
+        Rectangle()
+            .fill(Color.gray0)
+            .cornerRadius(14)
+            .frame(maxWidth: 357, maxHeight: 212)
+            .shadow(color: .gray900.opacity(0.25), radius: 1.5, x: 0, y: 2)
+            .overlay(
+                RoundedRectangle(cornerRadius: 14)
+                    .stroke(.gray400, lineWidth: 1)
+            )
+            .overlay(
+                // 영상 포멧 선택 안내문구
+                VStack(alignment: .center, spacing: 0){
+                    Text("저장 방식을 선택해주세요")
+                        .customFont(.popupCategory)
+                        .foregroundStyle(Color.gray900)
+                        .padding(.bottom, 4)
+                    Text("GIF는 작은 용량으로 어디든 쉽게 공유할 수 있어요.")
+                        .customFont(.categoryButtonBody)
+                        .foregroundStyle(Color.gray500)
+                    Text("MOV는 높은 화질로 오래 보관하기 좋아요.")
+                        .customFont(.categoryButtonBody)
+                        .foregroundStyle(Color.gray500)
+                    
+                    // 액션 버튼들
+                    actionButtons
+                        .padding(.vertical, 20)
+                }
+                .padding(.horizontal, 20), alignment: .bottom
+            )
+            .overlay(titleHeader, alignment: .top)
+
     }
     
     // MARK: - 제목 헤더
     private var titleHeader: some View {
-        Text("영상 공유하기")
-            .customFont(.popupTitle)
-            .foregroundColor(.gray0)
-            .frame(maxWidth: .infinity)
-            .frame(height: 44)
-            .background(.green500)
-            .clipShape(.rect(topLeadingRadius: 14, topTrailingRadius: 14))
+        UnevenRoundedRectangle(
+            cornerRadii: .init(
+                topLeading: 14,
+                bottomLeading: 0,
+                bottomTrailing: 0,
+                topTrailing: 14
+            )
+        )
+        .fill(.green500)
+        .stroke(Color.green700, lineWidth: 1)
+        .frame(height: 44)
+        .overlay(
+            Text("영상 공유하기")
+                .customFont(.popupTitle)
+                .foregroundColor(.gray0)
+        )
     }
     
 
@@ -93,5 +102,6 @@ struct FormatSelectPopupView: View {
 
 #Preview {
     FormatSelectPopupView {} confirmButtonAction: {}
+        .padding()
 
 }
