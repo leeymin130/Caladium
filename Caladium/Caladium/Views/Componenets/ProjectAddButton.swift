@@ -21,39 +21,51 @@ struct ProjectAddButton: View {
                 action()
             }
         }) {
-            VStack(){
-                Rectangle()
+            Rectangle()
+                .fill(Color.gray0)
+                .frame(width: 100, height: 100)
+                .cornerRadius(10)
+                .shadow(color: .gray900.opacity(0.25), radius: 1.5, x: 0, y: 2)
+                .overlay(
+                    RoundedRectangle(cornerRadius: 10)
+                        .stroke(
+                            Color.gray400,
+                            lineWidth: 1
+                        )
+                )
+                .overlay(
+                    UnevenRoundedRectangle(
+                        cornerRadii: .init(
+                            topLeading: 10,
+                            bottomLeading: 0,
+                            bottomTrailing: 0,
+                            topTrailing: 10
+                        )
+                    )
                     .fill(isEnabled ? Color.green500 : Color.gray300)
-                    .overlay {
+                    .stroke(isEnabled ? Color.green700 : Color.gray400, lineWidth: 1)
+                    .frame(width: 100, height: 51),alignment: .top
+                    
+                )
+                .overlay(
+                    VStack(alignment: .center, spacing: 0){
                         Image("plant")
                             .resizable()
                             .scaledToFit()
                             .frame(width: 38, height: 38)
-                    }
-                Rectangle()
-                    .fill(Color.gray0)
-                    .overlay(
-                        VStack(alignment: .center, spacing: 0){
-                            Text("새로운 식물")
-                                .customFont(.categoryButtonTitle)
-                                .foregroundColor(.gray900)
-                            Text("추가하기")
-                                .customFont(.categoryButtonBody)
-                                .foregroundColor(.gray400)
-                        }
-                        .padding(.bottom, 8)
-                    )
-            }
-            .frame(width: 100, height: 100)
-            .cornerRadius(10)
-            .shadow(color: .gray900.opacity(0.25), radius: 1.5, x: 0, y: 2)
-            .overlay(
-                RoundedRectangle(cornerRadius: 10)
-                    .stroke(
-                        isEnabled ? Color.green700 : Color.gray400,
-                        lineWidth: 1
-                    )
-            )
+                            .padding(.top, 6)
+                            .padding(.bottom, 7)
+                        
+                        Text("새로운 식물")
+                            .customFont(.categoryButtonTitle)
+                            .foregroundColor(.gray900)
+                            .padding(.top, 7)
+                        
+                        Text("추가하기")
+                            .customFont(.categoryButtonBody)
+                            .foregroundColor(.gray400)
+                    }, alignment: .top
+                )
         }
         .disabled(!isEnabled)
     }

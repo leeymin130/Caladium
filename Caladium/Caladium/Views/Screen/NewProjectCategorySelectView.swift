@@ -20,11 +20,11 @@ struct NewProjectCategorySelectView: View {
     
     var body: some View {
         ZStack {
-            Image("bg-picture")
+            Image("bg-category")
                 .resizable()
                 .scaledToFill()
                 .ignoresSafeArea()
-             
+            
             VStack(spacing: 0) {
                 // 상단 툴바 영역
                 HStack {
@@ -34,26 +34,27 @@ struct NewProjectCategorySelectView: View {
                         impactFeedback.impactOccurred()
                         
                         vm.back()
-                       
+                        
                     } label: {
                         Image("arrow-back-green700")
+                            .padding(.horizontal, 24)
                     }
                     
                     Spacer()
                 }
-                .padding(.horizontal, 24)
-                .padding(.top, 77)
+                .frame(height: 68)
+                .padding(.top, 54)
                 .padding(.bottom, 10)
                 
-                
                 // 촬영된 이미지
-                VStack(alignment: .leading, spacing: 8) {
+                VStack(alignment: .center, spacing: 0) {
                     // 사진 표시 영역
                     Image(uiImage: vm.image)
                         .resizable()
-                        .aspectRatio(contentMode: .fit)
-                        .cornerRadius(5)
+                        .aspectRatio(contentMode: .fill)
                         .frame(maxWidth: 246, maxHeight: 246)
+                        .clipped()
+                        .cornerRadius(5)
                     
                 }
                 .padding(18)
@@ -65,12 +66,12 @@ struct NewProjectCategorySelectView: View {
                         .inset(by: 0.5)
                         .stroke(Color.gray400, lineWidth: 1)
                 )
-                .padding(.top, 24)
+                .padding(.top, 32)
                 .padding(.bottom, 86)
                 
                 
                 Text("이 식물을 어디에 보관할까요?")
-                    .font(.system(size: 20))
+                    .customFont(.popupCategory)
                     .padding(.bottom, 35)
                 
                 categorySelector
@@ -89,6 +90,9 @@ struct NewProjectCategorySelectView: View {
     private var categorySelector: some View {
         HStack(spacing: 70) {
             Button(action: {
+                let impactFeedback = UIImpactFeedbackGenerator(style: .medium)
+                impactFeedback.impactOccurred()
+                
                 withAnimation(.easeInOut(duration: 0.1)) {
                     let currentIndex = vm.categories.firstIndex(of: vm.selectedCategory) ?? 0
                     if currentIndex > 0 {
@@ -98,16 +102,19 @@ struct NewProjectCategorySelectView: View {
                     }
                 }
             }) {
-                Image(systemName: "chevron.left")
-                    .frame(width: 20, height: 20)
-                    .foregroundColor(.green700)
+                Image("arrow-back-green700")
             }
             
-            Text("칼라디움의 \(vm.selectedCategory.displayName)")
-                .font(.system(size: 16, weight: .bold))
+            Text("\(vm.selectedCategory.displayName)")
+                .customFont(.popupCategory)
                 .foregroundColor(.gray900)
+                .lineLimit(1)
+                .minimumScaleFactor(0.5)
             
             Button(action: {
+                let impactFeedback = UIImpactFeedbackGenerator(style: .medium)
+                impactFeedback.impactOccurred()
+                
                 withAnimation(.easeInOut(duration: 0.1)) {
                     let currentIndex = vm.categories.firstIndex(of:vm.selectedCategory) ?? 0
                     if currentIndex < vm.categories.count - 1 {
@@ -117,19 +124,24 @@ struct NewProjectCategorySelectView: View {
                     }
                 }
             }) {
-                Image(systemName: "chevron.right")
-                    .frame(width: 20, height: 20)
-                    .foregroundColor(.green700)
+                Image("arrow-back-green700")
+                    .scaleEffect(x: -1)
             }
             
         }
         .padding(.horizontal, 17)
         .padding(.vertical, 16)
-        .background(.gray0)
-        .clipShape(RoundedRectangle(cornerRadius: 10))
+        .frame(maxWidth: .infinity)
+        .background(.gray0, in: RoundedRectangle(cornerRadius: 10))
         .overlay(
             RoundedRectangle(cornerRadius: 10)
                 .stroke(.gray300, lineWidth: 1)
+        )
+        .overlay(
+            RoundedRectangle(cornerRadius: 10)
+                .stroke(.gray300, lineWidth: 1)
+                .shadow(color: .gray900.opacity(0.25), radius: 2, x: 1, y: 1)
+                .clipShape(RoundedRectangle(cornerRadius: 10))
         )
     }
     
@@ -149,9 +161,9 @@ struct NewProjectCategorySelectView: View {
                 }
                 .buttonStyle(PlainButtonStyle())
                 .onLongPressGesture(minimumDuration: 0, maximumDistance: .infinity, pressing: { pressing in
-                                    isButtonPressed = pressing
-                                }, perform: {})
-
+                    isButtonPressed = pressing
+                }, perform: {})
+                
             }
             .background(Color.gray0)
         }

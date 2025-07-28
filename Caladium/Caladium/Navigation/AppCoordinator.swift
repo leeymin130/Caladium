@@ -80,4 +80,10 @@ final class AppCoordinator: ObservableObject {
         cameraPath = NavigationPath()
     }
     
+    func popToPreviousCameraView() {
+        if !cameraPath.isEmpty {
+            cameraPath.removeLast()
+        }
+    }
+    
 }

@@ -65,7 +65,6 @@ struct HomeView: View {
                 
                 Spacer()
                 
-                //                bottomToolbar
                 BottomToolbar(
                     homeEditMode: vm.editMode,
                     style: .home,
@@ -110,7 +109,7 @@ struct HomeView: View {
                     .padding()
             }
         }
-        .padding(.horizontal)
+        .padding(.horizontal, -4)
         .padding(.top)
     }
     
@@ -120,11 +119,9 @@ struct HomeView: View {
         ScrollView {
             // 편집 모드 가이드 배너
             if case .delete = vm.editMode {
-                guideBanner(
-                    text: "삭제할 식물을 \n선택해주세요"
-                )
+                guideBanner(text1: "삭제할 식물을", text2: "선택해주세요")
             } else if case .move = vm.editMode {
-                guideBanner(text: "장소를 옮길 식물을 \n선택해주세요")
+                guideBanner(text1: "장소를 옮길 식물을", text2: "선택해주세요")
             }
             
             LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: 24), count: 3), spacing: 12) {
@@ -145,12 +142,12 @@ struct HomeView: View {
     }
     
     // MARK: - Guide Banner
-    private func guideBanner(text: String) -> some View {
-        VStack(alignment: .leading) {
-            Text(text)
+    private func guideBanner(text1: String, text2: String) -> some View {
+        VStack(alignment: .leading, spacing: 4) {
+            Text(text1)
                 .customFont(.navigationBarTitle)
-                .lineSpacing(4)
-            
+            Text(text2)
+                .customFont(.navigationBarTitle)
         }
         .frame(maxWidth: .infinity, alignment: .leading)
         .padding(.horizontal, 24)
@@ -186,88 +183,6 @@ struct HomeView: View {
         case .move(let selectedProjects):
             return selectedProjects.contains(project) ? .selectedForMove : .inactive
         }
-    }
-    
-    // MARK: - Bottom Toolbar
-    private var bottomToolbar: some View {
-        VStack(spacing: 0) {
-            Rectangle()
-                .fill(Color.green500)
-                .frame(height: 5)
-                .frame(maxWidth: .infinity)
-            
-            HStack {
-                switch vm.editMode {
-                case .normal:
-                    Button {
-                        vm.startDeleteMode()
-                    } label: {
-                        Image("btn-delete-0")
-                    }
-                    .disabled(projects.isEmpty)
-                    
-                    Spacer()
-                    
-                    Button {
-                        vm.startMoveMode()
-                    } label: {
-                        Image("btn-move-0")
-                    }
-                    .disabled(projects.isEmpty)
-                    
-                case .delete(_):
-                    Button {
-                        vm.exitEditMode()
-                    } label: {
-                        Image("btn-cancel-0")
-                    }
-                    
-                    Spacer()
-                    
-                    if vm.selectedProjectsCount > 0 {
-                        Text("\(vm.selectedProjectsCount)개의 식물 선택")
-                            .customFont(.categoryButtonBody)
-                            .foregroundColor(.gray800)
-                    }
-                    
-                    Spacer()
-                    
-                    Button {
-                        vm.isShowingDeleteAlert = true
-                        // TODO: 선택한 프로젝트들 삭제 로직 호출
-                    } label: {
-                        Image("btn-select-0")
-                    }
-                    
-                case .move(_):
-                    Button {
-                        vm.exitEditMode()
-                    } label: {
-                        Image("btn-cancel-0")
-                    }
-                    
-                    Spacer()
-                    
-                    if vm.selectedProjectsCount > 0 {
-                        Text("\(vm.selectedProjectsCount)개의 식물 선택")
-                            .customFont(.categoryButtonBody)
-                            .foregroundColor(.gray800)
-
-                    }
-                    
-                    Spacer()
-                    
-                    Button {
-                        vm.isShowingMoveAlert = true
-                    } label: {
-                        Image("btn-select-0")
-                    }
-                }
-                
-            }
-            .background(Color.gray0)
-        }
-        
     }
 }
 

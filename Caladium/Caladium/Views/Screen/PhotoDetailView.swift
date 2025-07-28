@@ -9,14 +9,45 @@ import SwiftUI
 
 struct PhotoDetailView: View {
     let photo: Photo
+    
+    @Environment(\.dismiss) private var dismiss
 
     var body: some View {
-        VStack{
-            PhotoFrame(photo: photo)
-                .padding(.top)
+        ZStack(alignment: .leading) {
+            Image("bg-picture")
+                .resizable()
+                .scaledToFill()
+                .ignoresSafeArea()
             
-            Spacer()
+            VStack(spacing: 0){
+                // 상단 툴바 영역
+                HStack {
+                    Button {
+                        // 햅틱 피드백 추가
+                        let impactFeedback = UIImpactFeedbackGenerator(style: .medium)
+                        impactFeedback.impactOccurred()
+                        
+                        dismiss()
+                    } label: {
+                        Image("arrow-back-green700")
+                            .padding(.horizontal, 24)
+                    }
+                    
+                    Spacer()
+                }
+                .frame(height: 68)
+                .padding(.top, 54)
+                
+                PhotoFrame(photo: photo)
+                    .padding(.top, 20)
+                    .padding(.horizontal, 18)
+                
+                Spacer()
+            }
+            .ignoresSafeArea(.all)
+            .navigationBarHidden(true)
         }
+        
     }
 }
 
@@ -38,7 +69,6 @@ struct PhotoDetailView: View {
     
     return PhotoDetailView(photo: mockPhoto)
         .previewLayout(.sizeThatFits)
-        .padding()
 }
 
 

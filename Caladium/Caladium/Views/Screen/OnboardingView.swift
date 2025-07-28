@@ -167,11 +167,14 @@ struct CameraOnboardingView: View {
                     .foregroundStyle(.gray900)
                     .padding(.bottom, 12)
                 
-                Text("사진을 촬영하고 저장하면,\n나만의 식물 프로젝트를 만들 수 있어요.")
+                Text("사진을 촬영하고 저장하면,")
                     .customFont(.categoryButtonBody)
                     .foregroundStyle(.gray600)
-                    .multilineTextAlignment(.center)
-                    .lineSpacing(4)
+                    .padding(.bottom, 2)
+                
+                Text("나만의 식물 프로젝트를 만들 수 있어요.")
+                    .customFont(.categoryButtonBody)
+                    .foregroundStyle(.gray600)
                     .padding(.bottom, 37)
                 
                 Button {

@@ -19,16 +19,18 @@ struct PhotoFrame: View {
     }()
     
     var body: some View {
-        VStack(alignment: .leading, spacing: 8) {
+        VStack(alignment: .leading, spacing: 0) {
             // 사진 표시 영역
-            AsyncPhotoImage(photo: photo, ContentMode: .fit)
+            AsyncPhotoImage(photo: photo, ContentMode: .fill)
+                .frame(maxWidth: 321, maxHeight: 423)
+                .clipped()
                 .cornerRadius(5)
-                .frame(maxWidth: 320, maxHeight: 420)
             
             // 사진 촬영 날짜
             Text(formatDate(photo.capturedDate))
                 .customFont(.photoDate)
                 .foregroundColor(.gray900)
+                .padding(.top, 18)
         }
         .padding(.horizontal, 18)
         .padding(.top, 18)

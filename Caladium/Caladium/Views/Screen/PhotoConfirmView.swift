@@ -37,23 +37,24 @@ struct PhotoConfirmView: View {
                         vm.retakePhoto()
                     } label: {
                         Image("arrow-back-green700")
+                            .padding(.horizontal, 24)
                     }
                     
                     Spacer()
                 }
-                .padding(.horizontal, 24)
-                .padding(.top, 77)
+                .frame(height: 68)
+                .padding(.top, 54)
                 .padding(.bottom, 10)
                 
                 HStack{
                     VStack(alignment: .leading){
                         Text("이 사진으로 할까요?")
-                            .font(.title2)
-                            .bold()
+                            .customFont(.navigationBarTitle)
+                            .foregroundStyle(.gray900)
                             .padding(.bottom, 5)
                         Text(contextDescription)
-                            .foregroundColor(.secondary)
-                            .multilineTextAlignment(.center)
+                            .customFont(.navigationBarBody)
+                            .foregroundStyle(.gray500)
                     }
                     Spacer()
                 }
@@ -62,6 +63,7 @@ struct PhotoConfirmView: View {
                 
                 // 촬영된 이미지
                 PhotoConfirmFrame(image: vm.image)
+                    .padding(.bottom, 16)
                 
                 Spacer()
                 
@@ -77,9 +79,9 @@ struct PhotoConfirmView: View {
     private var contextDescription: String {
         switch vm.context {
         case .newProject:
-            return "이 사진으로 새 프로젝트를 시작하시겠습니까?"
+            return "현재 사진으로 새 프로젝트를 시작하시겠습니까?"
         case .existingProject:
-            return "이 사진을 프로젝트에 추가하시겠습니까?"
+            return "현재 사진을 프로젝트에 추가하시겠습니까?"
         }
     }
     
@@ -120,22 +122,25 @@ struct PhotoConfirmFrame: View {
     }()
     
     var body: some View {
-        VStack(alignment: .leading, spacing: 8) {
+        VStack(alignment: .leading, spacing: 0) {
             // 사진 표시 영역
             Image(uiImage: image)
                 .resizable()
-                .aspectRatio(contentMode: .fit)
+                .aspectRatio(contentMode: .fill)
+                .frame(maxWidth: 257, maxHeight: 338)
+                .clipped()
                 .cornerRadius(5)
-                .frame(maxWidth: 320, maxHeight: 420)
+                .background(.gray200, in: RoundedRectangle(cornerRadius: 5))
             
             // 사진 촬영 날짜
             Text(formatDate(.now))
-                .fontWeight(.semibold)
+                .customFont(.photoDate)
                 .foregroundColor(.gray900)
+                .padding(.top, 18)
+                .padding(.bottom, 48)
         }
         .padding(.horizontal, 18)
         .padding(.top, 18)
-        .padding(.bottom, 48)
         .background(.gray0)
         .cornerRadius(14)
         .shadow(color: .gray900.opacity(0.25), radius: 2, x: 0, y: 3)

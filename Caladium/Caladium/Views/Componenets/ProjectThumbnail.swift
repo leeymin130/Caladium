@@ -51,10 +51,16 @@ struct ProjectThumbnail: View {
             action()
         }) {
             ZStack {
+                
                 Rectangle()
-                    .foregroundColor(stateColor)
+                    .fill(stateColor)
                     .frame(width: 100, height: 100)
+                    .clipShape(RoundedRectangle(cornerRadius: 10))
                     .shadow(color: .gray900.opacity(0.25), radius: 1.5, x: 0, y: 2)
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 10)
+                            .stroke(.gray400, lineWidth: 1)
+                    )
                 
                 // 이미지 있나요?
                 // AsyncPhotoImage 또는 기본 아이콘
