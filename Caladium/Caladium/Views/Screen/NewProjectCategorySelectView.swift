@@ -108,6 +108,8 @@ struct NewProjectCategorySelectView: View {
             Text("\(vm.selectedCategory.displayName)")
                 .customFont(.popupCategory)
                 .foregroundColor(.gray900)
+                .lineLimit(1)
+                .minimumScaleFactor(0.5)
             
             Button(action: {
                 let impactFeedback = UIImpactFeedbackGenerator(style: .medium)

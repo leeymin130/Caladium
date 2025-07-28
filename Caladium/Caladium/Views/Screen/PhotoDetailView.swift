@@ -40,6 +40,7 @@ struct PhotoDetailView: View {
                 
                 PhotoFrame(photo: photo)
                     .padding(.top, 20)
+                    .padding(.horizontal, 18)
                 
                 Spacer()
             }
