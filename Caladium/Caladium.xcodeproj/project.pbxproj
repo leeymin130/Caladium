@@ -272,7 +272,7 @@
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = Caladium/Info.plist;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.lifestyle";
-				INFOPLIST_KEY_NSCameraUsageDescription = "식물의 성장 과정을 기록하기 위해 카메라로 사진을 촬영합니다.\n\"식물의 성장 과정을 기록하고 관찰하기 위해 카메라로 식물 사진을 촬영합니다\"\n\"식물의 성장 과정을 기록하고 관찰하기 위해 카메라로 식물 사진을 촬영합니다\"\n식물의 성장 과정을 기록하기 위해 카메라로 사진을 촬영합니다.";
+				INFOPLIST_KEY_NSCameraUsageDescription = "식물의 성장 과정을 기록하기 위해 카메라로 사진을 촬영합니다";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -308,7 +308,7 @@
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = Caladium/Info.plist;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.lifestyle";
-				INFOPLIST_KEY_NSCameraUsageDescription = "식물의 성장 과정을 기록하기 위해 카메라로 사진을 촬영합니다.\n\"식물의 성장 과정을 기록하고 관찰하기 위해 카메라로 식물 사진을 촬영합니다\"\n\"식물의 성장 과정을 기록하고 관찰하기 위해 카메라로 식물 사진을 촬영합니다\"\n식물의 성장 과정을 기록하기 위해 카메라로 사진을 촬영합니다.";
+				INFOPLIST_KEY_NSCameraUsageDescription = "식물의 성장 과정을 기록하기 위해 카메라로 사진을 촬영합니다";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
