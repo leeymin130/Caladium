@@ -22,6 +22,7 @@ class CameraService: NSObject, ObservableObject {
     }()
     
     @Published var permissionGranted = false
+    @Published var permissionStatus: AVAuthorizationStatus = .notDetermined
     @Published var isSessionRunning = false
     let capturedImageSubject = PassthroughSubject<UIImage, Never>()
 
@@ -30,6 +31,9 @@ class CameraService: NSObject, ObservableObject {
     
     override init() {
         super.init()
+        // 초기 권한 상태 설정
+        permissionStatus = AVCaptureDevice.authorizationStatus(for: .video)
+        permissionGranted = (permissionStatus == .authorized)
         setupNotifications()
     }
     
@@ -68,7 +72,15 @@ class CameraService: NSObject, ObservableObject {
     }
     
     @objc private func appWillEnterForeground() {
-        print("📱 포그라운드 복귀 - 카메라 재시작")
+        print("📱 포그라운드 복귀 - 권한 및 카메라 상태 확인")
+        
+        // 포그라운드 복귀 시 권한 상태 재확인
+        let currentStatus = AVCaptureDevice.authorizationStatus(for: .video)
+        DispatchQueue.main.async {
+            self.permissionStatus = currentStatus
+            self.permissionGranted = (currentStatus == .authorized)
+        }
+        
         if permissionGranted {
             sessionQueue.async { [weak self] in
                 guard let self = self else { return }
@@ -89,6 +101,10 @@ class CameraService: NSObject, ObservableObject {
     func requestCameraPermission() {
         let status = AVCaptureDevice.authorizationStatus(for: .video)
         
+        DispatchQueue.main.async {
+            self.permissionStatus = status
+        }
+        
         switch status {
         case .authorized:
             DispatchQueue.main.async {
@@ -98,19 +114,53 @@ class CameraService: NSObject, ObservableObject {
         case .notDetermined:
             AVCaptureDevice.requestAccess(for: .video) { granted in
                 DispatchQueue.main.async {
+                    self.permissionStatus = granted ? .authorized : .denied
                     self.permissionGranted = granted
-                    if granted { self.setupCamera() }
+                    if granted {
+                        self.setupCamera()
+                    } else {
+                        print("❌ 카메라 권한이 거부되었습니다")
+                    }
                 }
             }
-        default:
+        case .denied:
             DispatchQueue.main.async {
                 self.permissionGranted = false
+                print("❌ 카메라 권한이 거부된 상태입니다")
+            }
+        case .restricted:
+            DispatchQueue.main.async {
+                self.permissionGranted = false
+                print("❌ 카메라 접근이 제한된 상태입니다")
+            }
+        @unknown default:
+            DispatchQueue.main.async {
+                self.permissionGranted = false
+                print("❌ 알 수 없는 권한 상태입니다")
+            }
+        }
+    }
+    
+    // 권한 상태 재확인 (설정에서 돌아올 때 사용)
+    func recheckPermission() {
+        let status = AVCaptureDevice.authorizationStatus(for: .video)
+        DispatchQueue.main.async {
+            self.permissionStatus = status
+            self.permissionGranted = (status == .authorized)
+            
+            if self.permissionGranted {
+                self.setupCamera()
             }
         }
     }
     
     // 카메라 셋업
     func setupCamera() {
+        guard permissionGranted else {
+            print("❌ 카메라 권한이 없어 셋업할 수 없습니다")
+            return
+        }
+        
         guard !isSessionRunning else { return }
         
         sessionQueue.async { [weak self] in
@@ -125,6 +175,7 @@ class CameraService: NSObject, ObservableObject {
             guard let camera = AVCaptureDevice.default(.builtInWideAngleCamera, for: .video, position: .back),
                   let input = try? AVCaptureDeviceInput(device: camera) else {
                 self.captureSession.commitConfiguration()
+                print("❌ 카메라 디바이스를 설정할 수 없습니다")
                 return
             }
             
@@ -154,7 +205,7 @@ class CameraService: NSObject, ObservableObject {
     // 사진 촬영 메서드
     func capturePhoto() {
         guard isSessionRunning && permissionGranted else {
-            print("❌ 카메라가 준비되지 않음")
+            print("❌ 카메라가 준비되지 않음 (권한: \(permissionGranted), 세션: \(isSessionRunning))")
             return
         }
         
