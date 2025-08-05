@@ -67,11 +67,15 @@ struct OnboardingContainerView: View {
                                 .customFont(.navigationBarTitle)
                                 .padding(.bottom, 16)
                             
-                            Text("최근 사진 필터를 통해\n비슷한 구도로 쉽게 찍을 수 있어요.")
+                            Text("최근 사진 필터를 통해")
                                 .customFont(.categoryButtonBody)
                                 .foregroundStyle(.gray600)
                                 .multilineTextAlignment(.center)
-                                .lineSpacing(4)
+                            
+                            Text("비슷한 구도로 쉽게 찍을 수 있어요.")
+                                .customFont(.categoryButtonBody)
+                                .foregroundStyle(.gray600)
+                                .multilineTextAlignment(.center)
                         }
                         .frame(height: geometry.size.height * 2/5, alignment: .top)
                     }
@@ -95,7 +99,12 @@ struct OnboardingContainerView: View {
                                 .customFont(.navigationBarTitle)
                                 .padding(.bottom, 16)
                             
-                            Text("원하는 사진들을 선택해 영상을 만들고,\n저장하거나 공유할 수 있어요.")
+                            Text("원하는 사진들을 선택해 영상을 만들고")
+                                .customFont(.categoryButtonBody)
+                                .foregroundStyle(.gray600)
+                                .multilineTextAlignment(.center)
+                               
+                            Text("저장하거나 공유할 수 있어요.")
                                 .customFont(.categoryButtonBody)
                                 .foregroundStyle(.gray600)
                                 .multilineTextAlignment(.center)

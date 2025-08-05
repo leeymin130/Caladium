@@ -11,6 +11,7 @@ import AVFoundation
 struct CameraView: View {
     @StateObject private var vm: CameraViewModel
     @Environment(\.dependencies) private var dependencies
+    @Environment(\.scenePhase) private var scenePhase
     
     init(vm: CameraViewModel) {
         self._vm = StateObject(wrappedValue: vm)
@@ -34,7 +35,7 @@ struct CameraView: View {
                     bottomControls
                 }
                 
-                // 촬영 장소 안내  팝업
+                // 촬영 장소 안내 팝업
                 if vm.isShowingAlert {
                     Color.black.opacity(0.4)
                         .ignoresSafeArea()
@@ -48,6 +49,22 @@ struct CameraView: View {
                         })
                     .padding(.horizontal, 20)
                 }
+                
+                // 카메라 권한 요청 오버레이
+                if vm.shouldShowPermissionDeniedView {
+                    Color.black.opacity(0.8)
+                        .ignoresSafeArea()
+                    
+                    CameraPermissionDeniedView(
+                        onSettingsPressed: {
+                            vm.openSettings()
+                        },
+                        onCancelPressed: {
+                            vm.cancel()
+                        }
+                    )
+                    .padding(.horizontal, 20)
+                }
             }
             .foregroundColor(.gray0)
             .navigationBarHidden(true)
@@ -55,7 +72,15 @@ struct CameraView: View {
                 destinationView(for: route)
             }
             .onAppear {
-                vm.cameraService.requestCameraPermission()
+                vm.requestCameraPermission()
+            }
+            .onChange(of: scenePhase) { _, newPhase in
+                // 앱이 포그라운드로 돌아올 때 권한 상태 재확인
+                if newPhase == .active {
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                        vm.recheckPermissionOnForeground()
+                    }
+                }
             }
         }
     }
@@ -80,23 +105,22 @@ struct CameraView: View {
     
     // MARK: - 카메라 프리뷰 영역 (커스터마이징 가능)
     private var cameraPreviewArea: some View {
-            ZStack {
-                // 카메라 프리뷰
-                CameraViewController(cameraService: vm.cameraService)
+        ZStack {
+            // 카메라 프리뷰
+            CameraViewController(cameraService: vm.cameraService)
+                .frame(minHeight: 530)
+                .clipped()
+            
+            // 오버레이 이미지
+            if vm.isOverlayOn, let uiImage = vm.overlayImage {
+                Image(uiImage: uiImage)
+                    .resizable()
+                    .aspectRatio(contentMode: .fill)
                     .frame(minHeight: 530)
+                    .opacity(0.5)
                     .clipped()
-                
-                // 오버레이 이미지
-                if vm.isOverlayOn, let uiImage = vm.overlayImage {
-                    Image(uiImage: uiImage)
-                        .resizable()
-                        .aspectRatio(contentMode: .fill)
-                        .frame(minHeight: 530)
-                        .opacity(0.5)
-                        .clipped()
-                }
-        
             }
+        }
     }
     
     // MARK: - 하단 컨트롤
@@ -157,7 +181,6 @@ struct CameraView: View {
                         .padding(.trailing, 24) // 우측 여백
                     }
                 }
-                
             }
             .padding(.top, 30)
             .padding(.bottom, 50) // Safe Area 고려
@@ -187,6 +210,76 @@ struct CameraView: View {
     }
 }
 
+
+// MARK: - CameraPermissionDeniedView
+struct CameraPermissionDeniedView: View {
+    let onSettingsPressed: () -> Void
+    let onCancelPressed: () -> Void
+    
+    var body: some View {
+        VStack(spacing: 24) {
+            VStack(spacing: 24) {
+                // 카메라 아이콘
+                Image(systemName: "camera.fill")
+                    .font(.system(size: 60))
+                    .foregroundColor(.gray400)
+                
+                VStack(spacing: 12) {
+                    Text("카메라 접근 권한이 필요해요")
+                        .font(.title2)
+                        .fontWeight(.semibold)
+                        .foregroundColor(.gray0)
+                    
+                    Text("사진을 촬영하려면\n카메라 접근 권한을 허용해주세요")
+                        .font(.body)
+                        .foregroundColor(.gray300)
+                        .multilineTextAlignment(.center)
+                        .lineSpacing(2)
+                }
+            }
+            
+            // 버튼들
+            VStack(spacing: 12) {
+                Button {
+                    let impactFeedback = UIImpactFeedbackGenerator(style: .medium)
+                    impactFeedback.impactOccurred()
+                    onSettingsPressed()
+                } label: {
+                    HStack {
+                        Spacer()
+                        Text("설정으로 이동")
+                            .font(.headline)
+                            .foregroundColor(.gray0)
+                        Spacer()
+                    }
+                    .frame(height: 56)
+                    .background(Color.green500)
+                    .cornerRadius(12)
+                }
+                
+                Button {
+                    let impactFeedback = UIImpactFeedbackGenerator(style: .light)
+                    impactFeedback.impactOccurred()
+                    onCancelPressed()
+                } label: {
+                    HStack {
+                        Spacer()
+                        Text("취소")
+                            .font(.headline)
+                            .foregroundColor(.gray300)
+                        Spacer()
+                    }
+                    .frame(height: 56)
+                    .background(Color.gray600)
+                    .cornerRadius(12)
+                }
+            }
+        }
+        .padding(32)
+        .background(Color.black)
+        .cornerRadius(16)
+    }
+}
 
 #Preview {
     CameraView(vm: CameraViewModel(coordinator: AppCoordinator(), cameraService: CameraService(), context: .newProject))

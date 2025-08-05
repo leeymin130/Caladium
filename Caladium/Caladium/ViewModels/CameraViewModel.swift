@@ -7,6 +7,7 @@
 
 import SwiftUI
 import Combine
+import AVFoundation
 
 final class CameraViewModel: ObservableObject {
     
@@ -91,6 +92,27 @@ final class CameraViewModel: ObservableObject {
     func cancelAlert() {
         isShowingAlert = false
         coordinator.dismissFullScreen()
+    }
+    
+    // MARK: - 권한 관련 메서드
+    func requestCameraPermission() {
+        cameraService.requestCameraPermission()
+    }
+    
+    func openSettings() {
+        guard let settingsUrl = URL(string: UIApplication.openSettingsURLString) else {
+            return
+        }
+        UIApplication.shared.open(settingsUrl)
+    }
+    
+    func recheckPermissionOnForeground() {
+        cameraService.recheckPermission()
+    }
+    
+    // 권한 상태에 따른 UI 표시 여부 - 권한 거부시에만 오버레이 표시
+    var shouldShowPermissionDeniedView: Bool {
+        return cameraService.permissionStatus == .denied || cameraService.permissionStatus == .restricted
     }
     
     deinit {
