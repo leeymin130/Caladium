@@ -6,13 +6,14 @@
 //
 
 import SwiftUI
+import RiveRuntime
 
 struct LoadingView: View {
     var body: some View {
         ZStack {
-            Color.green300
+            Color.gray0
                 .ignoresSafeArea()
-            
+            RiveViewModel(fileName: "loading_jegeo").view()
         }
     }
 }
