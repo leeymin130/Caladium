@@ -64,6 +64,13 @@ struct ProjectDetailView: View {
                 } background: {
                     Rectangle()
                         .fill(.primary.opacity(0.35))
+                        .ignoresSafeArea()
+                        .onTapGesture {
+                            let impactFeedback = UIImpactFeedbackGenerator(style: .medium)
+                            impactFeedback.impactOccurred()
+                            
+                            vm.isShowingFormatSelectAlert = false
+                        }
                 }
             
             BottomToolbar(
