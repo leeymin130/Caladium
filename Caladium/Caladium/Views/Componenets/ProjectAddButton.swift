@@ -25,7 +25,7 @@ struct ProjectAddButton: View {
                 .fill(Color.gray0)
                 .frame(width: 100, height: 100)
                 .cornerRadius(10)
-                .shadow(color: .gray900.opacity(0.25), radius: 1.5, x: 0, y: 2)
+                .shadow(color: isEnabled ? .gray900.opacity(0.25): .gray0, radius: 1.5, x: 0, y: 2)
                 .overlay(
                     RoundedRectangle(cornerRadius: 10)
                         .stroke(
@@ -58,7 +58,7 @@ struct ProjectAddButton: View {
                         
                         Text("새로운 식물")
                             .customFont(.categoryButtonTitle)
-                            .foregroundColor(.gray900)
+                            .foregroundColor(isEnabled ? .gray900 : .gray500)
                             .padding(.top, 7)
                         
                         Text("추가하기")
