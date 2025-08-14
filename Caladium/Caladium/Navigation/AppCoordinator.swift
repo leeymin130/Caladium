@@ -19,6 +19,7 @@ final class AppCoordinator: ObservableObject {
     // App State
     @AppStorage("onboarding_completed") var isOnboardingComplete: Bool = false
     @AppStorage("last_selected_category") var currentCategory: Category = .garden
+    @AppStorage("showed_camera_popup") var showedCameraPopup = false
     
     // MARK: - Navigation Methods
     func navigate(to route: AppRoute) {
