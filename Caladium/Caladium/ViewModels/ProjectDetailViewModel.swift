@@ -197,12 +197,15 @@ final class ProjectDetailViewModel: ObservableObject {
             DispatchQueue.global(qos: .userInitiated).async {
                 let images = self.loadImagesFromPhotos(photos)
                 
+                let frameDelay = 0.5
+                let totalDuration = Double(images.count) * frameDelay
+                
                 switch self.selectedAnimationFormat {
                 case .gif:
                     // GIF 생성
                     let gifData = GIFCreator.createGIF(
                         from: images,
-                        duration: 3.0,
+                        duration: totalDuration,
                         loopCount: 0
                     )
                     completion(gifData, nil)
@@ -213,7 +216,7 @@ final class ProjectDetailViewModel: ObservableObject {
                     VideoCreator.createVideo(
                         from: images,
                         outputURL: tempURL,
-                        duration: 3.0
+                        duration: totalDuration
                     ) { success in
                         completion(nil, success ? tempURL : nil)
                     }
