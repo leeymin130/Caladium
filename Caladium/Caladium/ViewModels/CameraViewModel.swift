@@ -16,7 +16,7 @@ final class CameraViewModel: ObservableObject {
     
     @Published var isOverlayOn = false
     @Published var overlayImage: UIImage?
-    @Published var isShowingAlert: Bool = true
+    @Published var isShowingAlert: Bool = false
     @Published var isLoading = false
     
     var currentContext: CameraContext
@@ -85,12 +85,20 @@ final class CameraViewModel: ObservableObject {
         }
     }
     
+    func showPopUp() {
+        if !coordinator.showedCameraPopup {
+            isShowingAlert = true
+        }
+    }
+    
     func confirmAlert() {
         isShowingAlert = false
+        coordinator.showedCameraPopup = true
     }
     
     func cancelAlert() {
         isShowingAlert = false
+        coordinator.showedCameraPopup = true
         coordinator.dismissFullScreen()
     }
     

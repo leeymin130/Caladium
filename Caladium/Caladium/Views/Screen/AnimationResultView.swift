@@ -46,7 +46,12 @@ struct AnimationResultView: View {
                 }
                 .frame(height: 68)
                 .padding(.top, 54)
-                .padding(.bottom, 10)
+//                .padding(.bottom, 10)
+                
+                Text("영상이 완성되었습니다!")
+                    .customFont(.navigationBarTitle)
+                    .foregroundColor(.gray900)
+                
                 // 미리보기 영역
                 previewSection
                 

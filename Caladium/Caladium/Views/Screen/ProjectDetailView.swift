@@ -13,6 +13,7 @@ struct ProjectDetailView: View {
     
     @StateObject private var vm: ProjectDetailViewModel
     @Environment(\.dismiss) private var dismiss
+    @State private var isCameraButtonPressed = false
     
     let project: Project
     @FetchRequest private var photos: FetchedResults<Photo>
@@ -34,8 +35,10 @@ struct ProjectDetailView: View {
 
             photoGrid
                 .overlay(alignment: .bottomTrailing){
-                    cameraButton
-                        .padding()
+                    if case .normal = vm.editMode {
+                        cameraButton
+                            .padding()
+                    }
                 }
                 .alert(isPresented: $vm.isShowingDeleteAlert) {
                     /// ALERT CONTENT
@@ -231,13 +234,27 @@ struct ProjectDetailView: View {
             
             
         }
+        .opacity(isCameraButtonPressed ? 0.3 : 1.0)
         .onTapGesture {
+            // 버튼 눌림 효과
+            withAnimation(.easeInOut(duration: 0.05)) {
+                isCameraButtonPressed = true
+            }
+            
+            // 햅틱
             let impactFeedback = UIImpactFeedbackGenerator(style: .medium)
             impactFeedback.impactOccurred()
             
-            // 최신 사진을 찾아서 카메라에 전달
-            let latestPhoto = getLatestPhoto()
-            vm.addNewPhoto(currentProject: project, latestPhoto: latestPhoto)
+            // 버튼 원상복구 후 액션 실행
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.05) {
+                withAnimation(.easeInOut(duration: 0.1)) {
+                    isCameraButtonPressed = false
+                }
+                
+                // 최신 사진을 찾아서 카메라에 전달
+                let latestPhoto = getLatestPhoto()
+                vm.addNewPhoto(currentProject: project, latestPhoto: latestPhoto)
+            }
         }
         .frame(width: 158, height: 58, alignment: .leading)
         .background{
@@ -253,6 +270,7 @@ struct ProjectDetailView: View {
         )
   
     }
+    
     // 최신 사진을 가져오는 helper 함수 추가
     private func getLatestPhoto() -> Photo? {
         return photos.last // photos는 이미 capturedDate로 정렬되어 있음 (ascending: true)

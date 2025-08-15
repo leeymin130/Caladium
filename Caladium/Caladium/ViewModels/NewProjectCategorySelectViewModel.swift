@@ -13,7 +13,7 @@ final class NewProjectCategorySelectViewModel: ObservableObject {
     var coordinator: AppCoordinator
     let coreDataService: CoreDataService
     
-    @Published var selectedCategory: Category = .jungle
+    @Published var selectedCategory: Category = .garden
     let categories = Category.allCases
     let image: UIImage
     

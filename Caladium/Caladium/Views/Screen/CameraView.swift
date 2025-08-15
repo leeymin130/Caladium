@@ -72,6 +72,7 @@ struct CameraView: View {
                 destinationView(for: route)
             }
             .onAppear {
+                vm.showPopUp()
                 vm.requestCameraPermission()
             }
             .onChange(of: scenePhase) { _, newPhase in
