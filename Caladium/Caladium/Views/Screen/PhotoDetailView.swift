@@ -66,12 +66,13 @@ struct PhotoDetailView: View {
     // MARK: - Thumbnail Scroll View
     private var thumbnailScrollView: some View {
         ScrollView(.horizontal, showsIndicators: false) {
-            HStack(spacing: 3) {
+            LazyHStack(spacing: 3) {
                 ForEach(photos, id: \.objectID) { photo in
                     thumbnailItem(photo: photo)
                 }
             }
             .padding(.vertical, 14)
+            .frame(height: 105)
         }
         .background(
             Rectangle()
@@ -86,22 +87,25 @@ struct PhotoDetailView: View {
     // MARK: - Thumbnail Item
     private func thumbnailItem(photo: Photo) -> some View {
         Button {
+            let impactFeedback = UIImpactFeedbackGenerator(style: .light)
+            impactFeedback.impactOccurred()
+            
             currentPhoto = photo
             
         } label: {
             if case .normal = thumbnailState(for: photo) {
                 AsyncPhotoImage(photo: photo)
                     .clipShape(Rectangle())
-                    .frame(width: 57, height: 77)
+                    .frame(width: 57)
                 
             } else if case .selected = thumbnailState(for: photo) {
                 ZStack {
                     AsyncPhotoImage(photo: photo)
                         .clipShape(Rectangle())
-                        .frame(width: 57, height: 77)
+                        .frame(width: 57)
                     Rectangle()
                         .foregroundColor(.gray900.opacity(0.5))
-                        .frame(width: 57, height: 77)
+                        .frame(width: 57)
                     Text("now")
                         .customFont(.categoryButtonTitle)
                         .foregroundColor(.gray0)
