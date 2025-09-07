@@ -11,6 +11,9 @@ import CoreData
 struct PhotoDetailView: View {
     let project: Project
     
+    @State private var dragOffset: CGFloat = 0
+    @State private var currentPhotoIndex: Int = 0
+    
     @Environment(\.dismiss) private var dismiss
     @State private var currentPhoto: Photo
     @FetchRequest private var photos: FetchedResults<Photo>
@@ -49,11 +52,41 @@ struct PhotoDetailView: View {
                 .frame(height: 68)
                 .padding(.top, 54)
                 
-                PhotoFrame(photo: currentPhoto)
-                    .id(currentPhoto.objectID)
-                    .padding(.top, 20)
-                    .padding(.horizontal, 18)
-                    .padding(.bottom, 51)
+                GeometryReader { geometry in
+                    HStack(spacing: 18) {
+                        ForEach(Array(photos.enumerated()), id: \.element.objectID) { index, photo in
+                            PhotoFrame(photo: photo)
+                                .frame(width: geometry.size.width)
+                                .id(photo.objectID)
+                        }
+                    }
+                    .offset(x: -CGFloat(currentPhotoIndex) * (geometry.size.width + 18) + dragOffset)
+                    .gesture(
+                        DragGesture()
+                            .onChanged { value in
+                                dragOffset = value.translation.width
+                            }
+                            .onEnded { value in
+                                let threshold: CGFloat = 50
+                                
+                                withAnimation(.spring(response: 0.5, dampingFraction: 0.8)) {
+                                    if value.translation.width > threshold && currentPhotoIndex > 0 {
+                                        // 이전 사진
+                                        currentPhotoIndex -= 1
+                                    } else if value.translation.width < -threshold && currentPhotoIndex < photos.count - 1 {
+                                        // 다음 사진
+                                        currentPhotoIndex += 1
+                                    }
+                                    
+                                    currentPhoto = photos[currentPhotoIndex]
+                                    dragOffset = 0
+                                }
+                            }
+                    )
+                }
+                .padding(.top, 20)
+                .padding(.horizontal, 18)
+                .padding(.bottom, 51)
                 
                 thumbnailScrollView
                     .padding(.bottom, 32)
@@ -76,9 +109,10 @@ struct PhotoDetailView: View {
                 }
                 .padding(.vertical, 14)
                 .padding(.horizontal, geometry.size.width / 2 - 28.5)
-                .frame(height: 105)
+                
             }
         }
+            .frame(height: 105)
             .background(
                 Rectangle()
                     .fill(Color.gray0)
@@ -86,16 +120,20 @@ struct PhotoDetailView: View {
                     .border(Color.gray400, width: 1)
             )
             .onAppear {
+                // 초기 선택된 사진의 인덱스 찾기
+                    if let index = photos.firstIndex(where: { $0.objectID == currentPhoto.objectID }) {
+                        currentPhotoIndex = index
+                    }
                         // 화면이 처음 나타날 때 현재 선택된 썸네일로 스크롤
                         DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-                            withAnimation(.easeInOut(duration: 0.25)) {
+                            withAnimation(.spring(response: 0.3, dampingFraction: 1.0)) {
                                 proxy.scrollTo(currentPhoto.objectID, anchor: .center)
                             }
                         }
                     }
             .onChange(of: currentPhoto) { newPhoto in
                         // currentPhoto가 변경될 때마다 해당 썸네일로 스크롤
-                        withAnimation(.easeInOut(duration: 0.25)) {
+                        withAnimation(.spring(response: 0.3, dampingFraction: 1.0)) {
                             proxy.scrollTo(newPhoto.objectID, anchor: .center)
                         }
                     }
@@ -110,6 +148,11 @@ struct PhotoDetailView: View {
             impactFeedback.impactOccurred()
             
             currentPhoto = photo
+            
+            // 클릭된 사진의 인덱스로 currentPhotoIndex 업데이트
+                    if let index = photos.firstIndex(where: { $0.objectID == photo.objectID }) {
+                        currentPhotoIndex = index
+                    }
             
         } label: {
             if case .normal = thumbnailState(for: photo) {
