@@ -65,22 +65,41 @@ struct PhotoDetailView: View {
     
     // MARK: - Thumbnail Scroll View
     private var thumbnailScrollView: some View {
-        ScrollView(.horizontal, showsIndicators: false) {
-            LazyHStack(spacing: 3) {
-                ForEach(photos, id: \.objectID) { photo in
-                    thumbnailItem(photo: photo)
+        ScrollViewReader { proxy in
+            GeometryReader { geometry in
+            ScrollView(.horizontal, showsIndicators: false) {
+                LazyHStack(spacing: 3) {
+                    ForEach(photos, id: \.objectID) { photo in
+                        thumbnailItem(photo: photo)
+                            .id(photo.objectID)
+                    }
                 }
+                .padding(.vertical, 14)
+                .padding(.horizontal, geometry.size.width / 2 - 28.5)
+                .frame(height: 105)
             }
-            .padding(.vertical, 14)
-            .frame(height: 105)
         }
-        .background(
-            Rectangle()
-                .fill(Color.gray0)
-                .shadow(color: .gray900.opacity(0.25), radius: 1.5, x: 0, y: 2)
-                .border(Color.gray400, width: 1)
-        )
-        
+            .background(
+                Rectangle()
+                    .fill(Color.gray0)
+                    .shadow(color: .gray900.opacity(0.25), radius: 1.5, x: 0, y: 2)
+                    .border(Color.gray400, width: 1)
+            )
+            .onAppear {
+                        // 화면이 처음 나타날 때 현재 선택된 썸네일로 스크롤
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                            withAnimation(.easeInOut(duration: 0.25)) {
+                                proxy.scrollTo(currentPhoto.objectID, anchor: .center)
+                            }
+                        }
+                    }
+            .onChange(of: currentPhoto) { newPhoto in
+                        // currentPhoto가 변경될 때마다 해당 썸네일로 스크롤
+                        withAnimation(.easeInOut(duration: 0.25)) {
+                            proxy.scrollTo(newPhoto.objectID, anchor: .center)
+                        }
+                    }
+        }
         
     }
     
