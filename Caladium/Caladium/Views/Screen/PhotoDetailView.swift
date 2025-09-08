@@ -27,7 +27,7 @@ struct PhotoDetailView: View {
             predicate: NSPredicate(format: "project == %@", project)
         )
     }
-
+    
     var body: some View {
         ZStack(alignment: .leading) {
             Image("bg-picture")
@@ -100,18 +100,18 @@ struct PhotoDetailView: View {
     private var thumbnailScrollView: some View {
         ScrollViewReader { proxy in
             GeometryReader { geometry in
-            ScrollView(.horizontal, showsIndicators: false) {
-                LazyHStack(spacing: 3) {
-                    ForEach(photos, id: \.objectID) { photo in
-                        thumbnailItem(photo: photo)
-                            .id(photo.objectID)
+                ScrollView(.horizontal, showsIndicators: false) {
+                    LazyHStack(spacing: 3) {
+                        ForEach(photos, id: \.objectID) { photo in
+                            thumbnailItem(photo: photo)
+                                .id(photo.objectID)
+                        }
                     }
+                    .padding(.vertical, 14)
+                    .padding(.horizontal, geometry.size.width / 2 - 28.5)
+                    
                 }
-                .padding(.vertical, 14)
-                .padding(.horizontal, geometry.size.width / 2 - 28.5)
-                
             }
-        }
             .frame(height: 105)
             .background(
                 Rectangle()
@@ -120,23 +120,21 @@ struct PhotoDetailView: View {
                     .border(Color.gray400, width: 1)
             )
             .onAppear {
-                // 초기 선택된 사진의 인덱스 찾기
-                    if let index = photos.firstIndex(where: { $0.objectID == currentPhoto.objectID }) {
-                        currentPhotoIndex = index
+                if let index = photos.firstIndex(where: { $0.objectID == currentPhoto.objectID }) {
+                    currentPhotoIndex = index
+                }
+                
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                    withAnimation(.spring(response: 0.3, dampingFraction: 1.0)) {
+                        proxy.scrollTo(currentPhoto.objectID, anchor: .center)
                     }
-                        // 화면이 처음 나타날 때 현재 선택된 썸네일로 스크롤
-                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-                            withAnimation(.spring(response: 0.3, dampingFraction: 1.0)) {
-                                proxy.scrollTo(currentPhoto.objectID, anchor: .center)
-                            }
-                        }
-                    }
+                }
+            }
             .onChange(of: currentPhoto) { newPhoto in
-                        // currentPhoto가 변경될 때마다 해당 썸네일로 스크롤
-                        withAnimation(.spring(response: 0.3, dampingFraction: 1.0)) {
-                            proxy.scrollTo(newPhoto.objectID, anchor: .center)
-                        }
-                    }
+                withAnimation(.spring(response: 0.3, dampingFraction: 1.0)) {
+                    proxy.scrollTo(newPhoto.objectID, anchor: .center)
+                }
+            }
         }
         
     }
@@ -149,10 +147,9 @@ struct PhotoDetailView: View {
             
             currentPhoto = photo
             
-            // 클릭된 사진의 인덱스로 currentPhotoIndex 업데이트
-                    if let index = photos.firstIndex(where: { $0.objectID == photo.objectID }) {
-                        currentPhotoIndex = index
-                    }
+            if let index = photos.firstIndex(where: { $0.objectID == photo.objectID }) {
+                currentPhotoIndex = index
+            }
             
         } label: {
             if case .normal = thumbnailState(for: photo) {
@@ -179,49 +176,38 @@ struct PhotoDetailView: View {
     
     // MARK: - Thumbnail State
     private func thumbnailState(for photo: Photo) -> PhotoThumbnailState {
-        // 현재 선택된 사진은 selected 상태로 표시
         return photo.objectID == currentPhoto.objectID ? .selected : .normal
     }
     
-    // MARK: - Current Photo Index
-//    private var currentPhotoIndex: Int {
-//        photos.firstIndex { $0.objectID == currentPhoto.objectID } ?? 0
-//    }
 }
 
 #Preview {
-    // Preview를 위한 임시 컨텍스트 생성
     let previewContext = CoreDataManager.shared.mainContext
     
-    // Mock 프로젝트 생성 (Category enum이 필요하므로 기본값 사용)
     let mockProject = Project(context: previewContext)
     mockProject.id = UUID()
-    mockProject.category = "garden" // Category의 기본값으로 가정
+    mockProject.category = "garden"
     mockProject.createdDate = Date()
     mockProject.updatedDate = Date()
     
     var mockPhotos: [Photo] = []
-        for i in 1...5 {
-            // Mock 사진 생성
-            let mockPhoto = Photo(context: previewContext,
-                                fileName: "sample\(i).jpg",
-                                project: mockProject)
-            mockPhoto.capturedDate = Date().addingTimeInterval(TimeInterval(i * 3600 * 24)) // 1시간씩 간격
-            mockPhotos.append(mockPhoto)
-        }
+    for i in 1...5 {
+        let mockPhoto = Photo(context: previewContext,
+                              fileName: "sample\(i).jpg",
+                              project: mockProject)
+        mockPhoto.capturedDate = Date().addingTimeInterval(TimeInterval(i * 3600 * 24))
+        mockPhotos.append(mockPhoto)
+    }
     
-    // ✅ 컨텍스트에 저장
     do {
         try previewContext.save()
     } catch {
         print("Preview context save failed: \(error)")
     }
     
-    // Mock coordinator (실제 구현에서는 적절한 coordinator 전달)
     let mockCoordinator = AppCoordinator()
     
-    // 첫 번째 사진을 초기 사진으로 설정
     return PhotoDetailView(photo: mockPhotos[0], project: mockProject)
         .previewLayout(.sizeThatFits)
-        .environment(\.managedObjectContext, previewContext) // ✅ 컨텍스트 환경 설정
+        .environment(\.managedObjectContext, previewContext)
 }
