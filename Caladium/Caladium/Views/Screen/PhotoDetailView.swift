@@ -11,7 +11,6 @@ import CoreData
 struct PhotoDetailView: View {
     let project: Project
     
-    @State private var dragOffset: CGFloat = 0
     @State private var currentPhotoIndex: Int = 0
     
     @Environment(\.dismiss) private var dismiss
@@ -32,9 +31,10 @@ struct PhotoDetailView: View {
         ZStack(alignment: .leading) {
             Image("bg-picture")
                 .resizable()
-                .scaledToFill()
+                .scaledToFit()
                 .ignoresSafeArea()
             
+            // MARK: - HeaderView
             VStack(spacing: 0){
                 HStack {
                     Button {
@@ -44,55 +44,36 @@ struct PhotoDetailView: View {
                         dismiss()
                     } label: {
                         Image("arrow-back-green700")
-                            .padding(.horizontal, 24)
                     }
                     
                     Spacer()
                 }
-                .frame(height: 68)
-                .padding(.top, 54)
-                
-                GeometryReader { geometry in
-                    HStack(spacing: 18) {
-                        ForEach(Array(photos.enumerated()), id: \.element.objectID) { index, photo in
-                            PhotoFrame(photo: photo)
-                                .frame(width: geometry.size.width)
-                                .id(photo.objectID)
-                        }
-                    }
-                    .offset(x: -CGFloat(currentPhotoIndex) * (geometry.size.width + 18) + dragOffset)
-                    .gesture(
-                        DragGesture()
-                            .onChanged { value in
-                                dragOffset = value.translation.width
-                            }
-                            .onEnded { value in
-                                let threshold: CGFloat = 50
-                                
-                                withAnimation(.spring(response: 0.5, dampingFraction: 0.8)) {
-                                    if value.translation.width > threshold && currentPhotoIndex > 0 {
-                                        // 이전 사진
-                                        currentPhotoIndex -= 1
-                                    } else if value.translation.width < -threshold && currentPhotoIndex < photos.count - 1 {
-                                        // 다음 사진
-                                        currentPhotoIndex += 1
-                                    }
-                                    
-                                    currentPhoto = photos[currentPhotoIndex]
-                                    dragOffset = 0
-                                }
-                            }
-                    )
-                }
-                .padding(.top, 20)
                 .padding(.horizontal, 18)
-                .padding(.bottom, 51)
+                .padding(.horizontal)
+                
+                // MARK: - Photo TabView with Paging
+                TabView(selection: $currentPhotoIndex) {
+                    ForEach(Array(photos.enumerated()), id: \.element.objectID) { index, photo in
+                        PhotoFrame(photo: photo)
+                            .tag(index)
+                    }
+                }
+                .tabViewStyle(PageTabViewStyle(indexDisplayMode: .never))
+                .onChange(of: currentPhotoIndex) { _, newIndex in
+                    if newIndex < photos.count {
+                        currentPhoto = photos[newIndex]
+                    }
+                }
                 
                 thumbnailScrollView
-                    .padding(.bottom, 32)
+                    .padding(.bottom)
             }
-            .ignoresSafeArea(.all)
-            .navigationBarHidden(true)
+        }
+        .onAppear {
+            // 초기 인덱스 설정
+            if let index = photos.firstIndex(where: { $0.objectID == currentPhoto.objectID }) {
+                currentPhotoIndex = index
+            }
         }
     }
     
@@ -109,10 +90,9 @@ struct PhotoDetailView: View {
                     }
                     .padding(.vertical, 14)
                     .padding(.horizontal, geometry.size.width / 2 - 28.5)
-                    
                 }
             }
-            .frame(height: 105)
+            .frame(maxHeight: 105)
             .background(
                 Rectangle()
                     .fill(Color.gray0)
@@ -120,23 +100,18 @@ struct PhotoDetailView: View {
                     .border(Color.gray400, width: 1)
             )
             .onAppear {
-                if let index = photos.firstIndex(where: { $0.objectID == currentPhoto.objectID }) {
-                    currentPhotoIndex = index
-                }
-                
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
                     withAnimation(.spring(response: 0.3, dampingFraction: 1.0)) {
                         proxy.scrollTo(currentPhoto.objectID, anchor: .center)
                     }
                 }
             }
-            .onChange(of: currentPhoto) { newPhoto in
+            .onChange(of: currentPhoto) {_, newPhoto in
                 withAnimation(.spring(response: 0.3, dampingFraction: 1.0)) {
                     proxy.scrollTo(newPhoto.objectID, anchor: .center)
                 }
             }
         }
-        
     }
     
     // MARK: - Thumbnail Item
@@ -168,7 +143,6 @@ struct PhotoDetailView: View {
                     Text("now")
                         .customFont(.categoryButtonTitle)
                         .foregroundColor(.gray0)
-                    
                 }
             }
         }
@@ -178,7 +152,6 @@ struct PhotoDetailView: View {
     private func thumbnailState(for photo: Photo) -> PhotoThumbnailState {
         return photo.objectID == currentPhoto.objectID ? .selected : .normal
     }
-    
 }
 
 #Preview {
