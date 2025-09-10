@@ -31,6 +31,8 @@ struct PhotoDetailView: View {
         ZStack(alignment: .leading) {
             Image("bg-picture")
                 .resizable()
+                //MARK: - 현재 배경이 아이폰 pro 비율을 기준으로 되어 있어, 아이폰 SE 기기에서는 배경이 꽉차지 않음, 그래서 그걸 맞추려고 .scaledFill을 사용하니 뒤에 배경에 맞춰 전체 화면이 크기가 증가하여 레이아웃이 깨지는 현상 발생
+                // 지금 상태에서 이 화면 뿐만 아니라 배경이 깔리는 모든 뷰는 아이폰 SE 대응 안됨
                 .scaledToFit()
                 .ignoresSafeArea()
             
