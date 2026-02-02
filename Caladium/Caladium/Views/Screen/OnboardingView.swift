@@ -39,11 +39,18 @@ struct OnboardingContainerView: View {
                             
                             Text("사진으로 만드는 식물 기록 영상")
                                 .customFont(.navigationBarTitle)
+                                .multilineTextAlignment(.center)
+                                .lineLimit(2)
+                                .minimumScaleFactor(0.75)
                                 .padding(.bottom, 16)
+                                .padding(.horizontal)
                             
                             Text("긴 촬영 없이도 식물 타임랩스를 만들 수 있어요.")
                                 .customFont(.categoryButtonBody)
                                 .foregroundStyle(.gray600)
+                                .multilineTextAlignment(.center)
+                                .lineLimit(2)
+                                .minimumScaleFactor(0.75)
                         }
                         .frame(height: geometry.size.height * 2/5, alignment: .top)
                     }
@@ -65,17 +72,25 @@ struct OnboardingContainerView: View {
                             
                             Text("같은 자리에서 찍을 수 있도록")
                                 .customFont(.navigationBarTitle)
+                                .multilineTextAlignment(.center)
+                                .lineLimit(2)
+                                .minimumScaleFactor(0.85)
                                 .padding(.bottom, 16)
+                                .padding(.horizontal)
                             
                             Text("최근 사진 필터를 통해")
                                 .customFont(.categoryButtonBody)
                                 .foregroundStyle(.gray600)
                                 .multilineTextAlignment(.center)
+                                .lineLimit(2)
+                                .minimumScaleFactor(0.75)
                             
                             Text("비슷한 구도로 쉽게 찍을 수 있어요.")
                                 .customFont(.categoryButtonBody)
                                 .foregroundStyle(.gray600)
                                 .multilineTextAlignment(.center)
+                                .lineLimit(2)
+                                .minimumScaleFactor(0.75)
                         }
                         .frame(height: geometry.size.height * 2/5, alignment: .top)
                     }
@@ -97,18 +112,25 @@ struct OnboardingContainerView: View {
                             
                             Text("버튼 한 번이면 영상 완성")
                                 .customFont(.navigationBarTitle)
+                                .multilineTextAlignment(.center)
+                                .lineLimit(2)
+                                .minimumScaleFactor(0.85)
                                 .padding(.bottom, 16)
                             
                             Text("원하는 사진들을 선택해 영상을 만들고")
                                 .customFont(.categoryButtonBody)
                                 .foregroundStyle(.gray600)
                                 .multilineTextAlignment(.center)
+                                .lineLimit(2)
+                                .minimumScaleFactor(0.75)
                                
                             Text("저장하거나 공유할 수 있어요.")
                                 .customFont(.categoryButtonBody)
                                 .foregroundStyle(.gray600)
                                 .multilineTextAlignment(.center)
                                 .lineSpacing(4)
+                                .lineLimit(2)
+                                .minimumScaleFactor(0.75)
                                 .padding(.bottom, 70)
                             
                             Button {
@@ -121,7 +143,7 @@ struct OnboardingContainerView: View {
                             } label: {
                                 Text("칼라디움 시작하기")
                                     .customFont(.categoryButtonTitle)
-                                    .padding(.horizontal, 32)
+                                    .padding(.horizontal, 24)
                                     .padding(.vertical, 12)
                                     .foregroundColor(.gray0)
                                     .background(Color.green500)
@@ -196,7 +218,7 @@ struct CameraOnboardingView: View {
                 } label: {
                     Text("사진 찍기")
                         .customFont(.categoryButtonTitle)
-                        .padding(.horizontal, 32)
+                        .padding(.horizontal, 24)
                         .padding(.vertical, 12)
                         .foregroundColor(.gray0)
                         .background(Color.green500)
@@ -218,4 +240,3 @@ struct CameraOnboardingView: View {
 #Preview {
     OnboardingContainerView(coordinator: AppCoordinator())
 }
-

@@ -80,7 +80,11 @@ struct AnimationResultView: View {
                 Button {
                     shareAnimation()
                 } label: {
-                    Image(isButtonPressed ? "btn-export-1" : "btn-export-0")
+                    Image(
+                        LocalizedAsset.toolbarImageName(
+                            isButtonPressed ? "btn-export-1" : "btn-export-0"
+                        )
+                    )
                 }
                 .buttonStyle(PlainButtonStyle())
                 .onLongPressGesture(minimumDuration: 0, maximumDistance: .infinity, pressing: { pressing in
@@ -180,7 +184,7 @@ struct AnimationResultView: View {
     private func dateRangeText(start: Date, end: Date) -> String {
         let formatter = DateFormatter()
         formatter.dateStyle = .long
-        formatter.locale = Locale(identifier: "ko_KR")
+        formatter.locale = .current
         
         let startString = formatter.string(from: start)
         let endString = formatter.string(from: end)
@@ -189,7 +193,11 @@ struct AnimationResultView: View {
         if Calendar.current.isDate(start, equalTo: end, toGranularity: .day) {
             return startString
         } else {
-            return "\(startString) ~ \(endString)"
+            return String.localizedStringWithFormat(
+                String(localized: "date_range_format"),
+                startString,
+                endString
+            )
         }
     }
     
@@ -220,7 +228,10 @@ struct AnimationResultView: View {
         // 공유 텍스트 추가 (선택사항)
         if let start = startDate, let end = endDate {
             let dateText = dateRangeText(start: start, end: end)
-            let shareText = "📸 \(dateText) 기간의 성장 기록 애니메이션"
+            let shareText = String.localizedStringWithFormat(
+                String(localized: "share_animation_text_format"),
+                dateText
+            )
             itemsToShare.append(shareText)
         }
         

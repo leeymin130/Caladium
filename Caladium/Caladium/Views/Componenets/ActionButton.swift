@@ -9,7 +9,7 @@ import SwiftUI
 
 // MARK: - 액션 버튼 컴포넌트
 struct ActionButton: View {
-    let title: String
+    let title: LocalizedStringKey
     let backgroundColor: Color
     let borderColor: Color
     let textColor: Color?
@@ -19,7 +19,7 @@ struct ActionButton: View {
     @State private var scale: CGFloat = 1.0
     
     init(
-            title: String,
+            title: LocalizedStringKey,
             backgroundColor: Color,
             borderColor: Color,
             textColor: Color? = nil,

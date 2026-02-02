@@ -119,9 +119,9 @@ struct HomeView: View {
         ScrollView {
             // 편집 모드 가이드 배너
             if case .delete = vm.editMode {
-                guideBanner(text1: "삭제할 식물을", text2: "선택해주세요")
+                guideBanner(text1: "home_delete_banner_line1", text2: "home_delete_banner_line2")
             } else if case .move = vm.editMode {
-                guideBanner(text1: "장소를 옮길 식물을", text2: "선택해주세요")
+                guideBanner(text1: "home_move_banner_line1", text2: "home_move_banner_line2")
             }
             
             LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: 24), count: 3), spacing: 12) {
@@ -142,7 +142,7 @@ struct HomeView: View {
     }
     
     // MARK: - Guide Banner
-    private func guideBanner(text1: String, text2: String) -> some View {
+    private func guideBanner(text1: LocalizedStringKey, text2: LocalizedStringKey) -> some View {
         VStack(alignment: .leading, spacing: 4) {
             Text(text1)
                 .customFont(.navigationBarTitle)

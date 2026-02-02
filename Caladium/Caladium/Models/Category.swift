@@ -16,13 +16,13 @@ enum Category: String, CaseIterable {
     var displayName: String {
         switch self {
         case .garden:
-            return "칼라디움의 정원"
+            return String(localized: "category_garden")
         case .jungle:
-            return "칼라디움의 정글"
+            return String(localized: "category_jungle")
         case .rooftop:
-            return "칼라디움의 옥상"
+            return String(localized: "category_rooftop")
         case .desert:
-            return "칼라디움의 사막"
+            return String(localized: "category_desert")
         }
     }
     

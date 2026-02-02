@@ -28,9 +28,10 @@ struct PressableButton: View {
         isDisabled: Bool = false,
         action: @escaping () -> Void
     ) {
-        self.normalImageName = normalImage
+        let derivedPressed = pressedImage ?? normalImage.replacingOccurrences(of: "-0", with: "-1")
+        self.normalImageName = LocalizedAsset.toolbarImageName(normalImage)
         // pressed 이미지가 없으면 normal 이미지에서 -0을 -1로 변경
-        self.pressedImageName = pressedImage ?? normalImage.replacingOccurrences(of: "-0", with: "-1")
+        self.pressedImageName = LocalizedAsset.toolbarImageName(derivedPressed)
         self.isDisabled = isDisabled
         self.action = action
     }
@@ -194,12 +195,11 @@ struct BottomToolbar: View {
             Spacer()
             
             if selectedCount > 0 {
-                HStack(spacing: 0){
+                HStack(spacing: 0) {
                     Text("\(selectedCount)")
                         .customFont(.popupCategory)
                         .foregroundColor(.gray900)
-                    
-                    Text("개의 식물 선택")
+                    Text(String(localized: "plants_selected_suffix"))
                         .customFont(.navigationBarBody)
                         .foregroundColor(.gray800)
                 }
@@ -226,16 +226,14 @@ struct BottomToolbar: View {
             Spacer()
             
             if selectedCount > 0 {
-                HStack(spacing: 0){
+                HStack(spacing: 0) {
                     Text("\(selectedCount)")
                         .customFont(.popupCategory)
                         .foregroundColor(.gray900)
-                    
-                    Text("개의 식물 선택")
+                    Text(String(localized: "plants_selected_suffix"))
                         .customFont(.navigationBarBody)
                         .foregroundColor(.gray800)
                 }
-                
             }
             
             Spacer()

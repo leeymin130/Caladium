@@ -146,11 +146,10 @@ struct ProjectDetailView: View {
             ScrollView {
                 // 편집 모드 가이드 배너
                 if case .delete = vm.editMode {
-                    guideBanner(
-                        text: "삭제할 사진을 선택해주세요"
-                    )
+                    guideBanner(text: "project_delete_banner_title")
                 } else if case .makeVideo = vm.editMode {
-                    guideBanner(text: "영상에 추가할 사진을 고르세요", guideText : "사진을 많이 선택할수록 영상이 풍성해져요")
+                    guideBanner(text: "project_video_banner_title", guideText: "project_video_banner_subtitle")
+                        .minimumScaleFactor(0.7)
                 }
                 
                 LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: 3), count: 3), spacing: 3) {
@@ -165,7 +164,7 @@ struct ProjectDetailView: View {
     }
     
     // MARK: - Guide Banner
-    private func guideBanner(text: String, guideText: String? = nil) -> some View {
+    private func guideBanner(text: LocalizedStringKey, guideText: LocalizedStringKey? = nil) -> some View {
         VStack(alignment: .leading, spacing: 0) {
             Text(text)
                 .customFont(.navigationBarTitle)
@@ -281,11 +280,15 @@ struct ProjectDetailView: View {
             .year()
             .month(.wide)
             .day()
-            .locale(Locale(identifier: "ko_KR"))
+            .locale(.current)
         
         let startDate = project.createdDate?.formatted(formatter) ?? ""
         let endDate = project.updatedDate?.formatted(formatter) ?? ""
         
-        return "\(startDate) ~ \(endDate)"
+        return String.localizedStringWithFormat(
+            String(localized: "date_range_format"),
+            startDate,
+            endDate
+        )
     }
 }

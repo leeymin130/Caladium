@@ -14,7 +14,7 @@ struct PhotoFrame: View {
         let formatter = DateFormatter()
         formatter.dateStyle = .long
         formatter.timeStyle = .none
-        formatter.locale = Locale(identifier: "ko_KR")
+        formatter.locale = .current
         return formatter
     }()
     
@@ -48,7 +48,7 @@ struct PhotoFrame: View {
     
     private func formatDate(_ date: Date?) -> String {
         guard let date = date else {
-            return NSLocalizedString("date_info_unavailable", value: "날짜 정보 없음", comment: "날짜 정보가 없을 때 표시되는 메시지")
+            return String(localized: "date_info_unavailable")
         }
         return dateFormatter.string(from: date)
     }
