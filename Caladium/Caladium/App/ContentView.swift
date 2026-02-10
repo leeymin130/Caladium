@@ -50,8 +50,8 @@ struct ContentView: View {
         case .projectDetail(let project):
             ProjectDetailView(vm: dependencies.makeProjectDetailViewModel(), project: project)
             
-        case .photoDetail(let photo, _):
-            PhotoDetailView(photo: photo)
+        case .photoDetail(let photo, let project):
+            PhotoDetailView(photo: photo, project: project)
             
         case .camera(let context, let latestPhoto):
             CameraView(vm: dependencies.makeCameraViewModel(context: context, latestPhoto: latestPhoto))

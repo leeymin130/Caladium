@@ -157,7 +157,11 @@ struct NewProjectCategorySelectView: View {
                 Button {
                     vm.saveNewProject()
                 } label: {
-                    Image(isButtonPressed ? "btn-select-1" : "btn-select-0")
+                    Image(
+                        LocalizedAsset.toolbarImageName(
+                            isButtonPressed ? "btn-select-1" : "btn-select-0"
+                        )
+                    )
                 }
                 .buttonStyle(PlainButtonStyle())
                 .onLongPressGesture(minimumDuration: 0, maximumDistance: .infinity, pressing: { pressing in

@@ -76,12 +76,12 @@ struct PhotoConfirmView: View {
         
     }
     
-    private var contextDescription: String {
+    private var contextDescription: LocalizedStringKey {
         switch vm.context {
         case .newProject:
-            return "현재 사진으로 새 프로젝트를 시작하시겠습니까?"
+            return "photo_confirm_new_project_description"
         case .existingProject:
-            return "현재 사진을 프로젝트에 추가하시겠습니까?"
+            return "photo_confirm_existing_project_description"
         }
     }
     
@@ -97,7 +97,11 @@ struct PhotoConfirmView: View {
                 Button {
                     vm.confirmPhoto()
                 } label: {
-                    Image(isButtonPressed ? "btn-select-1" : "btn-select-0")
+                    Image(
+                        LocalizedAsset.toolbarImageName(
+                            isButtonPressed ? "btn-select-1" : "btn-select-0"
+                        )
+                    )
                 }
                 .buttonStyle(PlainButtonStyle())
                 .onLongPressGesture(minimumDuration: 0, maximumDistance: .infinity, pressing: { pressing in
@@ -117,7 +121,7 @@ struct PhotoConfirmFrame: View {
         let formatter = DateFormatter()
         formatter.dateStyle = .long
         formatter.timeStyle = .none
-        formatter.locale =  Locale(identifier: "ko_KR")// 시스템 현재 언어 설정 사용
+        formatter.locale = .current
         return formatter
     }()
     
@@ -154,7 +158,7 @@ struct PhotoConfirmFrame: View {
     
     private func formatDate(_ date: Date?) -> String {
         guard let date = date else {
-            return NSLocalizedString("date_info_unavailable", value: "날짜 정보 없음", comment: "날짜 정보가 없을 때 표시되는 메시지")
+            return String(localized: "date_info_unavailable")
         }
         return dateFormatter.string(from: date)
     }
